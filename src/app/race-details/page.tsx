@@ -38,21 +38,21 @@ const details = [
   {
     icon: Car,
     title: 'Parking',
-    content: '[[REPLACE: Parking details — lots, streets, shuttle info.]]',
+    content: 'Parking details will be announced closer to race day. Updates will be posted here and on social media.',
     link: undefined as string | undefined,
     linkLabel: undefined as string | undefined,
   },
   {
     icon: Droplets,
     title: 'Aid Stations',
-    content: '[[REPLACE: Number of aid stations, mile markers, what\'s offered — water, electrolytes, medical.]]',
+    content: 'Aid station locations and details will be confirmed closer to race day. Water and electrolytes will be available on course.',
     link: undefined as string | undefined,
     linkLabel: undefined as string | undefined,
   },
   {
     icon: Info,
     title: 'What to Expect',
-    content: '[[REPLACE: Race-day flow — check-in, bag drop, corrals, finish line, post-race area.]]',
+    content: 'Arrive early to check in and collect your bib. Both races start from the same location in Provo Canyon. Full race-day logistics will be shared with registered participants ahead of the event.',
     link: undefined as string | undefined,
     linkLabel: undefined as string | undefined,
   },
@@ -106,7 +106,7 @@ export default function RaceDetailsPage() {
           ) : (
             <div className="flex h-64 items-center justify-center rounded-card border-2 border-dashed border-petal bg-mist">
               <p className="font-body text-sm text-ash text-center px-6">
-                [[REPLACE: Add EVENT_COURSE_MAP_URL in site.ts, or embed a map here.]]
+                Course map coming soon.
               </p>
             </div>
           )}

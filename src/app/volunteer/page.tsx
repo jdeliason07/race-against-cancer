@@ -34,15 +34,15 @@ export default function VolunteerPage() {
             {[
               {
                 heading: 'When',
-                body: '[[REPLACE: Date(s) and times volunteers are needed — race morning, the day before for packet pickup, or both.]]',
+                body: 'Race morning — Saturday, November 7, 2026. Additional shifts may be available the day before for packet pickup.',
               },
               {
                 heading: 'Where',
-                body: '[[REPLACE: General location and any satellite volunteer stations.]]',
+                body: 'Provo Canyon, UT. Specific station assignments will be shared with confirmed volunteers ahead of race day.',
               },
               {
                 heading: 'What you get',
-                body: '[[REPLACE: Volunteer perks — e.g. volunteer shirt, post-race food access, etc.]]',
+                body: 'Post-race food, the satisfaction of making a real difference, and a front-row seat to something worth being part of.',
               },
             ].map((item) => (
               <div key={item.heading} className="rounded-card border border-line bg-paper p-6">
@@ -59,7 +59,7 @@ export default function VolunteerPage() {
             Ready to volunteer?
           </h2>
           <p className="mx-auto mb-8 max-w-lg font-body text-sm text-white/60">
-            [[REPLACE: Describe how to sign up — link to a form, or keep the email button below.]]
+            Send us an email and we&apos;ll get back to you with available roles and next steps.
           </p>
           {CONTACT_EMAIL && !CONTACT_EMAIL.includes('[[') ? (
             <a

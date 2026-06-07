@@ -6,7 +6,7 @@
 // ============================================================
 
 // --- CHARITY ------------------------------------------------
-export const CHARITY_NAME = "[[CHARITY_NAME — replace everywhere from here]]";
+export const CHARITY_NAME = "a charity";
 export const CHARITY_URL  = "[[CHARITY_WEBSITE_URL]]";
 export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 
@@ -14,13 +14,13 @@ export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 export const EVENT_NAME          = "Race Against Cancer 2026";
 export const EVENT_DATE_ISO      = "2026-11-07T08:00:00-05:00";
 export const EVENT_DATE_DISPLAY  = "Saturday, November 7, 2026";
-export const HALF_START_TIME     = "[[7:30 AM]]";
-export const FIVE_K_START_TIME   = "[[8:00 AM]]";
+export const HALF_START_TIME     = "TBD";
+export const FIVE_K_START_TIME   = "TBD";
 export const EVENT_YEAR          = "2026";
 
 // --- LOCATION -----------------------------------------------
-export const EVENT_LOCATION_NAME    = "[[VENUE NAME]]";
-export const EVENT_LOCATION_ADDRESS = "[[STREET ADDRESS, CITY, STATE, ZIP]]";
+export const EVENT_LOCATION_NAME    = "Provo Canyon";
+export const EVENT_LOCATION_ADDRESS = "Provo Canyon, UT";
 export const EVENT_LOCATION_MAPS_URL = "[[GOOGLE MAPS LINK]]";
 export const EVENT_COURSE_MAP_URL    = "[[COURSE MAP IMAGE OR LINK]]";
 
@@ -41,9 +41,9 @@ export const REGISTRATION_INCLUDES = [
 ];
 
 // --- PACKET PICKUP ------------------------------------------
-export const PACKET_PICKUP_DATE     = "[[Friday, November 6, 2026]]";
-export const PACKET_PICKUP_TIME     = "[[12:00 PM – 7:00 PM]]";
-export const PACKET_PICKUP_LOCATION = "[[Location name and address]]";
+export const PACKET_PICKUP_DATE     = "Details coming soon";
+export const PACKET_PICKUP_TIME     = "";
+export const PACKET_PICKUP_LOCATION = "";
 
 // --- CONTACT ------------------------------------------------
 export const CONTACT_EMAIL = "[[info@raceagainstcancer.org]]";

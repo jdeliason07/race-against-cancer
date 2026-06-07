@@ -21,19 +21,24 @@ export default function AboutPage() {
         <section>
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">Why this exists</h2>
           <p className="mb-4 font-body text-base leading-relaxed text-ash">
-            [[REPLACE: Tell the founding story. Who started this event and why? What personal connection to cancer motivated it?]]
+            Cancer touches everyone. Race Against Cancer 2026 was built to turn that grief, that
+            anger, and that love into something that moves — literally. Every person who lines up
+            at the start is running for someone.
           </p>
           <p className="font-body text-base leading-relaxed text-ash">
-            [[REPLACE: Continue the story — what is the vision? What does a world where this event matters look like?]]
+            This isn&apos;t a race with a charity attached. The race is the donation. Every registration,
+            every dollar, goes directly to the cause. More details about our story coming soon.
           </p>
         </section>
 
         <section>
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">
-            The charity: {CHARITY_NAME}
+            The charity
           </h2>
           <p className="mb-4 font-body text-base leading-relaxed text-ash">
-            [[REPLACE: Describe {CHARITY_NAME} — what do they do, who do they serve, why this specific organization?]]
+            100% of proceeds benefit a charity dedicated to fighting cancer. The specific
+            organization will be announced soon. What we can tell you now: every dollar raised
+            goes directly to them — no event overhead, no middleman.
           </p>
           {CHARITY_URL && !CHARITY_URL.includes('[[') && (
             <a
@@ -54,7 +59,9 @@ export default function AboutPage() {
               100% of donations to {CHARITY_NAME}
             </p>
             <p className="font-body text-sm leading-relaxed text-ash">
-              [[REPLACE: Be transparent and specific. How are funds used? Is there any event overhead? Who covers operational costs? If a sponsor covers costs, say so.]]
+              Event operations are covered separately so that your registration goes entirely to
+              the cause. Sponsors help make that possible — which is why their support matters
+              beyond just a logo placement.
             </p>
           </div>
         </section>

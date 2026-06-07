@@ -605,12 +605,14 @@ export function RegisterFlow() {
         emergencyName: formData.emergencyName,
         emergencyPhone: formData.emergencyPhone,
       });
-      setClientSecret(result.clientSecret);
-      setStep(3);
-    } catch (err) {
-      setIntentError(
-        err instanceof Error ? err.message : 'Something went wrong. Please try again.'
-      );
+      if ('error' in result) {
+        setIntentError(result.error);
+      } else {
+        setClientSecret(result.clientSecret);
+        setStep(3);
+      }
+    } catch {
+      setIntentError('Something went wrong. Please try again.');
     } finally {
       setLoadingIntent(false);
     }

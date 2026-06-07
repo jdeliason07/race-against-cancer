@@ -137,6 +137,7 @@ function StepRaceSelection({
 
 // Step 2 — Athlete Info + Donation + Waiver
 function StepAthleteInfo({
+  raceType,
   formData,
   setFormData,
   donationAmount,
@@ -147,6 +148,7 @@ function StepAthleteInfo({
   onBack,
   loading,
 }: {
+  raceType: RaceType;
   formData: FormData;
   setFormData: (f: FormData) => void;
   donationAmount: number;
@@ -157,6 +159,7 @@ function StepAthleteInfo({
   onBack: () => void;
   loading: boolean;
 }) {
+  const minDonation = raceType === '5k' ? 49 : 99;
   const update = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: e.target.value });
   };
@@ -172,7 +175,7 @@ function StepAthleteInfo({
     formData.dob.trim() &&
     formData.emergencyName.trim() &&
     formData.emergencyPhone.trim() &&
-    donationAmount >= 99 &&
+    donationAmount >= minDonation &&
     waiverAgreed;
 
   const inputClass =
@@ -269,20 +272,20 @@ function StepAthleteInfo({
           Donation Amount
         </p>
         <p className="mb-3 font-body text-sm text-ash">
-          Minimum $99 — every dollar goes directly to the cause. Give more if you&rsquo;re able.
+          Minimum ${minDonation} — every dollar goes directly to the cause. Give more if you&rsquo;re able.
         </p>
         <input
           type="number"
-          min="99"
+          min={minDonation}
           value={donationAmount}
           onChange={(e) => {
             const val = parseInt(e.target.value, 10);
-            setDonationAmount(isNaN(val) ? 99 : val);
+            setDonationAmount(isNaN(val) ? minDonation : val);
           }}
           className="border border-petal rounded-card px-4 py-3 font-body text-sm text-ink w-full focus:outline-none focus:border-pink bg-white"
         />
-        {donationAmount < 99 && (
-          <p className="mt-1 font-body text-xs text-red-700">Minimum donation is $99</p>
+        {donationAmount < minDonation && (
+          <p className="mt-1 font-body text-xs text-red-700">Minimum donation is ${minDonation}</p>
         )}
       </div>
 
@@ -621,13 +624,17 @@ export function RegisterFlow() {
         <StepRaceSelection
           raceType={raceType}
           setRaceType={setRaceType}
-          onNext={() => setStep(2)}
+          onNext={() => {
+            setDonationAmount(raceType === '5k' ? 49 : 99);
+            setStep(2);
+          }}
         />
       )}
 
       {step === 2 && (
         <>
           <StepAthleteInfo
+            raceType={raceType}
             formData={formData}
             setFormData={setFormData}
             donationAmount={donationAmount}

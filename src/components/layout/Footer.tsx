@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import {
   CONTACT_EMAIL, SOCIAL_INSTAGRAM, SOCIAL_FACEBOOK,
-  SOCIAL_TWITTER, SOCIAL_YOUTUBE, EMAIL_SIGNUP_EMBED,
-  EMAIL_SIGNUP_URL, CHARITY_NAME, EVENT_YEAR
+  SOCIAL_TWITTER, SOCIAL_YOUTUBE, CHARITY_NAME, EVENT_YEAR
 } from '@/config/site';
 import { Mail } from 'lucide-react';
 
@@ -44,32 +43,6 @@ function IconYoutube({ size = 18 }: { size?: number }) {
 export function Footer() {
   return (
     <footer className="bg-ink text-white">
-      {/* Email signup strip */}
-      <div className="border-b border-white/10 py-16">
-        <div className="mx-auto max-w-2xl px-6 text-center">
-          <p className="section-label mb-4 text-petal">Stay connected</p>
-          <h2 className="font-display text-3xl uppercase text-white mb-4">
-            Be the first to know
-          </h2>
-          <p className="font-body text-sm text-white/55 mb-8">
-            Registration updates, race-day info, and event news — straight to your inbox.
-          </p>
-          {EMAIL_SIGNUP_EMBED.trim() && !EMAIL_SIGNUP_EMBED.includes('[[') ? (
-            <div dangerouslySetInnerHTML={{ __html: EMAIL_SIGNUP_EMBED }} />
-          ) : (
-            <a
-              href={EMAIL_SIGNUP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary"
-            >
-              Get Race Updates
-            </a>
-          )}
-        </div>
-      </div>
-
-      {/* Main footer */}
       <div className="mx-auto max-w-7xl px-6 py-16">
         <div className="mb-12 text-center">
           <p className="font-display text-5xl uppercase leading-none md:text-7xl">

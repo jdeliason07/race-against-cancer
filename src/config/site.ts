@@ -55,14 +55,6 @@ export const SOCIAL_FACEBOOK  = "[[https://facebook.com/YOURPAGE]]";
 export const SOCIAL_TWITTER   = "[[https://twitter.com/YOURHANDLE]]";
 export const SOCIAL_YOUTUBE   = "[[https://youtube.com/@YOURCHANNEL]]";
 
-// --- EMAIL SIGNUP -------------------------------------------
-// Paste Mailchimp/Beehiiv/ConvertKit embed HTML here
-export const EMAIL_SIGNUP_EMBED = `
-[[PASTE EMAIL PLATFORM EMBED CODE HERE]]
-`;
-// Fallback link if embed isn't set up yet
-export const EMAIL_SIGNUP_URL = "[[EMAIL SIGNUP PLATFORM URL]]";
-
 // --- SEO ----------------------------------------------------
 export const SITE_URL         = "https://[[YOUR-DOMAIN.com]]";
 export const META_DESCRIPTION =

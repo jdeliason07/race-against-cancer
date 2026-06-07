@@ -1,56 +1,11 @@
-import { CONTACT_EMAIL, EVENT_DATE_DISPLAY, EVENT_LOCATION_NAME } from '@/config/site';
+import { CONTACT_EMAIL, EVENT_DATE_DISPLAY } from '@/config/site';
 import { Mail } from 'lucide-react';
 import type { Metadata } from 'next';
-
-// ============================================================
-// VOLUNTEER PAGE — NEEDS YOUR CONTENT
-// ============================================================
-// Search for [[REPLACE: ...]] throughout this file.
-// Every block marked that way needs real information before launch.
-// The structure and layout are done — just fill in the details.
-// ============================================================
 
 export const metadata: Metadata = {
   title: 'Become a Volunteer',
   description: `Volunteer at Race Against Cancer 2026 on ${EVENT_DATE_DISPLAY}. Help make race day happen.`,
 };
-
-// ── EDIT THIS DATA ──────────────────────────────────────────
-// Replace each role with real volunteer positions, times, and descriptions.
-const volunteerRoles = [
-  {
-    role: '[[REPLACE: Role name, e.g. "Course Marshal"]]',
-    time: '[[REPLACE: Shift time, e.g. "6:00 AM – 10:00 AM"]]',
-    description:
-      '[[REPLACE: What does this volunteer do? Where are they stationed? Any physical requirements?]]',
-  },
-  {
-    role: '[[REPLACE: Role name, e.g. "Aid Station Crew"]]',
-    time: '[[REPLACE: Shift time]]',
-    description:
-      '[[REPLACE: Describe this role — handing out water, electrolytes, encouraging runners, etc.]]',
-  },
-  {
-    role: '[[REPLACE: Role name, e.g. "Finish Line Team"]]',
-    time: '[[REPLACE: Shift time]]',
-    description:
-      '[[REPLACE: What does this team do at the finish? Medal hangers, food distribution, crowd management?]]',
-  },
-  {
-    role: '[[REPLACE: Role name, e.g. "Packet Pickup Helper"]]',
-    time: '[[REPLACE: Shift time — likely the day before the race]]',
-    description:
-      '[[REPLACE: Describe packet pickup volunteering — distributing bibs, shirts, answering questions, etc.]]',
-  },
-  {
-    role: '[[REPLACE: Role name, e.g. "Registration Table"]]',
-    time: '[[REPLACE: Shift time]]',
-    description:
-      '[[REPLACE: Race-morning check-in, answering questions from participants, directing runners to corrals.]]',
-  },
-];
-
-// ── END EDITABLE DATA ───────────────────────────────────────
 
 export default function VolunteerPage() {
   return (
@@ -72,24 +27,22 @@ export default function VolunteerPage() {
 
       <div className="mx-auto max-w-4xl px-6 py-20">
 
-        {/* What to expect — placeholder */}
+        {/* What to expect */}
         <section className="mb-16">
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">What to expect</h2>
-
-          {/* [[REPLACE: Fill in the three boxes below with real details before launch]] */}
           <div className="grid gap-6 sm:grid-cols-3">
             {[
               {
                 heading: 'When',
-                body: '[[REPLACE: Date(s) volunteers are needed — race morning, day before for packet pickup, or both. Include call-time.]]',
+                body: '[[REPLACE: Date(s) and times volunteers are needed — race morning, the day before for packet pickup, or both.]]',
               },
               {
                 heading: 'Where',
-                body: `[[REPLACE: General location — ${EVENT_LOCATION_NAME} and any satellite locations (e.g. packet pickup venue).]]`,
+                body: '[[REPLACE: General location and any satellite volunteer stations.]]',
               },
               {
                 heading: 'What you get',
-                body: '[[REPLACE: Volunteer perks — e.g. volunteer shirt, meal, post-race food access, etc.]]',
+                body: '[[REPLACE: Volunteer perks — e.g. volunteer shirt, post-race food access, etc.]]',
               },
             ].map((item) => (
               <div key={item.heading} className="rounded-card border border-line bg-paper p-6">
@@ -100,54 +53,13 @@ export default function VolunteerPage() {
           </div>
         </section>
 
-        {/* Volunteer roles */}
-        <section className="mb-16">
-          <div className="rule-line mb-10">
-            <div className="h-px flex-1 bg-line" aria-hidden="true" />
-            <span className="section-label">Volunteer roles</span>
-            <div className="h-px flex-1 bg-line" aria-hidden="true" />
-          </div>
-
-          {/* [[REPLACE: Edit the volunteerRoles array at the top of this file]] */}
-          <div className="space-y-4">
-            {volunteerRoles.map((item, i) => (
-              <div key={i} className="rounded-card border border-line bg-paper p-6">
-                <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <h3 className="font-display text-xl uppercase text-ink">{item.role}</h3>
-                  <span className="font-body text-xs font-bold uppercase tracking-widest text-pink">
-                    {item.time}
-                  </span>
-                </div>
-                <p className="mt-2 font-body text-sm leading-relaxed text-ash">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Training / orientation — placeholder */}
-        <section className="mb-16 rounded-card border border-line bg-mist p-8">
-          <h2 className="mb-4 font-display text-2xl uppercase text-ink">
-            Training & orientation
-          </h2>
-          {/* [[REPLACE: Describe volunteer orientation — is there a mandatory meeting? Online training? Day-of briefing?]] */}
-          <p className="font-body text-base leading-relaxed text-ash">
-            [[REPLACE: Will there be a volunteer orientation or training session before race day?
-            If so, when, where, and is it required? Describe what new volunteers should know
-            before showing up — e.g. wear comfortable shoes, arrive 30 minutes early for your
-            shift briefing, etc.]]
-          </p>
-        </section>
-
         {/* Sign-up CTA */}
         <section className="rounded-card bg-ink p-12 text-center">
           <h2 className="mb-4 font-display text-3xl uppercase text-white">
             Ready to volunteer?
           </h2>
-          {/* [[REPLACE: Either link to a volunteer sign-up form, or keep the email CTA below]] */}
           <p className="mx-auto mb-8 max-w-lg font-body text-sm text-white/60">
-            [[REPLACE: Describe how to sign up — e.g. "Fill out the form below" if you embed
-            one, or "Email us" to use the button below. If you use a third-party signup tool
-            like SignUpGenius or Volunteer Local, paste the link or embed here.]]
+            [[REPLACE: Describe how to sign up — link to a form, or keep the email button below.]]
           </p>
           {CONTACT_EMAIL && !CONTACT_EMAIL.includes('[[') ? (
             <a

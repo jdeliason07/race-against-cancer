@@ -43,9 +43,6 @@ export default function HomePage() {
             </a>
           </div>
 
-          <p className="mt-5 font-body text-xs text-ash">
-            No peer-to-peer fundraising. No fundraising goals. Just your miles and your mission.
-          </p>
         </div>
       </section>
 

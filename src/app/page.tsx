@@ -23,8 +23,8 @@ export default function HomePage() {
           </div>
 
           <h1 className="font-display text-[clamp(52px,10vw,132px)] uppercase leading-[0.92] tracking-[0.01em] text-ink">
-            RUN FOR THE{' '}
-            <em className="not-italic text-pink">ONES WHO COULDN&apos;T.</em>
+            MOVE. GIVE.{' '}
+            <em className="not-italic text-pink">CHANGE THINGS.</em>
           </h1>
 
           <p className="mt-8 max-w-xl font-body text-lg text-ash">

@@ -63,13 +63,6 @@ export const EMAIL_SIGNUP_EMBED = `
 // Fallback link if embed isn't set up yet
 export const EMAIL_SIGNUP_URL = "[[EMAIL SIGNUP PLATFORM URL]]";
 
-// --- DOCUMENTARY --------------------------------------------
-export const DOCUMENTARY_TITLE       = "20 Stories";
-export const DOCUMENTARY_DESCRIPTION =
-  "Twenty real people. Twenty cancer journeys. One film released each day for twenty days leading up to race day.";
-// Episodes defined in src/data/episodes.ts
-// Release window: Day 1 = Oct 18, 2026 → Day 20 = Nov 6, 2026
-
 // --- SEO ----------------------------------------------------
 export const SITE_URL         = "https://[[YOUR-DOMAIN.com]]";
 export const META_DESCRIPTION =

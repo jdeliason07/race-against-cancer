@@ -51,13 +51,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section>
-          <h2 className="font-display text-3xl uppercase text-ink mb-6">The documentary: 20 Stories</h2>
-          <p className="font-body text-base text-ash leading-relaxed">
-            [[REPLACE: Describe the documentary project — who made it, who is featured, why 20 stories, how the daily release builds to race day.]]
-          </p>
-        </section>
-
         <div className="flex flex-wrap gap-4 pt-4">
           <a href={REGISTRATION_URL} target="_blank" rel="noopener noreferrer" className="btn-primary">
             Register to Run

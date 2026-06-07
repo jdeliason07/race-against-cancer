@@ -47,12 +47,12 @@ export function Footer() {
       {/* Email signup strip */}
       <div className="border-b border-white/10 py-16">
         <div className="mx-auto max-w-2xl px-6 text-center">
-          <p className="section-label mb-4 text-petal">Stay in the story</p>
+          <p className="section-label mb-4 text-petal">Stay connected</p>
           <h2 className="font-display text-3xl uppercase text-white mb-4">
-            Get notified when each film drops
+            Be the first to know
           </h2>
           <p className="font-body text-sm text-white/55 mb-8">
-            One email per episode — 20 days, 20 stories. No noise between races.
+            Registration updates, race-day info, and event news — straight to your inbox.
           </p>
           {EMAIL_SIGNUP_EMBED.trim() && !EMAIL_SIGNUP_EMBED.includes('[[') ? (
             <div dangerouslySetInnerHTML={{ __html: EMAIL_SIGNUP_EMBED }} />
@@ -63,7 +63,7 @@ export function Footer() {
               rel="noopener noreferrer"
               className="btn-primary"
             >
-              Subscribe for Episode Alerts
+              Get Race Updates
             </a>
           )}
         </div>

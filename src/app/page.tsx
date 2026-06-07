@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import {
-  REGISTRATION_URL, EVENT_DATE_DISPLAY,
+  EVENT_DATE_DISPLAY,
   CHARITY_NAME, MIN_DONATION_AMOUNT, HALF_MARATHON_LABEL,
   FIVE_K_LABEL, EVENT_LOCATION_NAME,
 } from '@/config/site';
@@ -33,14 +33,12 @@ export default function HomePage() {
           </p>
 
           <div className="mt-10">
-            <a
-              href={REGISTRATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/register"
               className="btn-primary px-10 py-5 text-base"
             >
               Register
-            </a>
+            </Link>
           </div>
 
         </div>
@@ -69,7 +67,7 @@ export default function HomePage() {
               {
                 step: '03',
                 heading: 'Show up November 7',
-                body: `Race day is ${EVENT_DATE_DISPLAY}. You'll get a shirt, bib, and finisher medal — and you'll have run for something real.`,
+                body: `Race day is ${EVENT_DATE_DISPLAY}. You'll get a bib and finisher medal — and you'll have run for something real.`,
               },
             ].map((item) => (
               <div key={item.step} className="rounded-card border border-petal bg-paper p-8">
@@ -81,14 +79,12 @@ export default function HomePage() {
           </div>
 
           <div className="mt-10 text-center">
-            <a
-              href={REGISTRATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/register"
               className="btn-primary"
             >
               Register Now
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -146,14 +142,12 @@ export default function HomePage() {
             {EVENT_DATE_DISPLAY} · {EVENT_LOCATION_NAME}
           </p>
           <div className="mt-8">
-            <a
-              href={REGISTRATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/register"
               className="rounded-pill bg-white px-10 py-5 font-body text-base font-bold uppercase tracking-widest text-pink shadow-lg transition-colors hover:bg-blush"
             >
               Register
-            </a>
+            </Link>
           </div>
         </div>
       </section>

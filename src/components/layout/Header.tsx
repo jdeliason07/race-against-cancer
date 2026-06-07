@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { REGISTRATION_URL } from '@/config/site';
 
 const navLinks = [
   { href: '/register',  label: 'Register' },
@@ -42,14 +41,12 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
-            <a
-              href={REGISTRATION_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/register"
               className="btn-primary py-3 px-5 text-xs"
             >
               Register
-            </a>
+            </Link>
           </nav>
 
           {/* Mobile toggle */}
@@ -84,15 +81,13 @@ export function Header() {
                 </li>
               ))}
               <li className="pt-2">
-                <a
-                  href={REGISTRATION_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/register"
                   className="btn-primary w-full text-center"
                   onClick={() => setOpen(false)}
                 >
                   Register
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>

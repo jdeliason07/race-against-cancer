@@ -2,9 +2,10 @@ import {
   EVENT_DATE_DISPLAY, HALF_START_TIME, FIVE_K_START_TIME,
   EVENT_LOCATION_NAME, EVENT_LOCATION_ADDRESS, EVENT_LOCATION_MAPS_URL,
   PACKET_PICKUP_DATE, PACKET_PICKUP_TIME, PACKET_PICKUP_LOCATION,
-  EVENT_COURSE_MAP_URL, REGISTRATION_URL
+  EVENT_COURSE_MAP_URL
 } from '@/config/site';
 import { MapPin, Clock, Package, Car, Droplets, Info } from 'lucide-react';
+import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -112,9 +113,9 @@ export default function RaceDetailsPage() {
         </section>
 
         <div className="mt-16 text-center">
-          <a href={REGISTRATION_URL} target="_blank" rel="noopener noreferrer" className="btn-primary">
+          <Link href="/register" className="btn-primary">
             Register Now
-          </a>
+          </Link>
         </div>
       </div>
     </div>

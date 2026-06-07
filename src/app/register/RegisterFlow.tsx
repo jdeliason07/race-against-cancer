@@ -88,60 +88,20 @@ function StepIndicator({ step }: { step: Step }) {
   );
 }
 
-// Step 1 — Race Selection
+// Step 1 — Race Selection (two buttons only)
 function StepRaceSelection({
   raceType,
   setRaceType,
-  shirtSize,
-  setShirtSize,
-  donationAmount,
-  setDonationAmount,
   onNext,
 }: {
   raceType: RaceType;
   setRaceType: (r: RaceType) => void;
-  shirtSize: string;
-  setShirtSize: (s: string) => void;
-  donationAmount: number;
-  setDonationAmount: (a: number) => void;
   onNext: () => void;
 }) {
-  const [customAmount, setCustomAmount] = useState('');
-  const [customError, setCustomError] = useState('');
-  const [isCustom, setIsCustom] = useState(false);
-
-  const presets = [100, 150, 200, 250];
-  const shirtSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-
-  const handlePreset = (amount: number) => {
-    setDonationAmount(amount);
-    setIsCustom(false);
-    setCustomAmount('');
-    setCustomError('');
-  };
-
-  const handleCustomChange = (val: string) => {
-    setCustomAmount(val);
-    setIsCustom(true);
-    const num = parseFloat(val);
-    if (!val) {
-      setCustomError('');
-    } else if (isNaN(num) || num < 100) {
-      setCustomError('Minimum donation is $100');
-      setDonationAmount(0);
-    } else {
-      setCustomError('');
-      setDonationAmount(Math.floor(num));
-    }
-  };
-
-  const canAdvance = raceType !== null && shirtSize !== '' && donationAmount >= 100;
-
   return (
     <div>
       <h2 className="font-display text-3xl uppercase text-ink mb-6">Choose Your Race</h2>
 
-      {/* Race type */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         {([
           { key: 'half' as const, label: 'Half Marathon', sub: '13.1 mi' },
@@ -163,74 +123,10 @@ function StepRaceSelection({
         ))}
       </div>
 
-      {/* Shirt size */}
-      <div className="mb-8">
-        <label className="font-body text-xs font-bold uppercase tracking-widest text-ash mb-3 block">
-          Shirt Size
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {shirtSizes.map((size) => (
-            <button
-              key={size}
-              type="button"
-              onClick={() => setShirtSize(size)}
-              className="rounded-chip border-2 px-4 py-2 font-body text-sm font-bold transition-colors duration-150 focus-visible:outline-none"
-              style={{
-                borderColor: shirtSize === size ? '#F0307A' : '#ECE2E6',
-                backgroundColor: shirtSize === size ? '#FDE7F0' : '#FFFFFF',
-                color: shirtSize === size ? '#F0307A' : '#1C1719',
-              }}
-            >
-              {size}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Donation amount */}
-      <div className="mb-8">
-        <label className="font-body text-xs font-bold uppercase tracking-widest text-ash mb-3 block">
-          Donation Amount (minimum $100)
-        </label>
-        <div className="flex flex-wrap gap-2 mb-3">
-          {presets.map((amount) => (
-            <button
-              key={amount}
-              type="button"
-              onClick={() => handlePreset(amount)}
-              className="rounded-chip border-2 px-4 py-2 font-body text-sm font-bold transition-colors duration-150 focus-visible:outline-none"
-              style={{
-                borderColor: !isCustom && donationAmount === amount ? '#F0307A' : '#ECE2E6',
-                backgroundColor: !isCustom && donationAmount === amount ? '#FDE7F0' : '#FFFFFF',
-                color: !isCustom && donationAmount === amount ? '#F0307A' : '#1C1719',
-              }}
-            >
-              ${amount}
-            </button>
-          ))}
-        </div>
-        <div>
-          <input
-            type="number"
-            min="100"
-            placeholder="Custom amount"
-            value={customAmount}
-            onChange={(e) => handleCustomChange(e.target.value)}
-            className="border border-line rounded-card px-4 py-3 font-body text-sm text-ink w-full focus:outline-none focus:border-pink"
-            style={{
-              borderColor: isCustom && customAmount ? (customError ? '#c81a1a' : '#F0307A') : '#ECE2E6',
-            }}
-          />
-          {customError && (
-            <p className="mt-1 font-body text-xs text-red-700">{customError}</p>
-          )}
-        </div>
-      </div>
-
       <button
         type="button"
         onClick={onNext}
-        disabled={!canAdvance}
+        disabled={raceType === null}
         className="btn-primary w-full disabled:opacity-40 disabled:cursor-not-allowed"
       >
         Next: Athlete Info
@@ -239,10 +135,12 @@ function StepRaceSelection({
   );
 }
 
-// Step 2 — Athlete Info + Waiver
+// Step 2 — Athlete Info + Donation + Waiver
 function StepAthleteInfo({
   formData,
   setFormData,
+  donationAmount,
+  setDonationAmount,
   waiverAgreed,
   setWaiverAgreed,
   onNext,
@@ -251,6 +149,8 @@ function StepAthleteInfo({
 }: {
   formData: FormData;
   setFormData: (f: FormData) => void;
+  donationAmount: number;
+  setDonationAmount: (a: number) => void;
   waiverAgreed: boolean;
   setWaiverAgreed: (v: boolean) => void;
   onNext: () => void;
@@ -272,6 +172,7 @@ function StepAthleteInfo({
     formData.dob.trim() &&
     formData.emergencyName.trim() &&
     formData.emergencyPhone.trim() &&
+    donationAmount >= 99 &&
     waiverAgreed;
 
   const inputClass =
@@ -360,6 +261,29 @@ function StepAthleteInfo({
             required
           />
         </div>
+      </div>
+
+      {/* Donation amount suggestion */}
+      <div className="mb-6 rounded-card border border-petal bg-blush p-5">
+        <p className="mb-2 font-body text-xs font-bold uppercase tracking-widest text-ash">
+          Donation Amount
+        </p>
+        <p className="mb-3 font-body text-sm text-ash">
+          Minimum $99 — every dollar goes directly to the cause. Give more if you&rsquo;re able.
+        </p>
+        <input
+          type="number"
+          min="99"
+          value={donationAmount}
+          onChange={(e) => {
+            const val = parseInt(e.target.value, 10);
+            setDonationAmount(isNaN(val) ? 99 : val);
+          }}
+          className="border border-petal rounded-card px-4 py-3 font-body text-sm text-ink w-full focus:outline-none focus:border-pink bg-white"
+        />
+        {donationAmount < 99 && (
+          <p className="mt-1 font-body text-xs text-red-700">Minimum donation is $99</p>
+        )}
       </div>
 
       {/* Waiver */}
@@ -577,12 +501,10 @@ function StepConfirmation({
   raceType,
   formData,
   donationAmount,
-  shirtSize,
 }: {
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
-  shirtSize: string;
 }) {
   const raceLabel = raceType === 'half' ? 'Half Marathon (13.1 mi)' : '5K (3.1 mi)';
 
@@ -626,10 +548,6 @@ function StepConfirmation({
             <dd className="text-ink">{raceLabel}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="font-bold uppercase tracking-widest text-ash text-xs">Shirt Size</dt>
-            <dd className="text-ink">{shirtSize}</dd>
-          </div>
-          <div className="flex justify-between">
             <dt className="font-bold uppercase tracking-widest text-ash text-xs">Donation</dt>
             <dd className="text-ink font-bold" style={{ color: '#F0307A' }}>
               ${donationAmount}
@@ -653,8 +571,7 @@ function StepConfirmation({
 export function RegisterFlow() {
   const [step, setStep] = useState<Step>(1);
   const [raceType, setRaceType] = useState<RaceType>(null);
-  const [shirtSize, setShirtSize] = useState('');
-  const [donationAmount, setDonationAmount] = useState(100);
+  const [donationAmount, setDonationAmount] = useState(99);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -676,8 +593,7 @@ export function RegisterFlow() {
     try {
       const result = await createPaymentIntent({
         raceType,
-        shirtSize,
-        amount: donationAmount * 100, // convert to cents
+        amount: donationAmount * 100,
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -695,7 +611,7 @@ export function RegisterFlow() {
     } finally {
       setLoadingIntent(false);
     }
-  }, [raceType, shirtSize, donationAmount, formData]);
+  }, [raceType, donationAmount, formData]);
 
   return (
     <div>
@@ -705,10 +621,6 @@ export function RegisterFlow() {
         <StepRaceSelection
           raceType={raceType}
           setRaceType={setRaceType}
-          shirtSize={shirtSize}
-          setShirtSize={setShirtSize}
-          donationAmount={donationAmount}
-          setDonationAmount={setDonationAmount}
           onNext={() => setStep(2)}
         />
       )}
@@ -718,6 +630,8 @@ export function RegisterFlow() {
           <StepAthleteInfo
             formData={formData}
             setFormData={setFormData}
+            donationAmount={donationAmount}
+            setDonationAmount={setDonationAmount}
             waiverAgreed={waiverAgreed}
             setWaiverAgreed={setWaiverAgreed}
             onNext={handleStep2ToStep3}
@@ -748,7 +662,6 @@ export function RegisterFlow() {
           raceType={raceType}
           formData={formData}
           donationAmount={donationAmount}
-          shirtSize={shirtSize}
         />
       )}
     </div>

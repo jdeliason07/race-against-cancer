@@ -1,6 +1,7 @@
 import { Accordion } from '@/components/ui/Accordion';
 import { faqs } from '@/data/faq';
-import { CONTACT_EMAIL, REGISTRATION_URL } from '@/config/site';
+import { CONTACT_EMAIL } from '@/config/site';
+import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -34,9 +35,9 @@ export default function FAQPage() {
         </div>
 
         <div className="mt-8 text-center">
-          <a href={REGISTRATION_URL} target="_blank" rel="noopener noreferrer" className="btn-ghost">
+          <Link href="/register" className="btn-ghost">
             Ready to register?
-          </a>
+          </Link>
         </div>
       </div>
     </div>

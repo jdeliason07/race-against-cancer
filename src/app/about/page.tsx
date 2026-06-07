@@ -1,4 +1,5 @@
-import { CHARITY_NAME, CHARITY_URL, REGISTRATION_URL } from '@/config/site';
+import Link from 'next/link';
+import { CHARITY_NAME, CHARITY_URL } from '@/config/site';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -59,14 +60,9 @@ export default function AboutPage() {
         </section>
 
         <div className="pt-4">
-          <a
-            href={REGISTRATION_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary"
-          >
+          <Link href="/register" className="btn-primary">
             Register to Run
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -30,7 +30,7 @@ export const REGISTRATION_URL = "[[REPLACE: registration platform URL (RunSignup
 export const DONATION_URL     = "[[REPLACE: donation platform URL (RunSignup/GiveButter)]]";
 
 // --- REGISTRATION -------------------------------------------
-export const MIN_DONATION_AMOUNT   = 100;
+export const MIN_DONATION_AMOUNT   = 99;
 export const HALF_MARATHON_LABEL   = "Half Marathon (13.1 mi)";
 export const FIVE_K_LABEL          = "5K (3.1 mi)";
 export const REGISTRATION_INCLUDES = [

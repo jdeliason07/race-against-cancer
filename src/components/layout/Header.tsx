@@ -7,10 +7,10 @@ import { REGISTRATION_URL } from '@/config/site';
 const navLinks = [
   { href: '/register',  label: 'Register' },
   { href: '/race-details', label: 'Race Details' },
-  { href: '/about',    label: 'About' },
   { href: '/sponsor',  label: 'Become a Sponsor' },
   { href: '/volunteer', label: 'Become a Volunteer' },
   { href: '/faq',      label: 'FAQ' },
+  { href: '/about',    label: 'About' },
 ];
 
 export function Header() {

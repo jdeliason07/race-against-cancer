@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Race Against Cancer 2026 — Website
 
-## Getting Started
-
-First, run the development server:
-
+## Quick start
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Deploy to Vercel: connect the repo and click Deploy. No environment variables needed — all config is in source files.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## What you MUST fill in before launch
 
-## Learn More
+All content lives in two places:
+- **`src/config/site.ts`** — event facts, links, contacts, social handles
+- **`src/data/episodes.ts`** — the 20 documentary episodes
+- **`src/data/faq.ts`** — FAQ answers
 
-To learn more about Next.js, take a look at the following resources:
+Search for `[[` to find every placeholder across the codebase.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### `src/config/site.ts`
+| Constant | What to fill in |
+|---|---|
+| `CHARITY_NAME` | The charity's official name |
+| `CHARITY_URL` | Charity website URL |
+| `CHARITY_EIN` | EIN or 501(c)(3) number |
+| `HALF_START_TIME` | e.g. "7:30 AM" |
+| `FIVE_K_START_TIME` | e.g. "8:00 AM" |
+| `EVENT_LOCATION_NAME` | Venue name |
+| `EVENT_LOCATION_ADDRESS` | Full street address |
+| `EVENT_LOCATION_MAPS_URL` | Google Maps link |
+| `EVENT_COURSE_MAP_URL` | Course map image URL or link |
+| `REGISTRATION_URL` | RunSignup/GiveButter registration link |
+| `DONATION_URL` | RunSignup/GiveButter donation link |
+| `REGISTRATION_INCLUDES` | List of swag/perks in each array item |
+| `PACKET_PICKUP_DATE` | e.g. "Friday, November 6, 2026" |
+| `PACKET_PICKUP_TIME` | e.g. "12:00 PM – 7:00 PM" |
+| `PACKET_PICKUP_LOCATION` | Full address |
+| `CONTACT_EMAIL` | Your contact email |
+| `SOCIAL_INSTAGRAM` | Full Instagram profile URL |
+| `SOCIAL_FACEBOOK` | Full Facebook page URL |
+| `SOCIAL_TWITTER` | Full Twitter/X profile URL |
+| `SOCIAL_YOUTUBE` | Full YouTube channel URL |
+| `EMAIL_SIGNUP_EMBED` | Paste Mailchimp/Beehiiv/ConvertKit embed HTML |
+| `SITE_URL` | Your production domain, e.g. https://raceagainstcancer.org |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### `src/data/episodes.ts`
+For each of the 20 episodes, fill in:
+- `personName` — the person's name
+- `title` — episode title
+- `description` — 1–2 sentence summary of their story
+- `videoId` — YouTube video ID (the part after `v=`) or Vimeo video ID
+- `videoProvider` — `"youtube"` or `"vimeo"`
+- `releaseDate` — pre-set Oct 18 through Nov 6, confirm or adjust
 
-## Deploy on Vercel
+### `src/data/faq.ts`
+Fill in the `answer` field for each FAQ item, especially:
+- Refund policy
+- Packet pickup details
+- What to expect on race day
+- Volunteering info
+- Charity fund usage specifics
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Assets to add
+| File | What it is |
+|---|---|
+| `public/logo.svg` | Brand logo SVG |
+| `public/favicon.ico` | Favicon (generate from logo) |
+| `public/images/og-image.jpg` | Social share image (1200×630px) |
+| `public/images/hero-bg.jpg` | Optional hero background photo |
+| `public/images/video-placeholder.jpg` | Fallback for Vimeo episode thumbnails |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### About page (`src/app/about/page.tsx`)
+Fill in the `[[REPLACE: ...]]` blocks for:
+- Founding story
+- Charity description
+- Fund transparency statement
+- Documentary background
+
+---
+
+## Architecture notes
+- No payment processing — all transactions handled by RunSignup/GiveButter
+- No backend — pure static + server components, deployable to Vercel
+- Episode daily-drip logic: `isReleased()` in `src/lib/utils.ts` compares episode `releaseDate` against today's date. Episodes auto-unlock when their date arrives.
+- All external CTAs read from `site.ts` — change a URL once, it updates everywhere

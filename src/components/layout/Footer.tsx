@@ -1,0 +1,126 @@
+import Link from 'next/link';
+import {
+  CONTACT_EMAIL, SOCIAL_INSTAGRAM, SOCIAL_FACEBOOK,
+  SOCIAL_TWITTER, SOCIAL_YOUTUBE, EMAIL_SIGNUP_EMBED,
+  EMAIL_SIGNUP_URL, CHARITY_NAME, EVENT_YEAR
+} from '@/config/site';
+import { Mail } from 'lucide-react';
+
+function IconInstagram({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  );
+}
+
+function IconFacebook({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  );
+}
+
+function IconTwitterX({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+function IconYoutube({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" />
+      <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
+    </svg>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className="bg-ink text-white">
+      {/* Email signup strip */}
+      <div className="border-b border-white/10 py-16">
+        <div className="mx-auto max-w-2xl px-6 text-center">
+          <p className="section-label mb-4 text-petal">Stay in the story</p>
+          <h2 className="font-display text-3xl uppercase text-white mb-4">
+            Get notified when each film drops
+          </h2>
+          <p className="font-body text-sm text-white/55 mb-8">
+            One email per episode — 20 days, 20 stories. No noise between races.
+          </p>
+          {EMAIL_SIGNUP_EMBED.trim() && !EMAIL_SIGNUP_EMBED.includes('[[') ? (
+            <div dangerouslySetInnerHTML={{ __html: EMAIL_SIGNUP_EMBED }} />
+          ) : (
+            <a
+              href={EMAIL_SIGNUP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary"
+            >
+              Subscribe for Episode Alerts
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Main footer */}
+      <div className="mx-auto max-w-7xl px-6 py-16">
+        <div className="mb-12 text-center">
+          <p className="font-display text-5xl uppercase leading-none md:text-7xl">
+            RACE<span className="text-pink">AGAINST</span>CANCER
+          </p>
+          <p className="mt-4 font-body text-sm text-white/55 tracking-widest uppercase">
+            Half Marathon & 5K · November 7, 2026
+          </p>
+        </div>
+
+        <div className="flex flex-col items-center gap-6 border-t border-white/10 pt-10 md:flex-row md:justify-between">
+          <p className="font-body text-xs text-white/40 tracking-widest uppercase">
+            Benefiting {CHARITY_NAME}
+          </p>
+          <nav className="flex items-center gap-5" aria-label="Footer navigation">
+            <Link href="/about" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">About</Link>
+            <Link href="/faq" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">FAQ</Link>
+            {CONTACT_EMAIL && !CONTACT_EMAIL.includes('[[') && (
+              <a href={`mailto:${CONTACT_EMAIL}`} className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest flex items-center gap-1">
+                <Mail size={13} /> Contact
+              </a>
+            )}
+          </nav>
+          <div className="flex items-center gap-4">
+            {SOCIAL_INSTAGRAM && !SOCIAL_INSTAGRAM.includes('[[') && (
+              <a href={SOCIAL_INSTAGRAM} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-white/40 hover:text-pink transition-colors">
+                <IconInstagram size={18} />
+              </a>
+            )}
+            {SOCIAL_FACEBOOK && !SOCIAL_FACEBOOK.includes('[[') && (
+              <a href={SOCIAL_FACEBOOK} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-white/40 hover:text-pink transition-colors">
+                <IconFacebook size={18} />
+              </a>
+            )}
+            {SOCIAL_TWITTER && !SOCIAL_TWITTER.includes('[[') && (
+              <a href={SOCIAL_TWITTER} target="_blank" rel="noopener noreferrer" aria-label="Twitter / X" className="text-white/40 hover:text-pink transition-colors">
+                <IconTwitterX size={18} />
+              </a>
+            )}
+            {SOCIAL_YOUTUBE && !SOCIAL_YOUTUBE.includes('[[') && (
+              <a href={SOCIAL_YOUTUBE} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="text-white/40 hover:text-pink transition-colors">
+                <IconYoutube size={18} />
+              </a>
+            )}
+          </div>
+        </div>
+
+        <p className="mt-8 text-center font-body text-xs text-white/25">
+          © {EVENT_YEAR} Race Against Cancer. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  );
+}

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Accordion } from '@/components/ui/Accordion';
 import { EVENT_DATE_DISPLAY, COURSE_GPX_URL } from '@/config/site';
 import { MapPin, Flag, Clock, Download } from 'lucide-react';
 import { CourseMapSection, ElevationChartSection } from '@/components/course/CourseClientSections';
@@ -11,25 +10,6 @@ export const metadata: Metadata = {
     'Run 13.1 miles from Utah Lake to BYU campus along the Provo River Parkway. Nearly flat, fast, and beautiful. Race Against Cancer 2026 — November 7, Provo, Utah.',
 };
 
-const courseFaqs = [
-  {
-    question: 'Can I run with headphones?',
-    answer: 'Yes, though we encourage one earbud out so you can hear volunteers and other runners.',
-  },
-  {
-    question: 'Are strollers or dogs allowed?',
-    answer: 'Strollers are permitted in Wave 4 only. Dogs are not permitted on the race course.',
-  },
-  {
-    question: 'Is the course USATF certified?',
-    answer: 'Certification pending — we will update this page once confirmed.',
-  },
-  {
-    question: 'What happens if weather is severe?',
-    answer: 'Our weather and emergency policy will be posted here closer to race day. Registered participants will be notified directly.',
-  },
-];
-
 const waves = [
   { wave: 'Wave 1', time: '8:00 AM', pace: 'Sub-9:00 min/mile' },
   { wave: 'Wave 2', time: '8:05 AM', pace: '9:00–11:00 min/mile' },
@@ -39,8 +19,8 @@ const waves = [
 
 const aidStations = [
   { mile: 'Mile 3',    supplies: 'Water + electrolytes' },
-  { mile: 'Mile 6',    supplies: 'Water + electrolytes + gels' },
-  { mile: 'Mile 9',    supplies: 'Water + electrolytes + gels + medical check' },
+  { mile: 'Mile 6',    supplies: 'Water + electrolytes' },
+  { mile: 'Mile 9',    supplies: 'Water + electrolytes' },
   { mile: 'Mile 11.5', supplies: 'Water + electrolytes' },
   { mile: 'Finish',    supplies: 'Full recovery station — water, food, medical' },
 ];
@@ -152,9 +132,6 @@ export default function CoursePage() {
               campus perimeter, where the final miles deliver a long, open stretch toward the
               stadium finish — Y Mountain directly ahead, the crowd growing louder with every step.
             </p>
-            <p className="font-semibold text-ink">
-              No canyon. No significant hills. Just 13.1 miles of Provo at its most beautiful.
-            </p>
           </div>
         </section>
 
@@ -222,10 +199,6 @@ export default function CoursePage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-4 font-body text-sm text-ash">
-            Wave assignments are included with your registration confirmation. Your chip time
-            starts when you cross the start mat, not when your wave is released.
-          </p>
         </section>
 
         {/* Aid stations */}
@@ -247,12 +220,6 @@ export default function CoursePage() {
               </div>
             ))}
           </div>
-        </section>
-
-        {/* Course FAQ */}
-        <section>
-          <h2 className="mb-8 font-display text-3xl uppercase text-ink">Course FAQ</h2>
-          <Accordion items={courseFaqs} />
         </section>
 
         <div className="pt-4">

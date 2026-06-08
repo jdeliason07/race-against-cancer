@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 
 export async function createPaymentIntent(registrationData: {
   raceType: string;
+  bandanaColor: string;
   amount: number; // in cents, e.g. 9900 for $99
   firstName: string;
   lastName: string;
@@ -27,6 +28,7 @@ export async function createPaymentIntent(registrationData: {
       metadata: {
         event: 'Race Against Cancer 2026',
         raceType: registrationData.raceType,
+        bandanaColor: registrationData.bandanaColor,
         firstName: registrationData.firstName,
         lastName: registrationData.lastName,
         email: registrationData.email,

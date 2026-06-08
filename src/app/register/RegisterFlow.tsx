@@ -135,11 +135,23 @@ function StepRaceSelection({
   );
 }
 
+const bandanaOptions = [
+  { label: 'Breast Cancer',     color: '#F0307A' },
+  { label: 'Leukemia',          color: '#F97316' },
+  { label: 'Pancreatic Cancer', color: '#9333EA' },
+  { label: 'Colon Cancer',      color: '#2563EB' },
+  { label: 'Melanoma',          color: '#111111' },
+  { label: 'Childhood Cancer',  color: '#EAB308' },
+  { label: 'Lung Cancer',       color: '#9CA3AF' },
+];
+
 // Step 2 — Athlete Info + Donation + Waiver
 function StepAthleteInfo({
   raceType,
   formData,
   setFormData,
+  bandanaColor,
+  setBandanaColor,
   donationAmount,
   setDonationAmount,
   waiverAgreed,
@@ -151,6 +163,8 @@ function StepAthleteInfo({
   raceType: RaceType;
   formData: FormData;
   setFormData: (f: FormData) => void;
+  bandanaColor: string;
+  setBandanaColor: (c: string) => void;
   donationAmount: number;
   setDonationAmount: (a: number) => void;
   waiverAgreed: boolean;
@@ -176,6 +190,7 @@ function StepAthleteInfo({
     formData.emergencyName.trim() &&
     formData.emergencyPhone.trim() &&
     donationAmount >= minDonation &&
+    bandanaColor !== '' &&
     waiverAgreed;
 
   const inputClass =
@@ -263,6 +278,37 @@ function StepAthleteInfo({
             className={inputClass}
             required
           />
+        </div>
+      </div>
+
+      {/* Bandana color */}
+      <div className="mb-6">
+        <p className="font-body text-xs font-bold uppercase tracking-widest text-ash mb-3">
+          Which color bandana will you race with?
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          {bandanaOptions.map((opt) => {
+            const selected = bandanaColor === opt.label;
+            return (
+              <button
+                key={opt.label}
+                type="button"
+                onClick={() => setBandanaColor(opt.label)}
+                className="rounded-card border-2 px-4 py-3 text-left transition-colors duration-150 focus-visible:outline-none"
+                style={{
+                  borderColor: selected ? '#F0307A' : '#ECE2E6',
+                  backgroundColor: selected ? '#FDE7F0' : '#FFFFFF',
+                }}
+              >
+                <span
+                  className="font-display text-lg uppercase leading-tight"
+                  style={{ color: opt.color }}
+                >
+                  {opt.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -379,12 +425,14 @@ function PaymentForm({
   raceType,
   formData,
   donationAmount,
+  bandanaColor,
   onSuccess,
   onBack,
 }: {
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
+  bandanaColor: string;
   onSuccess: () => void;
   onBack: () => void;
 }) {
@@ -430,6 +478,9 @@ function PaymentForm({
           <span>
             <span className="font-bold">Donation:</span> ${donationAmount}
           </span>
+          <span>
+            <span className="font-bold">Bandana:</span> {bandanaColor}
+          </span>
         </div>
       </div>
 
@@ -473,6 +524,7 @@ function StepPayment({
   raceType,
   formData,
   donationAmount,
+  bandanaColor,
   onSuccess,
   onBack,
 }: {
@@ -480,6 +532,7 @@ function StepPayment({
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
+  bandanaColor: string;
   onSuccess: () => void;
   onBack: () => void;
 }) {
@@ -492,6 +545,7 @@ function StepPayment({
         raceType={raceType}
         formData={formData}
         donationAmount={donationAmount}
+        bandanaColor={bandanaColor}
         onSuccess={onSuccess}
         onBack={onBack}
       />
@@ -504,10 +558,12 @@ function StepConfirmation({
   raceType,
   formData,
   donationAmount,
+  bandanaColor,
 }: {
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
+  bandanaColor: string;
 }) {
   const raceLabel = raceType === 'half' ? 'Half Marathon (13.1 mi)' : '5K (3.1 mi)';
 
@@ -551,6 +607,10 @@ function StepConfirmation({
             <dd className="text-ink">{raceLabel}</dd>
           </div>
           <div className="flex justify-between">
+            <dt className="font-bold uppercase tracking-widest text-ash text-xs">Bandana</dt>
+            <dd className="text-ink">{bandanaColor}</dd>
+          </div>
+          <div className="flex justify-between">
             <dt className="font-bold uppercase tracking-widest text-ash text-xs">Donation</dt>
             <dd className="text-ink font-bold" style={{ color: '#F0307A' }}>
               ${donationAmount}
@@ -574,6 +634,7 @@ function StepConfirmation({
 export function RegisterFlow() {
   const [step, setStep] = useState<Step>(1);
   const [raceType, setRaceType] = useState<RaceType>(null);
+  const [bandanaColor, setBandanaColor] = useState('');
   const [donationAmount, setDonationAmount] = useState(99);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
@@ -596,6 +657,7 @@ export function RegisterFlow() {
     try {
       const result = await createPaymentIntent({
         raceType,
+        bandanaColor,
         amount: donationAmount * 100,
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -616,7 +678,7 @@ export function RegisterFlow() {
     } finally {
       setLoadingIntent(false);
     }
-  }, [raceType, donationAmount, formData]);
+  }, [raceType, bandanaColor, donationAmount, formData]);
 
   return (
     <div>
@@ -639,6 +701,8 @@ export function RegisterFlow() {
             raceType={raceType}
             formData={formData}
             setFormData={setFormData}
+            bandanaColor={bandanaColor}
+            setBandanaColor={setBandanaColor}
             donationAmount={donationAmount}
             setDonationAmount={setDonationAmount}
             waiverAgreed={waiverAgreed}
@@ -661,6 +725,7 @@ export function RegisterFlow() {
           raceType={raceType}
           formData={formData}
           donationAmount={donationAmount}
+          bandanaColor={bandanaColor}
           onSuccess={() => setStep(4)}
           onBack={() => setStep(2)}
         />
@@ -671,6 +736,7 @@ export function RegisterFlow() {
           raceType={raceType}
           formData={formData}
           donationAmount={donationAmount}
+          bandanaColor={bandanaColor}
         />
       )}
     </div>

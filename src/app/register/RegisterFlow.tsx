@@ -296,8 +296,8 @@ function StepAthleteInfo({
                 onClick={() => setBandanaColor(opt.label)}
                 className="rounded-card border-2 px-4 py-3 text-left transition-colors duration-150 focus-visible:outline-none"
                 style={{
-                  borderColor: selected ? '#F0307A' : '#ECE2E6',
-                  backgroundColor: selected ? '#FDE7F0' : '#FFFFFF',
+                  borderColor: selected ? opt.color : '#ECE2E6',
+                  backgroundColor: selected ? opt.color + '18' : '#FFFFFF',
                 }}
               >
                 <span

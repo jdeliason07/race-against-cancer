@@ -143,6 +143,7 @@ const bandanaOptions = [
   { label: 'Melanoma',          color: '#111111' },
   { label: 'Childhood Cancer',  color: '#EAB308' },
   { label: 'Lung Cancer',       color: '#9CA3AF' },
+  { label: 'Lymphoma',          color: '#16A34A' },
 ];
 
 // Step 2 — Athlete Info + Donation + Waiver

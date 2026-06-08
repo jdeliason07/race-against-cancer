@@ -120,25 +120,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* WHERE THE MONEY GOES */}
-      <section className="bg-ink py-24">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <p className="section-label mb-6 text-petal">Where your money goes</p>
-          <p className="font-display text-4xl uppercase text-white md:text-6xl">
-            100% to {CHARITY_NAME}.
-          </p>
-          <p className="mt-6 max-w-lg mx-auto font-body text-base text-white/60">
-            Every dollar from every registration goes directly to the cause. No overhead
-            fund, no middleman — your registration is your donation.
-          </p>
-          <div className="mt-10">
-            <Link href="/about" className="btn-ghost border-petal text-petal hover:bg-petal hover:text-ink">
-              About the Cause
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* GOAL + PROGRESS */}
       <section className="bg-blush py-24">
         <div className="mx-auto max-w-3xl px-6 text-center">

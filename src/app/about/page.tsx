@@ -66,6 +66,19 @@ export default function AboutPage() {
           </div>
         </section>
 
+        <section>
+          <h2 className="mb-6 font-display text-3xl uppercase text-ink">Our goal</h2>
+          <div className="rounded-card border-2 border-pink bg-blush p-8 text-center">
+            <p className="font-display text-[clamp(56px,10vw,96px)] uppercase leading-none text-ink">
+              $100,000
+            </p>
+            <p className="mt-4 font-body text-base text-ash">
+              That&rsquo;s what we&rsquo;re raising for the cause. Every registration is a
+              direct donation — no overhead, no middleman. Every dollar goes straight to the fight.
+            </p>
+          </div>
+        </section>
+
         <div className="pt-4">
           <Link href="/register" className="btn-primary">
             Register to Run

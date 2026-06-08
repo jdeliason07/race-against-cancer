@@ -132,6 +132,25 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* GOAL */}
+      <section className="bg-blush py-24">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <p className="section-label mb-6">Our goal</p>
+          <p className="font-display text-[clamp(64px,12vw,120px)] uppercase leading-none text-ink">
+            $100,000
+          </p>
+          <p className="mt-6 max-w-lg mx-auto font-body text-base text-ash">
+            That&rsquo;s what we&rsquo;re raising for the cause. Every registration gets us closer.
+            Every dollar counts. Every person who shows up matters.
+          </p>
+          <div className="mt-10">
+            <Link href="/register" className="btn-primary px-10 py-5 text-base">
+              Register to Give
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* FINAL CTA STRIP */}
       <section className="bg-pink py-16">
         <div className="mx-auto max-w-4xl px-6 text-center">

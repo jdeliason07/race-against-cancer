@@ -137,7 +137,7 @@ function StepRaceSelection({
 
 const bandanaOptions = [
   { label: 'Breast Cancer',     color: '#F0307A' },
-  { label: 'Leukemia',          color: '#F97316' },
+  { label: 'Leukemia',          color: '#8B0000' },
   { label: 'Pancreatic Cancer', color: '#9333EA' },
   { label: 'Colon Cancer',      color: '#2563EB' },
   { label: 'Melanoma',          color: '#111111' },

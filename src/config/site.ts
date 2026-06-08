@@ -23,6 +23,7 @@ export const EVENT_LOCATION_NAME    = "Provo Canyon";
 export const EVENT_LOCATION_ADDRESS = "Provo Canyon, UT";
 export const EVENT_LOCATION_MAPS_URL = "[[GOOGLE MAPS LINK]]";
 export const EVENT_COURSE_MAP_URL    = "[[COURSE MAP IMAGE OR LINK]]";
+export const COURSE_GPX_URL          = ""; // drop real GPX file URL here to enable download
 
 // --- PLATFORM LINKS -----------------------------------------
 // Paste RunSignup or GiveButter URLs here — every button on the site points here

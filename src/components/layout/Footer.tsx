@@ -58,6 +58,7 @@ export function Footer() {
             Benefiting {CHARITY_NAME}
           </p>
           <nav className="flex items-center gap-5" aria-label="Footer navigation">
+            <Link href="/course" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Course</Link>
             <Link href="/about" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">About</Link>
             <Link href="/faq" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">FAQ</Link>
             {CONTACT_EMAIL && !CONTACT_EMAIL.includes('[[') && (

@@ -42,8 +42,14 @@ export function Header() {
             RACE<span className="text-pink">AGAINST</span>CANCER
           </Link>
 
-          {/* Hamburger — shown on all screen sizes */}
-          <div ref={menuRef} className="relative">
+          {/* Register button + hamburger */}
+          <div className="flex items-center gap-3">
+            <Link href="/register" className="btn-primary py-3 px-5 text-xs">
+              Register
+            </Link>
+
+            {/* Hamburger */}
+            <div ref={menuRef} className="relative">
             <button
               onClick={() => setOpen(!open)}
               aria-label={open ? 'Close menu' : 'Open menu'}
@@ -76,6 +82,7 @@ export function Header() {
                 </ul>
               </nav>
             )}
+          </div>
           </div>
         </div>
       </header>

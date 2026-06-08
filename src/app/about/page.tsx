@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { CHARITY_NAME, CHARITY_URL } from '@/config/site';
 import type { Metadata } from 'next';
 
@@ -26,30 +27,50 @@ export default function AboutPage() {
             at the start is running for someone.
           </p>
           <p className="font-body text-base leading-relaxed text-ash">
-            This isn&apos;t a race with a charity attached. The race is the donation. Every registration,
-            every dollar, goes directly to the cause. More details about our story coming soon.
+            This isn&apos;t a race with a charity attached. The race is the donation. Every
+            registration, every dollar, goes directly to the cause. More details about our story
+            coming soon.
           </p>
         </section>
 
         <section>
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">
-            The charity
+            The charity: {CHARITY_NAME}
           </h2>
+
+          {/* Logo */}
+          <div className="mb-8 flex justify-center">
+            <Image
+              src="/images/huntsman-logo.jpg"
+              alt="Huntsman Cancer Institute — University of Utah"
+              width={280}
+              height={200}
+              className="object-contain"
+            />
+          </div>
+
           <p className="mb-4 font-body text-base leading-relaxed text-ash">
-            100% of proceeds benefit a charity dedicated to fighting cancer. The specific
-            organization will be announced soon. What we can tell you now: every dollar raised
-            goes directly to them — no event overhead, no middleman.
+            Huntsman Cancer Institute (HCI) at the University of Utah is one of the nation&apos;s
+            leading cancer research and treatment centers. Founded through the vision and generosity
+            of Jon M. Huntsman Sr. — himself a cancer survivor — HCI is dedicated to understanding
+            cancer from its beginnings in our genes, finding ways to prevent and cure cancer, and
+            providing the best possible care for people with cancer.
           </p>
-          {CHARITY_URL && !CHARITY_URL.includes('[[') && (
-            <a
-              href={CHARITY_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-body text-sm font-bold uppercase tracking-widest text-pink transition-colors hover:text-raspberry"
-            >
-              Visit {CHARITY_NAME} →
-            </a>
-          )}
+          <p className="mb-6 font-body text-base leading-relaxed text-ash">
+            As a National Cancer Institute (NCI)-designated cancer center, HCI conducts pioneering
+            research, offers state-of-the-art treatment, and serves patients and families across
+            Utah and the Intermountain West. Their work in cancer genetics, precision medicine, and
+            prevention has put Utah on the global map for cancer research.
+          </p>
+
+          <a
+            href={CHARITY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-body text-sm font-bold uppercase tracking-widest text-pink transition-colors hover:text-raspberry"
+          >
+            Visit Huntsman Cancer Institute →
+          </a>
         </section>
 
         <section>
@@ -59,8 +80,9 @@ export default function AboutPage() {
               100% of donations to {CHARITY_NAME}
             </p>
             <p className="font-body text-sm leading-relaxed text-ash">
-              Event operations are covered separately so that your registration goes entirely to
-              the cause. Sponsors help make that possible — which is why their support matters
+              Every dollar from every registration goes directly to Huntsman Cancer Institute.
+              Event operations are covered separately so that your registration is a pure donation
+              to the cause. Sponsors help make that possible — which is why their support matters
               beyond just a logo placement.
             </p>
           </div>
@@ -73,8 +95,8 @@ export default function AboutPage() {
               $100,000
             </p>
             <p className="mt-4 font-body text-base text-ash">
-              That&rsquo;s what we&rsquo;re raising for the cause. Every registration is a
-              direct donation — no overhead, no middleman. Every dollar goes straight to the fight.
+              That&apos;s what we&apos;re raising for Huntsman Cancer Institute. Every registration
+              is a direct donation — no overhead, no middleman. Every dollar goes straight to the fight.
             </p>
           </div>
         </section>

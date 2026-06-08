@@ -6,8 +6,8 @@
 // ============================================================
 
 // --- CHARITY ------------------------------------------------
-export const CHARITY_NAME = "a charity";
-export const CHARITY_URL  = "[[CHARITY_WEBSITE_URL]]";
+export const CHARITY_NAME = "Huntsman Cancer Institute";
+export const CHARITY_URL  = "https://huntsmancancer.org";
 export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 
 // --- EVENT --------------------------------------------------

@@ -6,7 +6,7 @@ export interface FAQItem {
 export const faqs: FAQItem[] = [
   {
     question: "What is the registration fee?",
-    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to a charity. We warmly encourage you to give as much more as you're willing — every dollar goes directly to the cause.",
+    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Huntsman Cancer Institute. We warmly encourage you to give as much more as you're willing — every dollar goes directly to the cause.",
   },
   {
     question: "Can I register without fundraising?",
@@ -34,7 +34,7 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "Where does my donation go?",
-    answer: "100% of donations benefit a charity selected by the race organizers. Every dollar from registration goes directly to the cause — no overhead fund, no middleman.",
+    answer: "100% of donations benefit Huntsman Cancer Institute at the University of Utah. Every dollar from registration goes directly to them — no overhead fund, no middleman.",
   },
   {
     question: "Is this a timed race?",

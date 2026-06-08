@@ -4,13 +4,20 @@ import {
   CHARITY_NAME, MIN_DONATION_AMOUNT, HALF_MARATHON_LABEL,
   FIVE_K_LABEL, EVENT_LOCATION_NAME,
 } from '@/config/site';
+import { getDonationTotal } from '@/lib/getDonationTotal';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Race Against Cancer 2026 — Half Marathon & 5K',
 };
 
-export default function HomePage() {
+export const revalidate = 300; // refresh every 5 minutes
+
+const GOAL = 100000;
+
+export default async function HomePage() {
+  const raised = await getDonationTotal();
+  const pct = Math.min(Math.round((raised / GOAL) * 100), 100);
   return (
     <>
       {/* HERO */}
@@ -132,7 +139,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* GOAL */}
+      {/* GOAL + PROGRESS */}
       <section className="bg-blush py-24">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <p className="section-label mb-6">Our goal</p>
@@ -143,6 +150,26 @@ export default function HomePage() {
             That&rsquo;s what we&rsquo;re raising for the cause. Every registration gets us closer.
             Every dollar counts. Every person who shows up matters.
           </p>
+
+          {/* Progress bar */}
+          <div className="mt-10 max-w-xl mx-auto">
+            <div className="mb-3 flex items-end justify-between">
+              <span className="font-display text-3xl uppercase text-ink">
+                ${raised.toLocaleString()}
+              </span>
+              <span className="font-body text-sm text-ash">{pct}% of goal</span>
+            </div>
+            <div className="h-4 w-full rounded-pill bg-petal overflow-hidden">
+              <div
+                className="h-full rounded-pill bg-pink transition-all duration-700"
+                style={{ width: `${pct === 0 ? 1 : pct}%` }}
+              />
+            </div>
+            <div className="mt-2 text-right">
+              <span className="font-body text-xs text-ash">Goal: $100,000</span>
+            </div>
+          </div>
+
           <div className="mt-10">
             <Link href="/register" className="btn-primary px-10 py-5 text-base">
               Register to Give

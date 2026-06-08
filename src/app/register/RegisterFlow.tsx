@@ -674,8 +674,8 @@ export function RegisterFlow() {
         setClientSecret(result.clientSecret);
         setStep(3);
       }
-    } catch {
-      setIntentError('Something went wrong. Please try again.');
+    } catch (err) {
+      setIntentError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setLoadingIntent(false);
     }

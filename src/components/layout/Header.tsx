@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
@@ -14,6 +14,18 @@ const navLinks = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [open]);
 
   return (
     <>
@@ -30,68 +42,42 @@ export function Header() {
             RACE<span className="text-pink">AGAINST</span>CANCER
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary navigation">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="font-body text-xs font-semibold uppercase tracking-widest text-ash transition-colors hover:text-pink"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Link
-              href="/register"
-              className="btn-primary py-3 px-5 text-xs"
+          {/* Hamburger — shown on all screen sizes */}
+          <div ref={menuRef} className="relative">
+            <button
+              onClick={() => setOpen(!open)}
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              aria-expanded={open}
+              aria-controls="main-nav"
+              className="flex flex-col justify-center gap-[5px] p-2 text-ink transition-colors hover:text-pink"
             >
-              Register
-            </Link>
-          </nav>
+              {open ? <X size={24} /> : <Menu size={24} />}
+            </button>
 
-          {/* Mobile toggle */}
-          <button
-            className="text-ink lg:hidden"
-            onClick={() => setOpen(!open)}
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-          >
-            {open ? <X size={24} /> : <Menu size={24} />}
-          </button>
+            {/* Dropdown */}
+            {open && (
+              <nav
+                id="main-nav"
+                className="absolute right-0 top-full mt-2 w-56 rounded-card border border-line bg-paper shadow-lg"
+                aria-label="Primary navigation"
+              >
+                <ul className="flex flex-col py-2">
+                  {navLinks.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        onClick={() => setOpen(false)}
+                        className="block px-5 py-3 font-body text-xs font-semibold uppercase tracking-widest text-ash transition-colors hover:bg-blush hover:text-pink"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+          </div>
         </div>
-
-        {/* Mobile nav */}
-        {open && (
-          <nav
-            id="mobile-nav"
-            className="border-t border-line bg-paper px-6 py-6 lg:hidden"
-            aria-label="Mobile navigation"
-          >
-            <ul className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="font-body text-sm font-semibold uppercase tracking-widest text-ash transition-colors hover:text-pink"
-                    onClick={() => setOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-              <li className="pt-2">
-                <Link
-                  href="/register"
-                  className="btn-primary w-full text-center"
-                  onClick={() => setOpen(false)}
-                >
-                  Register
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        )}
       </header>
     </>
   );

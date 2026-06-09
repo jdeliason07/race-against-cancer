@@ -142,29 +142,31 @@ export default function RaceDetailsPage() {
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">The 10K Course</h2>
           <div className="space-y-4 font-body text-base leading-relaxed text-ash">
             <p>
-              The 10K is a point-to-point, predominantly downhill course that drops approximately
+              The 10K is a point-to-point, predominantly downhill course that drops more than
               284 feet over 6.2 miles through Provo, Utah. With only one turn on the entire
               course, it is one of the cleanest and most runnable 10K routes in the state.
             </p>
             <p>
-              Runners start on North Canyon Road near the mouth of Provo Canyon, at an elevation
-              of approximately 4,788 feet. From there the course makes a single left turn onto
-              University Avenue (US-189) and follows it straight south through Provo. The
-              consistent, gentle downhill grade makes this course fast for all paces.
+              Runners start on North Canyon Road in front of Canyon Crest Elementary, at an
+              elevation of approximately 4,850 feet, and head north toward the mouth of Provo
+              Canyon with the canyon walls rising ahead. At the canyon mouth the course makes
+              its single left turn onto University Avenue (US-189) and follows it straight
+              south through Provo. The consistent, gentle downhill grade makes this course
+              fast for all paces.
             </p>
             <p>
               The finish line sits at the intersection of University Avenue and Center Street in
               downtown Provo, in front of the Utah County Courthouse, at an elevation of
-              4,504 feet. The final stretch is lined with spectators as runners pour into
-              the heart of downtown.
+              roughly 4,567 feet. The final stretch is lined with spectators as runners pour
+              into the heart of downtown.
             </p>
             <div className="rounded-card border border-petal bg-blush p-5 mt-4">
               <p className="font-body text-sm font-bold uppercase tracking-widest text-pink mb-2">Shuttle required — 10K</p>
               <p className="font-body text-sm text-ash">
                 Because the 10K is point-to-point, a free shuttle takes runners from the finish
-                area to the start. Buses depart from <strong className="text-ink">Provo Towne Centre Mall</strong> beginning
-                at approximately 5:15 AM. Plan to arrive by 5:00 AM. Do not be late — the shuttle
-                schedule is fixed.
+                area to the start. Buses depart from <strong className="text-ink">Provo Towne Centre Mall</strong> and
+                run from 5:15 to 6:10 AM. Plan to arrive by 5:00 AM — no personal vehicles are
+                allowed at the start line, and the shuttle schedule is fixed.
               </p>
             </div>
           </div>
@@ -212,7 +214,7 @@ export default function RaceDetailsPage() {
               </span>
             )}
             <a
-              href="https://maps.google.com/?q=N+Canyon+Rd,+Provo,+UT+84604"
+              href="https://maps.google.com/?q=4664+N+Canyon+Rd,+Provo,+UT+84604"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary inline-flex items-center gap-2 text-xs"

@@ -22,7 +22,7 @@ export const EVENT_YEAR          = "2026";
 // --- LOCATION -----------------------------------------------
 // 10K: point-to-point — start near mouth of Provo Canyon, finish downtown Provo
 export const EVENT_LOCATION_NAME     = "N Canyon Road, Provo";        // 10K start
-export const EVENT_LOCATION_ADDRESS  = "N Canyon Rd, Provo, UT 84604"; // near Canyon Crest Elementary
+export const EVENT_LOCATION_ADDRESS  = "4664 N Canyon Rd, Provo, UT 84604"; // in front of Canyon Crest Elementary
 export const FINISH_LOCATION_NAME    = "University Ave & Center St";   // 10K finish
 export const FINISH_LOCATION_ADDRESS = "University Ave & Center St, Provo, UT 84601";
 // 5K: loop — starts and finishes at Riverwoods (no shuttle needed)

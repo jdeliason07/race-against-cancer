@@ -14,11 +14,11 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "What's the difference between the 10K and the 5K?",
-    answer: "The 10K is 6.2 miles and follows a point-to-point, predominantly downhill route from N Canyon Road to University Ave & Center Street in downtown Provo — with only one turn on the entire course. The 5K is 3.1 miles and is a flat loop starting and finishing at the Riverwoods Shopping Center. Both events take place on November 7, 2026.",
+    answer: "The 10K is 6.2 miles and follows a point-to-point, predominantly downhill route: it starts in front of Canyon Crest Elementary on N Canyon Road, runs to the mouth of Provo Canyon, then makes its single turn onto University Avenue and heads straight to the finish at Center Street in downtown Provo. The 5K is 3.1 miles and is a flat loop starting and finishing at the Riverwoods Shopping Center. Both events take place on November 7, 2026.",
   },
   {
     question: "Does the 10K require a shuttle?",
-    answer: "Yes. Because the 10K is point-to-point, a free shuttle takes runners from the finish area to the start. Buses depart from Provo Towne Centre Mall (1200 Towne Centre Blvd) starting at approximately 5:15 AM. Plan to arrive by 5:00 AM — the shuttle schedule is fixed.",
+    answer: "Yes. Because the 10K is point-to-point, a free shuttle takes runners to the start — no personal vehicles are allowed at the start line. Buses depart from Provo Towne Centre Mall (1200 Towne Centre Blvd) and run from 5:15 to 6:10 AM. Plan to arrive by 5:00 AM — the shuttle schedule is fixed.",
   },
   {
     question: "What's included with registration?",

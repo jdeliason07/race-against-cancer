@@ -49,7 +49,7 @@ export const PACKET_PICKUP_LOCATION = "";
 // --- CONTACT ------------------------------------------------
 export const CONTACT_EMAIL = "[[info@raceagainstcancer.org]]";
 export const CONTACT_PHONE = "858-774-2699";
-export const VOLUNTEER_FORM_URL = "[[REPLACE: Google Form URL for volunteer sign-up]]";
+export const VOLUNTEER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScX-3U-iBEHY7YoIp1Htsdfz-NnOafxxGssKFWVrKnv7hDumQ/viewform";
 
 // --- SOCIAL LINKS -------------------------------------------
 // Set to "" to hide that icon in the footer

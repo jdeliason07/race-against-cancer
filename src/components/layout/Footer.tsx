@@ -46,7 +46,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-16">
         <div className="mb-12 text-center">
           <p className="font-display text-5xl uppercase leading-none md:text-7xl">
-            RACE<span className="text-pink">AGAINST</span>CANCER
+            RACE<span className="text-pink">AGAINST</span>CANCERS
           </p>
           <p className="mt-4 font-body text-sm text-white/55 tracking-widest uppercase">
             Half Marathon & 5K · November 7, 2026
@@ -95,7 +95,7 @@ export function Footer() {
         </div>
 
         <p className="mt-8 text-center font-body text-xs text-white/25">
-          © {EVENT_YEAR} Race Against Cancer. All rights reserved.
+          © {EVENT_YEAR} Race Against Cancers. All rights reserved.
         </p>
       </div>
     </footer>

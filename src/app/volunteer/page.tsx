@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Become a Volunteer',
-  description: `Volunteer at Race Against Cancer 2026 on ${EVENT_DATE_DISPLAY}. Help make race day happen.`,
+  description: `Volunteer at Race Against Cancers 2026 on ${EVENT_DATE_DISPLAY}. Help make race day happen.`,
 };
 
 export default function VolunteerPage() {

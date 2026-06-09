@@ -1,6 +1,6 @@
 'use server';
 import Stripe from 'stripe';
-import { MIN_DONATION_AMOUNT, MIN_DONATION_5K } from '@/config/site';
+import { EVENT_NAME, MIN_DONATION_AMOUNT, MIN_DONATION_5K } from '@/config/site';
 
 export async function createPaymentIntent(registrationData: {
   raceType: string;
@@ -34,9 +34,9 @@ export async function createPaymentIntent(registrationData: {
       amount: registrationData.amount,
       currency: 'usd',
       receipt_email: registrationData.email,
-      description: `Race Against Cancer 2026 — ${registrationData.raceType}`,
+      description: `${EVENT_NAME} — ${registrationData.raceType}`,
       metadata: {
-        event: 'Race Against Cancer 2026',
+        event: EVENT_NAME,
         raceType: registrationData.raceType,
         bandanaColor: registrationData.bandanaColor,
         firstName: registrationData.firstName,

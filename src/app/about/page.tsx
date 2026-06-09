@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: `Why Race Against Cancer exists, how it works, and where every dollar goes.`,
+  description: `Why Race Against Cancers exists, how it works, and where every dollar goes.`,
 };
 
 export default function AboutPage() {

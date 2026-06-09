@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'FAQ',
-  description: 'Frequently asked questions about Race Against Cancer 2026.',
+  description: 'Frequently asked questions about Race Against Cancers 2026.',
 };
 
 export default function FAQPage() {

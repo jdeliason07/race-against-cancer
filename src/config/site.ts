@@ -1,5 +1,5 @@
 // ============================================================
-// RACE AGAINST CANCER — SITE CONFIGURATION
+// RACE AGAINST CANCERS — SITE CONFIGURATION
 // ============================================================
 // This is the ONE file to edit for content updates.
 // Non-developers: only touch this file and src/data/*.ts
@@ -11,7 +11,7 @@ export const CHARITY_URL  = "https://huntsmancancer.org";
 export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 
 // --- EVENT --------------------------------------------------
-export const EVENT_NAME          = "Race Against Cancer 2026";
+export const EVENT_NAME          = "Race Against Cancers 2026";
 export const EVENT_DATE_ISO      = "2026-11-07T08:00:00-07:00"; // MST = UTC-7
 export const EVENT_DATE_DISPLAY  = "Saturday, November 7, 2026";
 export const HALF_START_TIME     = "8:00 AM";
@@ -60,7 +60,9 @@ export const SOCIAL_TWITTER   = "[[https://twitter.com/YOURHANDLE]]";
 export const SOCIAL_YOUTUBE   = "[[https://youtube.com/@YOURCHANNEL]]";
 
 // --- SEO ----------------------------------------------------
-// Update SITE_URL when a custom domain is set; used by sitemap, robots, and metadataBase
+// Update SITE_URL when a custom domain is set; used by sitemap, robots, and metadataBase.
+// Note: the Vercel subdomain still carries the old name — update to a custom domain
+// (e.g. raceagainstcancers.org) to reflect the new name in the URL.
 export const SITE_URL         = "https://race-against-cancer.vercel.app";
 export const META_DESCRIPTION =
   `Run for a reason. ${EVENT_NAME} — a half marathon & 5K on ${EVENT_DATE_DISPLAY}, benefiting ${CHARITY_NAME}. Register with a $${MIN_DONATION_AMOUNT} minimum donation.`;

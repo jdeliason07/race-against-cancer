@@ -5,7 +5,7 @@ import { isReleased, formatReleaseDate } from '@/lib/utils';
 export const metadata: Metadata = {
   title: '20 Stories',
   description:
-    'Twenty cancer survivors. Twenty stories. One race. A new film drops every day for 20 days leading up to Race Against Cancer 2026.',
+    'Twenty cancer survivors. Twenty stories. One race. A new film drops every day for 20 days leading up to Race Against Cancers 2026.',
 };
 
 // 20 daily episodes: Oct 18 → Nov 6, 2026 (20 days before Nov 7 race day)
@@ -141,7 +141,7 @@ export default function DocumentaryPage() {
       {/* CTA */}
       <section className="bg-blush py-20 border-t border-petal">
         <div className="mx-auto max-w-3xl px-6 text-center">
-          <p className="section-label mb-4">Race Against Cancer 2026</p>
+          <p className="section-label mb-4">Race Against Cancers 2026</p>
           <p className="font-display text-4xl uppercase text-ink mb-6">
             Their stories are the reason we run.
           </p>

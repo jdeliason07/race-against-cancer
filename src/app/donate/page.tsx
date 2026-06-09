@@ -43,7 +43,7 @@ export default function DonatePage() {
           <ul className="space-y-4">
             {[
               'Share the 20 Stories documentary with someone who needs to see it.',
-              `Tell a runner in your life about Race Against Cancer 2026 — ${EVENT_DATE_DISPLAY}.`,
+              `Tell a runner in your life about Race Against Cancers 2026 — ${EVENT_DATE_DISPLAY}.`,
               'Follow us on social media and spread the word when each new film drops.',
             ].map((item, i) => (
               <li key={i} className="flex items-start gap-4 font-body text-sm text-ash">

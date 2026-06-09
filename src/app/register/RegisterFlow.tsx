@@ -657,7 +657,7 @@ function StepConfirmation({
 
       <h2 className="font-display text-4xl uppercase text-ink mb-2">You&rsquo;re Registered!</h2>
       <p className="font-body text-base text-ash mb-8">
-        Thank you for signing up for Race Against Cancer 2026.
+        Thank you for signing up for Race Against Cancers 2026.
       </p>
 
       {/* Summary */}

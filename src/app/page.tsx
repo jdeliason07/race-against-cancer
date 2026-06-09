@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import {
-  EVENT_DATE_DISPLAY, EVENT_DATE_ISO,
+  EVENT_NAME, EVENT_DATE_DISPLAY, EVENT_DATE_ISO,
   CHARITY_NAME, MIN_DONATION_AMOUNT,
   HALF_MARATHON_LABEL, FIVE_K_LABEL,
   EVENT_LOCATION_NAME, EVENT_LOCATION_ADDRESS,
@@ -10,7 +10,7 @@ import { getDonationTotal } from '@/lib/getDonationTotal';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Race Against Cancer 2026 — Half Marathon & 5K',
+  title: 'Race Against Cancers 2026 — Half Marathon & 5K',
 };
 
 export const revalidate = 300; // refresh every 5 minutes
@@ -20,7 +20,7 @@ const GOAL = 100000;
 const eventJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SportsEvent',
-  name: 'Race Against Cancer 2026',
+  name: EVENT_NAME,
   description: `A half marathon & 5K charity race benefiting ${CHARITY_NAME}. Run the Provo River Parkway from Utah Lake State Park to LaVell Edwards Stadium.`,
   startDate: EVENT_DATE_ISO,
   endDate: '2026-11-07T14:00:00-07:00',
@@ -40,7 +40,7 @@ const eventJsonLd = {
   },
   organizer: {
     '@type': 'Organization',
-    name: 'Race Against Cancer',
+    name: 'Race Against Cancers',
     url: SITE_URL,
   },
   offers: {

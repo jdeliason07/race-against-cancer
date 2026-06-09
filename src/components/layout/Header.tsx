@@ -37,9 +37,9 @@ export function Header() {
           <Link
             href="/"
             className="font-display text-lg uppercase tracking-wide text-ink transition-colors hover:text-pink"
-            aria-label="Race Against Cancer — Home"
+            aria-label="Race Against Cancers — Home"
           >
-            RACE<span className="text-pink">AGAINST</span>CANCER
+            RACE<span className="text-pink">AGAINST</span>CANCERS
           </Link>
 
           {/* Register button + hamburger */}

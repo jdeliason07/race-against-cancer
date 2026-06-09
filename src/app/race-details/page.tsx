@@ -1,5 +1,5 @@
 import {
-  EVENT_DATE_DISPLAY, HALF_START_TIME, FIVE_K_START_TIME,
+  EVENT_NAME, EVENT_DATE_DISPLAY, HALF_START_TIME, FIVE_K_START_TIME,
   EVENT_LOCATION_ADDRESS, EVENT_DATE_ISO,
   PACKET_PICKUP_DATE, PACKET_PICKUP_TIME, PACKET_PICKUP_LOCATION,
   COURSE_GPX_URL, SITE_URL,
@@ -11,7 +11,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Race Details',
-  description: `Course info, start times, packet pickup, and logistics for Race Against Cancer 2026 on ${EVENT_DATE_DISPLAY}.`,
+  description: `Course info, start times, packet pickup, and logistics for Race Against Cancers 2026 on ${EVENT_DATE_DISPLAY}.`,
 };
 
 const waves = [
@@ -32,7 +32,7 @@ const aidStations = [
 const courseJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SportsEvent',
-  name: 'Race Against Cancer 2026',
+  name: EVENT_NAME,
   startDate: EVENT_DATE_ISO,
   location: {
     '@type': 'Place',
@@ -113,7 +113,7 @@ export default function RaceDetailsPage() {
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">The Route</h2>
           <div className="space-y-4 font-body text-base leading-relaxed text-ash">
             <p>
-              Race Against Cancer follows the Provo River Parkway — one of Utah Valley&rsquo;s
+              Race Against Cancers follows the Provo River Parkway — one of Utah Valley&rsquo;s
               most beloved multi-use trails — for the majority of its 13.1 miles. The course is
               nearly flat throughout, making it accessible to first-time half marathoners while
               rewarding experienced runners with a fast, PR-friendly surface.

@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { EVENT_NAME } from '@/config/site';
 
 export async function getDonationTotal(): Promise<number> {
   if (!process.env.STRIPE_SECRET_KEY) return 0;
@@ -18,7 +19,7 @@ export async function getDonationTotal(): Promise<number> {
       for (const intent of intents.data) {
         if (
           intent.status === 'succeeded' &&
-          intent.metadata?.event === 'Race Against Cancer 2026'
+          intent.metadata?.event === EVENT_NAME
         ) {
           total += intent.amount;
         }

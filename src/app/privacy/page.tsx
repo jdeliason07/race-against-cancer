@@ -3,7 +3,7 @@ import { CONTACT_PHONE, EVENT_YEAR, CHARITY_NAME } from '@/config/site';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Privacy policy for Race Against Cancer 2026. Learn how we collect, use, and protect your personal information.',
+  description: 'Privacy policy for Race Against Cancers 2026. Learn how we collect, use, and protect your personal information.',
 };
 
 export default function PrivacyPage() {
@@ -22,7 +22,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="mb-4 font-display text-2xl uppercase text-ink">Overview</h2>
           <p className="font-body text-base leading-relaxed text-ash">
-            Race Against Cancer 2026 (&ldquo;we,&rdquo; &ldquo;our,&rdquo; &ldquo;us&rdquo;) respects your privacy. This policy
+            Race Against Cancers 2026 (&ldquo;we,&rdquo; &ldquo;our,&rdquo; &ldquo;us&rdquo;) respects your privacy. This policy
             explains what information we collect when you use this website, how we use it, and
             your rights. All donations collected through this event benefit {CHARITY_NAME}.
           </p>
@@ -79,7 +79,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="mb-4 font-display text-2xl uppercase text-ink">Media &amp; Photography</h2>
           <p className="font-body text-base leading-relaxed text-ash">
-            By registering, you agree that Race Against Cancer 2026 may use photographs and
+            By registering, you agree that Race Against Cancers 2026 may use photographs and
             video taken at the event for promotional purposes, including on this website, social
             media, and other materials. If you have a concern about a specific photograph or
             video, please contact us.
@@ -126,7 +126,7 @@ export default function PrivacyPage() {
         </section>
 
         <p className="font-body text-xs text-ash border-t border-line pt-8">
-          © {EVENT_YEAR} Race Against Cancer. All rights reserved.
+          © {EVENT_YEAR} Race Against Cancers. All rights reserved.
         </p>
       </div>
     </div>

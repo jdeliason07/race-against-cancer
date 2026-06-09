@@ -6,7 +6,7 @@ export interface FAQItem {
 export const faqs: FAQItem[] = [
   {
     question: "What is the registration fee?",
-    answer: "There is no flat entry fee. Registration requires a minimum $100 donation to Huntsman Cancer Institute for the 10K, or a minimum $49 donation for the 5K. We warmly encourage you to give as much more as you're willing — every dollar goes directly to the cause.",
+    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Huntsman Cancer Institute for the 10K, or a minimum $49 donation for the 5K. We warmly encourage you to give as much more as you're willing — every dollar goes directly to the cause.",
   },
   {
     question: "Can I register without fundraising?",

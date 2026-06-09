@@ -38,7 +38,7 @@ export const REGISTRATION_URL = "[[REPLACE: registration platform URL (RunSignup
 export const DONATION_URL     = "[[REPLACE: donation platform URL (RunSignup/GiveButter)]]";
 
 // --- REGISTRATION -------------------------------------------
-export const MIN_DONATION_AMOUNT   = 100; // 10K minimum — canonical number
+export const MIN_DONATION_AMOUNT   = 99; // 10K minimum — canonical number
 export const MIN_DONATION_5K       = 49;  // 5K minimum
 export const TEN_K_LABEL           = "10K (6.2 mi)";
 export const FIVE_K_LABEL          = "5K (3.1 mi)";

@@ -5,7 +5,7 @@ import { EVENT_NAME, MIN_DONATION_AMOUNT, MIN_DONATION_5K } from '@/config/site'
 export async function createPaymentIntent(registrationData: {
   raceType: string;
   bandanaColor: string;
-  amount: number; // in cents, e.g. 10000 for $100
+  amount: number; // in cents, e.g. 9900 for $99
   firstName: string;
   lastName: string;
   email: string;

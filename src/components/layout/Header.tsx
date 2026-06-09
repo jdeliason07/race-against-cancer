@@ -6,7 +6,6 @@ import { Menu, X } from 'lucide-react';
 const navLinks = [
   { href: '/register',      label: 'Register' },
   { href: '/race-details',  label: 'Race Details' },
-  { href: '/documentary',   label: '20 Stories' },
   { href: '/volunteer',     label: 'Become a Volunteer' },
   { href: '/faq',           label: 'FAQ' },
   { href: '/about',         label: 'About' },

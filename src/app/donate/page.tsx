@@ -14,7 +14,7 @@ export default function DonatePage() {
           <p className="section-label mb-4 text-petal">You don&apos;t have to run</p>
           <h1 className="font-display text-6xl uppercase text-white md:text-8xl">Donate</h1>
           <p className="mt-6 font-body text-lg text-white/60 max-w-2xl mx-auto">
-            Can&apos;t make it to the start line? You can still show up for the people in the stories. Every donation goes directly to {CHARITY_NAME}.
+            Can&apos;t make it to the start line? You can still make a difference. Every donation goes directly to {CHARITY_NAME}.
           </p>
         </div>
       </section>
@@ -42,9 +42,9 @@ export default function DonatePage() {
           <h2 className="font-display text-3xl uppercase text-ink mb-6">Other ways to help</h2>
           <ul className="space-y-4">
             {[
-              'Share the 20 Stories documentary with someone who needs to see it.',
               `Tell a runner in your life about Race Against Cancers 2026 — ${EVENT_DATE_DISPLAY}.`,
-              'Follow us on social media and spread the word when each new film drops.',
+              'Share the event on social media and help us spread the word.',
+              'Volunteer on race day — every aid station and cheering section needs people.',
             ].map((item, i) => (
               <li key={i} className="flex items-start gap-4 font-body text-sm text-ash">
                 <span className="mt-1 h-px w-8 shrink-0 bg-pink" aria-hidden="true" />

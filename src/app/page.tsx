@@ -3,7 +3,7 @@ import {
   EVENT_NAME, EVENT_DATE_DISPLAY, EVENT_DATE_ISO,
   CHARITY_NAME, MIN_DONATION_AMOUNT,
   HALF_MARATHON_LABEL, FIVE_K_LABEL,
-  EVENT_LOCATION_NAME, EVENT_LOCATION_ADDRESS,
+  EVENT_LOCATION_NAME,
   SITE_URL,
 } from '@/config/site';
 import { getDonationTotal } from '@/lib/getDonationTotal';
@@ -161,46 +161,6 @@ export default async function HomePage() {
               </div>
             ))}
           </dl>
-        </div>
-      </section>
-
-      {/* DOCUMENTARY SERIES */}
-      <section className="bg-ink py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-            <div>
-              <p className="section-label mb-4 text-petal">Documentary Series</p>
-              <h2 className="font-display text-[clamp(48px,8vw,96px)] uppercase leading-none text-white">
-                20 Stories
-              </h2>
-              <p className="mt-6 font-body text-lg text-white/60 max-w-md">
-                Twenty cancer survivors. Twenty films. One drops every day for the 20 days
-                leading up to race day.
-              </p>
-              <p className="mt-4 font-body text-base text-white/40">
-                These are the people we run for.
-              </p>
-              <div className="mt-8">
-                <Link href="/documentary" className="btn-primary">
-                  Watch the Series
-                </Link>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-4 gap-2">
-              {Array.from({ length: 20 }, (_, i) => (
-                <div
-                  key={i}
-                  className="aspect-square rounded-card flex items-center justify-center"
-                  style={{ backgroundColor: 'rgba(240,48,122,0.12)', border: '1px solid rgba(240,48,122,0.2)' }}
-                >
-                  <span className="font-display text-lg uppercase text-white/30">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 

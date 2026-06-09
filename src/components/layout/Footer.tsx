@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {
   SOCIAL_INSTAGRAM, SOCIAL_FACEBOOK,
-  SOCIAL_TWITTER, SOCIAL_YOUTUBE, CHARITY_NAME, EVENT_YEAR, CONTACT_PHONE
+  SOCIAL_TWITTER, SOCIAL_YOUTUBE, CHARITY_NAME, EVENT_YEAR, CONTACT_PHONE, ORG_NAME
 } from '@/config/site';
 import { Phone } from 'lucide-react';
 
@@ -60,7 +60,6 @@ export function Footer() {
           <nav className="flex flex-wrap items-center justify-center gap-5" aria-label="Footer navigation">
             <Link href="/register" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Register</Link>
             <Link href="/race-details" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Race Details</Link>
-            <Link href="/documentary" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">20 Stories</Link>
             <Link href="/donate" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Donate</Link>
             <Link href="/volunteer" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Volunteer</Link>
             <Link href="/faq" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">FAQ</Link>
@@ -95,7 +94,7 @@ export function Footer() {
         </div>
 
         <p className="mt-8 text-center font-body text-xs text-white/25">
-          © {EVENT_YEAR} Race Against Cancers. All rights reserved.
+          © {EVENT_YEAR} {ORG_NAME} All rights reserved.
         </p>
       </div>
     </footer>

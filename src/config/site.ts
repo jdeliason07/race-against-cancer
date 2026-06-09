@@ -11,6 +11,7 @@ export const CHARITY_URL  = "https://huntsmancancer.org";
 export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 
 // --- EVENT --------------------------------------------------
+export const ORG_NAME            = "Race Against Cancers Inc.";
 export const EVENT_NAME          = "Race Against Cancers 2026";
 export const EVENT_DATE_ISO      = "2026-11-07T08:00:00-07:00"; // MST = UTC-7
 export const EVENT_DATE_DISPLAY  = "Saturday, November 7, 2026";

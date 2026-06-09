@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import {
-  EVENT_DATE_DISPLAY,
-  CHARITY_NAME, MIN_DONATION_AMOUNT, HALF_MARATHON_LABEL,
-  FIVE_K_LABEL, EVENT_LOCATION_NAME,
+  EVENT_DATE_DISPLAY, EVENT_DATE_ISO,
+  CHARITY_NAME, MIN_DONATION_AMOUNT,
+  HALF_MARATHON_LABEL, FIVE_K_LABEL,
+  EVENT_LOCATION_NAME, EVENT_LOCATION_ADDRESS,
+  SITE_URL,
 } from '@/config/site';
 import { getDonationTotal } from '@/lib/getDonationTotal';
 import type { Metadata } from 'next';
@@ -15,11 +17,53 @@ export const revalidate = 300; // refresh every 5 minutes
 
 const GOAL = 100000;
 
+const eventJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsEvent',
+  name: 'Race Against Cancer 2026',
+  description: `A half marathon & 5K charity race benefiting ${CHARITY_NAME}. Run the Provo River Parkway from Utah Lake State Park to LaVell Edwards Stadium.`,
+  startDate: EVENT_DATE_ISO,
+  endDate: '2026-11-07T14:00:00-07:00',
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: EVENT_LOCATION_NAME,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '4400 W Center St',
+      addressLocality: 'Provo',
+      addressRegion: 'UT',
+      postalCode: '84601',
+      addressCountry: 'US',
+    },
+  },
+  organizer: {
+    '@type': 'Organization',
+    name: 'Race Against Cancer',
+    url: SITE_URL,
+  },
+  offers: {
+    '@type': 'Offer',
+    price: String(MIN_DONATION_AMOUNT),
+    priceCurrency: 'USD',
+    url: `${SITE_URL}/register`,
+    availability: 'https://schema.org/InStock',
+    validFrom: '2026-01-01',
+  },
+};
+
 export default async function HomePage() {
   const raised = await getDonationTotal();
   const pct = Math.min(Math.round((raised / GOAL) * 100), 100);
   return (
     <>
+      {/* JSON-LD Event Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
+      />
+
       {/* HERO */}
       <section className="bg-paper pb-20 pt-16 md:pb-28 md:pt-24">
         <div className="mx-auto max-w-7xl px-6">
@@ -120,6 +164,46 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* DOCUMENTARY SERIES */}
+      <section className="bg-ink py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+            <div>
+              <p className="section-label mb-4 text-petal">Documentary Series</p>
+              <h2 className="font-display text-[clamp(48px,8vw,96px)] uppercase leading-none text-white">
+                20 Stories
+              </h2>
+              <p className="mt-6 font-body text-lg text-white/60 max-w-md">
+                Twenty cancer survivors. Twenty films. One drops every day for the 20 days
+                leading up to race day.
+              </p>
+              <p className="mt-4 font-body text-base text-white/40">
+                These are the people we run for.
+              </p>
+              <div className="mt-8">
+                <Link href="/documentary" className="btn-primary">
+                  Watch the Series
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 gap-2">
+              {Array.from({ length: 20 }, (_, i) => (
+                <div
+                  key={i}
+                  className="aspect-square rounded-card flex items-center justify-center"
+                  style={{ backgroundColor: 'rgba(240,48,122,0.12)', border: '1px solid rgba(240,48,122,0.2)' }}
+                >
+                  <span className="font-display text-lg uppercase text-white/30">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* GOAL + PROGRESS */}
       <section className="bg-blush py-24">
         <div className="mx-auto max-w-3xl px-6 text-center">
@@ -140,7 +224,14 @@ export default async function HomePage() {
               </span>
               <span className="font-body text-sm text-ash">{pct}% of goal</span>
             </div>
-            <div className="h-4 w-full rounded-pill bg-petal overflow-hidden">
+            <div
+              className="h-4 w-full rounded-pill bg-petal overflow-hidden"
+              role="progressbar"
+              aria-valuenow={pct}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`${pct}% of $100,000 goal raised`}
+            >
               <div
                 className="h-full rounded-pill bg-pink transition-all duration-700"
                 style={{ width: `${pct === 0 ? 1 : pct}%` }}

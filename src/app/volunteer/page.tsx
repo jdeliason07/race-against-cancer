@@ -62,14 +62,9 @@ export default function VolunteerPage() {
                 src={embedUrl}
                 width="100%"
                 height="800"
-                frameBorder="0"
-                marginHeight={0}
-                marginWidth={0}
                 title="Volunteer Sign-Up Form"
-                className="block"
-              >
-                Loading…
-              </iframe>
+                className="block border-0 m-0"
+              />
             </div>
           ) : (
             <div className="flex h-40 items-center justify-center rounded-card border-2 border-dashed border-petal bg-mist">

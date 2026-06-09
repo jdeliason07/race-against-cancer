@@ -9,6 +9,7 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 import { createPaymentIntent } from './actions';
+import { MIN_DONATION_AMOUNT, MIN_DONATION_5K } from '@/config/site';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -104,13 +105,14 @@ function StepRaceSelection({
 
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         {([
-          { key: 'half' as const, label: 'Half Marathon', sub: '13.1 mi' },
-          { key: '5k' as const, label: '5K', sub: '3.1 mi' },
+          { key: 'half' as const, label: 'Half Marathon', sub: `13.1 mi · $${MIN_DONATION_AMOUNT}+ donation` },
+          { key: '5k' as const, label: '5K', sub: `3.1 mi · $${MIN_DONATION_5K}+ donation` },
         ]).map((race) => (
           <button
             key={race.key}
             type="button"
             onClick={() => setRaceType(race.key)}
+            aria-pressed={raceType === race.key}
             className="rounded-card border-2 p-6 text-left transition-colors duration-150 focus-visible:outline-none"
             style={{
               borderColor: raceType === race.key ? '#F0307A' : '#ECE2E6',
@@ -174,12 +176,26 @@ function StepAthleteInfo({
   onBack: () => void;
   loading: boolean;
 }) {
-  const minDonation = raceType === '5k' ? 49 : 99;
+  const [touched, setTouched] = useState<Partial<Record<keyof FormData, boolean>>>({});
+  const minDonation = raceType === '5k' ? MIN_DONATION_5K : MIN_DONATION_AMOUNT;
+
   const update = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: e.target.value });
   };
 
+  const touch = (field: keyof FormData) => () => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
   const isEmailValid = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const fieldError = (field: keyof FormData): string | null => {
+    if (!touched[field]) return null;
+    const val = formData[field].trim();
+    if (!val) return 'This field is required.';
+    if (field === 'email' && !isEmailValid(formData.email)) return 'Enter a valid email address.';
+    return null;
+  };
 
   const canAdvance =
     formData.firstName.trim() &&
@@ -198,6 +214,7 @@ function StepAthleteInfo({
     'border border-line rounded-card px-4 py-3 font-body text-sm text-ink w-full focus:outline-none focus:border-pink';
   const labelClass =
     'font-body text-xs font-bold uppercase tracking-widest text-ash mb-1 block';
+  const errorClass = 'mt-1 font-body text-xs text-red-700';
 
   return (
     <div>
@@ -205,89 +222,124 @@ function StepAthleteInfo({
 
       <div className="grid gap-4 sm:grid-cols-2 mb-4">
         <div>
-          <label className={labelClass}>First Name</label>
+          <label htmlFor="firstName" className={labelClass}>First Name</label>
           <input
+            id="firstName"
             type="text"
             value={formData.firstName}
             onChange={update('firstName')}
+            onBlur={touch('firstName')}
             className={inputClass}
             required
+            aria-required="true"
+            aria-describedby={fieldError('firstName') ? 'firstName-error' : undefined}
           />
+          {fieldError('firstName') && <p id="firstName-error" className={errorClass}>{fieldError('firstName')}</p>}
         </div>
         <div>
-          <label className={labelClass}>Last Name</label>
+          <label htmlFor="lastName" className={labelClass}>Last Name</label>
           <input
+            id="lastName"
             type="text"
             value={formData.lastName}
             onChange={update('lastName')}
+            onBlur={touch('lastName')}
             className={inputClass}
             required
+            aria-required="true"
+            aria-describedby={fieldError('lastName') ? 'lastName-error' : undefined}
           />
+          {fieldError('lastName') && <p id="lastName-error" className={errorClass}>{fieldError('lastName')}</p>}
         </div>
       </div>
 
       <div className="mb-4">
-        <label className={labelClass}>Email Address</label>
+        <label htmlFor="email" className={labelClass}>Email Address</label>
         <input
+          id="email"
           type="email"
           value={formData.email}
           onChange={update('email')}
+          onBlur={touch('email')}
           className={inputClass}
           required
+          aria-required="true"
+          aria-describedby={fieldError('email') ? 'email-error' : undefined}
         />
+        {fieldError('email') && <p id="email-error" className={errorClass}>{fieldError('email')}</p>}
       </div>
 
       <div className="mb-4">
-        <label className={labelClass}>Phone Number</label>
+        <label htmlFor="phone" className={labelClass}>Phone Number</label>
         <input
+          id="phone"
           type="tel"
           value={formData.phone}
           onChange={update('phone')}
+          onBlur={touch('phone')}
           className={inputClass}
           required
+          aria-required="true"
+          aria-describedby={fieldError('phone') ? 'phone-error' : undefined}
         />
+        {fieldError('phone') && <p id="phone-error" className={errorClass}>{fieldError('phone')}</p>}
       </div>
 
       <div className="mb-4">
-        <label className={labelClass}>Date of Birth</label>
+        <label htmlFor="dob" className={labelClass}>Date of Birth</label>
         <input
+          id="dob"
           type="date"
           value={formData.dob}
           onChange={update('dob')}
+          onBlur={touch('dob')}
           className={inputClass}
           required
+          aria-required="true"
+          aria-describedby={fieldError('dob') ? 'dob-error' : undefined}
         />
+        {fieldError('dob') && <p id="dob-error" className={errorClass}>{fieldError('dob')}</p>}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 mb-6">
         <div>
-          <label className={labelClass}>Emergency Contact Name</label>
+          <label htmlFor="emergencyName" className={labelClass}>Emergency Contact Name</label>
           <input
+            id="emergencyName"
             type="text"
             value={formData.emergencyName}
             onChange={update('emergencyName')}
+            onBlur={touch('emergencyName')}
             className={inputClass}
             required
+            aria-required="true"
+            aria-describedby={fieldError('emergencyName') ? 'emergencyName-error' : undefined}
           />
+          {fieldError('emergencyName') && <p id="emergencyName-error" className={errorClass}>{fieldError('emergencyName')}</p>}
         </div>
         <div>
-          <label className={labelClass}>Emergency Contact Phone</label>
+          <label htmlFor="emergencyPhone" className={labelClass}>Emergency Contact Phone</label>
           <input
+            id="emergencyPhone"
             type="tel"
             value={formData.emergencyPhone}
             onChange={update('emergencyPhone')}
+            onBlur={touch('emergencyPhone')}
             className={inputClass}
             required
+            aria-required="true"
+            aria-describedby={fieldError('emergencyPhone') ? 'emergencyPhone-error' : undefined}
           />
+          {fieldError('emergencyPhone') && <p id="emergencyPhone-error" className={errorClass}>{fieldError('emergencyPhone')}</p>}
         </div>
       </div>
 
       {/* Bandana color */}
       <div className="mb-6">
-        <p className="font-body text-xs font-bold uppercase tracking-widest text-ash mb-3">
+        <p id="bandana-label" className="font-body text-xs font-bold uppercase tracking-widest text-ash mb-3">
           Which color bandana will you race with?
         </p>
-        <div className="grid grid-cols-2 gap-2">
+        <div role="group" aria-labelledby="bandana-label" className="grid grid-cols-2 gap-2">
           {bandanaOptions.map((opt) => {
             const selected = bandanaColor === opt.label;
             return (
@@ -295,6 +347,7 @@ function StepAthleteInfo({
                 key={opt.label}
                 type="button"
                 onClick={() => setBandanaColor(opt.label)}
+                aria-pressed={selected}
                 className="rounded-card border-2 px-4 py-3 text-left transition-colors duration-150 focus-visible:outline-none"
                 style={{
                   borderColor: selected ? opt.color : '#ECE2E6',
@@ -311,17 +364,21 @@ function StepAthleteInfo({
             );
           })}
         </div>
+        {bandanaColor === '' && (
+          <p className="mt-2 font-body text-xs text-ash">Select a bandana color to continue.</p>
+        )}
       </div>
 
-      {/* Donation amount suggestion */}
+      {/* Donation amount */}
       <div className="mb-6 rounded-card border border-petal bg-blush p-5">
-        <p className="mb-2 font-body text-xs font-bold uppercase tracking-widest text-ash">
+        <label htmlFor="donationAmount" className="mb-2 font-body text-xs font-bold uppercase tracking-widest text-ash block">
           Donation Amount
-        </p>
+        </label>
         <p className="mb-3 font-body text-sm text-ash">
           Minimum ${minDonation} — every dollar goes directly to the cause. Give more if you&rsquo;re able.
         </p>
         <input
+          id="donationAmount"
           type="number"
           min={minDonation}
           value={donationAmount}
@@ -330,18 +387,25 @@ function StepAthleteInfo({
             setDonationAmount(isNaN(val) ? minDonation : val);
           }}
           className="border border-petal rounded-card px-4 py-3 font-body text-sm text-ink w-full focus:outline-none focus:border-pink bg-white"
+          aria-describedby="donation-min-hint"
         />
+        <p id="donation-min-hint" className="mt-1 font-body text-xs text-ash sr-only">
+          Minimum donation: ${minDonation}
+        </p>
         {donationAmount < minDonation && (
-          <p className="mt-1 font-body text-xs text-red-700">Minimum donation is ${minDonation}</p>
+          <p className="mt-1 font-body text-xs text-red-700" role="alert">Minimum donation is ${minDonation}</p>
         )}
       </div>
 
       {/* Waiver */}
       <div className="mb-6">
-        <label className={labelClass}>Release &amp; Waiver of Liability</label>
+        <p className="font-body text-xs font-bold uppercase tracking-widest text-ash mb-1">Release &amp; Waiver of Liability</p>
         <div
+          role="region"
+          aria-label="Waiver text — scroll to read"
           className="border border-line rounded-card p-4 font-body text-xs text-ash leading-relaxed"
           style={{ maxHeight: '200px', overflowY: 'scroll' }}
+          tabIndex={0}
         >
           <p className="mb-3 font-bold uppercase">
             ALL PARTICIPANTS IN THE EVENT AND RELATED EVENTS ARE REQUIRED TO ASSUME ALL RISK OF
@@ -386,8 +450,9 @@ function StepAthleteInfo({
             AND WAIVER OF LIABILITY AGREEMENT.
           </p>
         </div>
-        <label className="mt-3 flex items-start gap-3 cursor-pointer">
+        <label htmlFor="waiverCheckbox" className="mt-3 flex items-start gap-3 cursor-pointer">
           <input
+            id="waiverCheckbox"
             type="checkbox"
             checked={waiverAgreed}
             onChange={(e) => setWaiverAgreed(e.target.checked)}
@@ -492,7 +557,7 @@ function PaymentForm({
       </div>
 
       {paymentError && (
-        <p className="mb-4 rounded-card border border-red-200 bg-red-50 px-4 py-3 font-body text-sm text-red-700">
+        <p className="mb-4 rounded-card border border-red-200 bg-red-50 px-4 py-3 font-body text-sm text-red-700" role="alert">
           {paymentError}
         </p>
       )}
@@ -574,6 +639,7 @@ function StepConfirmation({
       <div
         className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full"
         style={{ backgroundColor: '#FDE7F0' }}
+        aria-hidden="true"
       >
         <svg
           viewBox="0 0 24 24"
@@ -613,7 +679,7 @@ function StepConfirmation({
           </div>
           <div className="flex justify-between">
             <dt className="font-bold uppercase tracking-widest text-ash text-xs">Donation</dt>
-            <dd className="text-ink font-bold" style={{ color: '#F0307A' }}>
+            <dd className="font-bold" style={{ color: '#F0307A' }}>
               ${donationAmount}
             </dd>
           </div>
@@ -636,7 +702,7 @@ export function RegisterFlow() {
   const [step, setStep] = useState<Step>(1);
   const [raceType, setRaceType] = useState<RaceType>(null);
   const [bandanaColor, setBandanaColor] = useState('');
-  const [donationAmount, setDonationAmount] = useState(99);
+  const [donationAmount, setDonationAmount] = useState(MIN_DONATION_AMOUNT);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -690,7 +756,7 @@ export function RegisterFlow() {
           raceType={raceType}
           setRaceType={setRaceType}
           onNext={() => {
-            setDonationAmount(raceType === '5k' ? 49 : 99);
+            setDonationAmount(raceType === '5k' ? MIN_DONATION_5K : MIN_DONATION_AMOUNT);
             setStep(2);
           }}
         />
@@ -713,7 +779,7 @@ export function RegisterFlow() {
             loading={loadingIntent}
           />
           {intentError && (
-            <p className="mt-4 rounded-card border border-red-200 bg-red-50 px-4 py-3 font-body text-sm text-red-700">
+            <p className="mt-4 rounded-card border border-red-200 bg-red-50 px-4 py-3 font-body text-sm text-red-700" role="alert">
               {intentError}
             </p>
           )}

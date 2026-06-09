@@ -25,7 +25,7 @@ const saira = Saira({
 export const metadata: Metadata = {
   title: { default: `${EVENT_NAME} — Half Marathon & 5K`, template: `%s | ${EVENT_NAME}` },
   description: META_DESCRIPTION,
-  metadataBase: new URL(SITE_URL.replace('[[YOUR-DOMAIN.com]]', 'raceagainstcancer.org')),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
     title: EVENT_NAME,
     description: META_DESCRIPTION,

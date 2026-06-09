@@ -1,10 +1,11 @@
 'use server';
 import Stripe from 'stripe';
+import { MIN_DONATION_AMOUNT, MIN_DONATION_5K } from '@/config/site';
 
 export async function createPaymentIntent(registrationData: {
   raceType: string;
   bandanaColor: string;
-  amount: number; // in cents, e.g. 9900 for $99
+  amount: number; // in cents, e.g. 10000 for $100
   firstName: string;
   lastName: string;
   email: string;
@@ -15,6 +16,15 @@ export async function createPaymentIntent(registrationData: {
 }): Promise<{ clientSecret: string } | { error: string }> {
   if (!process.env.STRIPE_SECRET_KEY) {
     return { error: 'Payment is not configured yet. Please contact the race organizer.' };
+  }
+
+  // Enforce minimum on the server — UI minimum can be bypassed
+  const minCents =
+    (registrationData.raceType === '5k' ? MIN_DONATION_5K : MIN_DONATION_AMOUNT) * 100;
+  if (registrationData.amount < minCents) {
+    return {
+      error: `Minimum donation for this event is $${minCents / 100}. Please increase your donation amount.`,
+    };
   }
 
   try {

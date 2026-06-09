@@ -12,10 +12,10 @@ export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 
 // --- EVENT --------------------------------------------------
 export const EVENT_NAME          = "Race Against Cancer 2026";
-export const EVENT_DATE_ISO      = "2026-11-07T08:00:00-05:00";
+export const EVENT_DATE_ISO      = "2026-11-07T08:00:00-07:00"; // MST = UTC-7
 export const EVENT_DATE_DISPLAY  = "Saturday, November 7, 2026";
 export const HALF_START_TIME     = "8:00 AM";
-export const FIVE_K_START_TIME   = "TBD";
+export const FIVE_K_START_TIME   = "To be announced";
 export const EVENT_YEAR          = "2026";
 
 // --- LOCATION -----------------------------------------------
@@ -31,7 +31,8 @@ export const REGISTRATION_URL = "[[REPLACE: registration platform URL (RunSignup
 export const DONATION_URL     = "[[REPLACE: donation platform URL (RunSignup/GiveButter)]]";
 
 // --- REGISTRATION -------------------------------------------
-export const MIN_DONATION_AMOUNT   = 99;
+export const MIN_DONATION_AMOUNT   = 100; // half marathon minimum — canonical number
+export const MIN_DONATION_5K       = 49;  // 5K minimum
 export const HALF_MARATHON_LABEL   = "Half Marathon (13.1 mi)";
 export const FIVE_K_LABEL          = "5K (3.1 mi)";
 export const REGISTRATION_INCLUDES = [
@@ -59,7 +60,9 @@ export const SOCIAL_TWITTER   = "[[https://twitter.com/YOURHANDLE]]";
 export const SOCIAL_YOUTUBE   = "[[https://youtube.com/@YOURCHANNEL]]";
 
 // --- SEO ----------------------------------------------------
-export const SITE_URL         = "https://[[YOUR-DOMAIN.com]]";
+// Update SITE_URL when a custom domain is set; used by sitemap, robots, and metadataBase
+export const SITE_URL         = "https://race-against-cancer.vercel.app";
 export const META_DESCRIPTION =
   `Run for a reason. ${EVENT_NAME} — a half marathon & 5K on ${EVENT_DATE_DISPLAY}, benefiting ${CHARITY_NAME}. Register with a $${MIN_DONATION_AMOUNT} minimum donation.`;
-export const OG_IMAGE_PATH    = "/images/og-image.jpg";
+// Replace with a proper 1200×630 OG image before any public sharing
+export const OG_IMAGE_PATH    = "/images/huntsman-logo.jpg";

@@ -2,7 +2,10 @@ import { RegisterFlow } from './RegisterFlow';
 import type { Metadata } from 'next';
 import { CHARITY_NAME } from '@/config/site';
 
-export const metadata: Metadata = { title: 'Register' };
+export const metadata: Metadata = {
+  title: 'Register',
+  description: `Register for Race Against Cancer 2026 — Half Marathon & 5K on November 7, 2026. Your registration is a direct donation to ${CHARITY_NAME}.`,
+};
 
 export default function RegisterPage() {
   return (

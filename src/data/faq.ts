@@ -6,11 +6,11 @@ export interface FAQItem {
 export const faqs: FAQItem[] = [
   {
     question: "What is the registration fee?",
-    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Huntsman Cancer Institute. We warmly encourage you to give as much more as you're willing — every dollar goes directly to the cause.",
+    answer: "There is no flat entry fee. Registration requires a minimum $100 donation to Huntsman Cancer Institute for the half marathon, or a minimum $49 donation for the 5K. We warmly encourage you to give as much more as you're willing — every dollar goes directly to the cause.",
   },
   {
     question: "Can I register without fundraising?",
-    answer: "Yes. There is no peer-to-peer fundraising requirement. Your $99+ donation at registration is all that's needed. You won't be asked to recruit other donors or hit a fundraising goal.",
+    answer: "Yes. There is no peer-to-peer fundraising requirement. Your donation at registration is all that's needed. You won't be asked to recruit other donors or hit a fundraising goal.",
   },
   {
     question: "What's the difference between the half marathon and the 5K?",
@@ -26,7 +26,7 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "When and where is packet pickup?",
-    answer: "Packet pickup details will be announced closer to race day. Check back here or follow us on social media for updates.",
+    answer: "Packet pickup is Friday, November 6, 2026 from 3:00–5:00 PM at LaVell Edwards Stadium on the BYU campus. Your bib and bandana will be available there. You must pick up your packet before race day.",
   },
   {
     question: "Where does my donation go?",

@@ -60,9 +60,12 @@ export function Footer() {
           <nav className="flex flex-wrap items-center justify-center gap-5" aria-label="Footer navigation">
             <Link href="/register" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Register</Link>
             <Link href="/race-details" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Race Details</Link>
+            <Link href="/documentary" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">20 Stories</Link>
+            <Link href="/donate" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Donate</Link>
             <Link href="/volunteer" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Volunteer</Link>
             <Link href="/faq" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">FAQ</Link>
             <Link href="/about" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">About</Link>
+            <Link href="/privacy" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Privacy</Link>
             <a href={`tel:${CONTACT_PHONE.replace(/-/g, '')}`} className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest flex items-center gap-1">
               <Phone size={13} /> {CONTACT_PHONE}
             </a>

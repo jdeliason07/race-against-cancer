@@ -1,8 +1,8 @@
 import {
   EVENT_DATE_DISPLAY, HALF_START_TIME, FIVE_K_START_TIME,
-  EVENT_LOCATION_ADDRESS,
+  EVENT_LOCATION_ADDRESS, EVENT_DATE_ISO,
   PACKET_PICKUP_DATE, PACKET_PICKUP_TIME, PACKET_PICKUP_LOCATION,
-  COURSE_GPX_URL,
+  COURSE_GPX_URL, SITE_URL,
 } from '@/config/site';
 import { MapPin, Clock, Package, Download, Flag } from 'lucide-react';
 import Link from 'next/link';
@@ -29,9 +29,32 @@ const aidStations = [
   { mile: 'Finish',    supplies: 'Full recovery station — water and food' },
 ];
 
+const courseJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsEvent',
+  name: 'Race Against Cancer 2026',
+  startDate: EVENT_DATE_ISO,
+  location: {
+    '@type': 'Place',
+    name: 'Utah Lake State Park',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: EVENT_LOCATION_ADDRESS,
+      addressLocality: 'Provo',
+      addressRegion: 'UT',
+      addressCountry: 'US',
+    },
+  },
+  url: `${SITE_URL}/race-details`,
+};
+
 export default function RaceDetailsPage() {
   return (
     <div className="bg-paper">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}
+      />
       <section className="bg-mist py-20 border-b border-line">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <p className="section-label mb-4">{EVENT_DATE_DISPLAY}</p>

@@ -80,8 +80,8 @@ export default function AboutPage() {
             <p className="font-body text-sm leading-relaxed text-ash">
               Every dollar from every registration goes directly to Huntsman Cancer Institute.
               Event operations are covered separately so that your registration is a pure donation
-              to the cause. Sponsors help make that possible — which is why their support matters
-              beyond just a logo placement.
+              to the cause. We are actively seeking sponsors who share our belief that fighting
+              cancer is worth every dollar.
             </p>
           </div>
         </section>

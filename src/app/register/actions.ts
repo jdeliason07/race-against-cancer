@@ -48,7 +48,7 @@ export async function createPaymentIntent(registrationData: {
         emergencyPhone: registrationData.emergencyPhone,
         waiverAgreed: 'true',
         waiverAgreedAt: new Date().toISOString(),
-        waiverVersion: '2026-v1',
+        waiverVersion: '2026-v2',
       },
     });
 

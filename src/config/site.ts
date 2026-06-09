@@ -30,7 +30,9 @@ export const FIVE_K_LOCATION_NAME    = "Riverwoods Shopping Center";
 export const FIVE_K_LOCATION_ADDRESS = "4931 N 300 W, Provo, UT 84604";
 // Shuttle: 10K runners bus from Provo Towne Centre Mall to the start
 export const SHUTTLE_LOCATION        = "Provo Towne Centre Mall, 1200 Towne Centre Blvd, Provo, UT 84601";
-export const COURSE_GPX_URL          = "/course.gpx";
+// Set to "" until an official GPS recording of the 10K course exists —
+// the race-details page automatically shows "GPX Coming Soon" when empty.
+export const COURSE_GPX_URL          = "";
 
 // --- PLATFORM LINKS -----------------------------------------
 // Paste RunSignup or GiveButter URLs here — every button on the site points here

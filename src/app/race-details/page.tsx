@@ -4,7 +4,7 @@ import {
   FINISH_LOCATION_NAME, FINISH_LOCATION_ADDRESS,
   FIVE_K_LOCATION_NAME, FIVE_K_LOCATION_ADDRESS,
   SHUTTLE_LOCATION,
-  PACKET_PICKUP_DATE, PACKET_PICKUP_TIME, PACKET_PICKUP_LOCATION,
+  CHECK_IN_DATE, CHECK_IN_TIME, CHECK_IN_LOCATION,
   COURSE_GPX_URL, SITE_URL, ORG_NAME,
 } from '@/config/site';
 import { MapPin, Clock, Package, Download, Flag, Bus } from 'lucide-react';
@@ -14,7 +14,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Race Details',
-  description: `Course info, start times, packet pickup, and logistics for Race Against Cancers 2026 on ${EVENT_DATE_DISPLAY}.`,
+  description: `Course info, start times, check-in, and logistics for Race Against Cancers 2026 on ${EVENT_DATE_DISPLAY}.`,
 };
 
 const courseJsonLd = {
@@ -38,9 +38,9 @@ const courseJsonLd = {
 };
 
 const waves = [
-  { wave: 'Wave 1', time: '7:00 AM', pace: 'Sub-8:00 min/mile' },
-  { wave: 'Wave 2', time: '7:05 AM', pace: '8:00–10:00 min/mile' },
-  { wave: 'Wave 3', time: '7:10 AM', pace: '10:00+ min/mile / run-walkers' },
+  { wave: 'Wave 1', time: '8:00 AM', pace: 'Sub-8:00 min/mile' },
+  { wave: 'Wave 2', time: '8:05 AM', pace: '8:00–10:00 min/mile' },
+  { wave: 'Wave 3', time: '8:10 AM', pace: '10:00+ min/mile / run-walkers' },
 ];
 
 const aidStations = [
@@ -127,10 +127,10 @@ export default function RaceDetailsPage() {
             <div className="rounded-card border border-line p-6">
               <div className="mb-2 flex items-center gap-2">
                 <Package size={16} className="text-pink shrink-0" aria-hidden="true" />
-                <dt className="section-label">Packet Pickup</dt>
+                <dt className="section-label">Check-In</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed whitespace-pre-line">
-                {PACKET_PICKUP_DATE}{PACKET_PICKUP_TIME ? `\n${PACKET_PICKUP_TIME}` : ''}{PACKET_PICKUP_LOCATION ? `\n${PACKET_PICKUP_LOCATION}` : ''}
+                {CHECK_IN_DATE}{CHECK_IN_TIME ? `\n${CHECK_IN_TIME}` : ''}{CHECK_IN_LOCATION ? `\n${CHECK_IN_LOCATION}` : ''}
                 {'\n'}Includes: race bib + bandana
               </dd>
             </div>

@@ -13,10 +13,10 @@ export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 // --- EVENT --------------------------------------------------
 export const ORG_NAME            = "Race Against Cancers Inc.";
 export const EVENT_NAME          = "Race Against Cancers 2026";
-export const EVENT_DATE_ISO      = "2026-11-07T07:00:00-07:00"; // 10K starts 7:00 AM MST
+export const EVENT_DATE_ISO      = "2026-11-07T08:00:00-07:00"; // 10K & 5K start 8:00 AM MST
 export const EVENT_DATE_DISPLAY  = "Saturday, November 7, 2026";
-export const TEN_K_START_TIME    = "7:00 AM";
-export const FIVE_K_START_TIME   = "To be announced";
+export const TEN_K_START_TIME    = "8:00 AM";
+export const FIVE_K_START_TIME   = "8:00 AM";
 export const EVENT_YEAR          = "2026";
 
 // --- LOCATION -----------------------------------------------
@@ -45,10 +45,10 @@ export const MIN_DONATION_5K       = 49;  // 5K minimum
 export const TEN_K_LABEL           = "10K (6.2 mi)";
 export const FIVE_K_LABEL          = "5K (3.1 mi)";
 
-// --- PACKET PICKUP ------------------------------------------
-export const PACKET_PICKUP_DATE     = "Friday, November 6, 2026";
-export const PACKET_PICKUP_TIME     = "3:00 – 5:00 PM";
-export const PACKET_PICKUP_LOCATION = "Downtown Provo — exact venue to be announced";
+// --- CHECK-IN -----------------------------------------------
+export const CHECK_IN_DATE     = "Saturday, November 7, 2026";
+export const CHECK_IN_TIME     = "7:00 AM (1 hour before race start)";
+export const CHECK_IN_LOCATION = "Downtown Provo — exact venue to be announced";
 
 // --- CONTACT ------------------------------------------------
 export const CONTACT_EMAIL = "[[info@raceagainstcancers.org]]";

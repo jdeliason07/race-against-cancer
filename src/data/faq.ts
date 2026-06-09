@@ -29,8 +29,8 @@ export const faqs: FAQItem[] = [
     answer: "Donations are non-refundable. Registration transfers are available until October 1, 2026 — reach out to us directly to arrange a transfer.",
   },
   {
-    question: "When and where is packet pickup?",
-    answer: "Packet pickup is Friday, November 6, 2026 from 3:00–5:00 PM. The exact venue in downtown Provo will be announced closer to race day. Your bib and bandana will be available there. You must pick up your packet before race day.",
+    question: "When and where is check-in?",
+    answer: "Check-in is on race morning — Saturday, November 7, 2026 at 7:00 AM (one hour before the 8:00 AM start). The exact venue in downtown Provo will be announced closer to race day. Your bib and bandana will be available at check-in.",
   },
   {
     question: "Where does my donation go?",

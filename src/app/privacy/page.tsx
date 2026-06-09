@@ -42,7 +42,7 @@ export default function PrivacyPage() {
           <ul className="space-y-3 font-body text-base text-ash">
             {[
               'To process your race registration and donation.',
-              'To send you race-day logistics, packet pickup reminders, and important updates about the event.',
+              'To send you race-day logistics, check-in reminders, and important updates about the event.',
               'To contact you if there is an emergency or issue with your registration.',
               'To communicate with your emergency contact if necessary on race day.',
               'To comply with legal obligations.',
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
             {[
               `${CHARITY_NAME} — as needed to process your donation and issue receipts.`,
               'Stripe — to process payment securely.',
-              'Race logistics providers (timing company, packet pickup) — limited to name and bib information necessary for event operations.',
+              'Race logistics providers (timing company, check-in) — limited to name and bib information necessary for event operations.',
               'Law enforcement or legal authorities — only when required by law.',
             ].map((item, i) => (
               <li key={i} className="flex items-start gap-4">

@@ -83,7 +83,7 @@ export function CourseMap() {
       });
       L.marker(route[0], { icon: startIcon })
         .addTo(map)
-        .bindPopup('<b>10K START</b><br>N Canyon Rd at Canyon Crest Elementary<br>7:00 AM');
+        .bindPopup('<b>10K START</b><br>N Canyon Rd at Canyon Crest Elementary<br>8:00 AM');
 
       const finishIcon = L.divIcon({
         html: '<div style="background:#F0307A;color:#fff;font-weight:700;font-size:11px;padding:3px 7px;border-radius:999px;white-space:nowrap;font-family:sans-serif;box-shadow:0 1px 4px rgba(0,0,0,0.3)">FINISH</div>',

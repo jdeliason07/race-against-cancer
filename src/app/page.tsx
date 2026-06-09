@@ -90,7 +90,7 @@ export default async function HomePage() {
               href="/register"
               className="btn-primary"
             >
-              Register Now
+              Register
             </Link>
           </div>
         </div>

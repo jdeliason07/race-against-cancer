@@ -37,8 +37,8 @@ export default function FAQPage() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link href="/register" className="btn-ghost">
-            Ready to register?
+          <Link href="/register" className="btn-primary">
+            Register
           </Link>
         </div>
       </div>

@@ -34,8 +34,7 @@ export default function VolunteerPage() {
           <div className="rounded-card border border-line bg-paper p-8">
             <p className="font-body text-base leading-relaxed text-ash">
               Before race day we&apos;re hosting a volunteer info meeting where we&apos;ll go over
-              all assignments, roles, and logistics. Attendance is strongly encouraged — it&apos;s
-              the best way to make sure race day runs smoothly.
+              all assignments, roles, and logistics. Attendance is required — we look forward to seeing you there.
             </p>
             <dl className="mt-6 space-y-3">
               <div className="flex gap-4">

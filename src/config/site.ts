@@ -14,7 +14,7 @@ export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 export const EVENT_NAME          = "Race Against Cancer 2026";
 export const EVENT_DATE_ISO      = "2026-11-07T08:00:00-05:00";
 export const EVENT_DATE_DISPLAY  = "Saturday, November 7, 2026";
-export const HALF_START_TIME     = "TBD";
+export const HALF_START_TIME     = "8:00 AM";
 export const FIVE_K_START_TIME   = "TBD";
 export const EVENT_YEAR          = "2026";
 
@@ -42,9 +42,9 @@ export const REGISTRATION_INCLUDES = [
 ];
 
 // --- PACKET PICKUP ------------------------------------------
-export const PACKET_PICKUP_DATE     = "Details coming soon";
-export const PACKET_PICKUP_TIME     = "";
-export const PACKET_PICKUP_LOCATION = "";
+export const PACKET_PICKUP_DATE     = "Friday, November 6, 2026";
+export const PACKET_PICKUP_TIME     = "3:00 – 5:00 PM";
+export const PACKET_PICKUP_LOCATION = "LaVell Edwards Stadium, BYU Campus";
 
 // --- CONTACT ------------------------------------------------
 export const CONTACT_EMAIL = "[[info@raceagainstcancer.org]]";

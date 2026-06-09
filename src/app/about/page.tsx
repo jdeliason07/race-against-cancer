@@ -101,7 +101,7 @@ export default function AboutPage() {
 
         <div className="pt-4">
           <Link href="/register" className="btn-primary">
-            Register to Run
+            Register
           </Link>
         </div>
       </div>

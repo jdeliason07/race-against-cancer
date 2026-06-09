@@ -50,7 +50,8 @@ export default function RaceDetailsPage() {
                 <dt className="section-label">Start Times</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed">
-                Half Marathon: {HALF_START_TIME}<br />5K: {FIVE_K_START_TIME}
+                Half Marathon: 8:00 AM (Wave 1) · 8:05 (W2) · 8:10 (W3) · 8:15 (W4)<br />
+                5K: {FIVE_K_START_TIME}
               </dd>
             </div>
             <div className="rounded-card border border-line p-6">
@@ -76,10 +77,9 @@ export default function RaceDetailsPage() {
                 <Package size={16} className="text-pink shrink-0" aria-hidden="true" />
                 <dt className="section-label">Packet Pickup</dt>
               </div>
-              <dd className="font-body text-sm text-ink leading-relaxed">
-                {PACKET_PICKUP_DATE}
-                {PACKET_PICKUP_TIME ? `\n${PACKET_PICKUP_TIME}` : ''}
-                {PACKET_PICKUP_LOCATION ? `\n${PACKET_PICKUP_LOCATION}` : ''}
+              <dd className="font-body text-sm text-ink leading-relaxed whitespace-pre-line">
+                {PACKET_PICKUP_DATE}{PACKET_PICKUP_TIME ? `\n${PACKET_PICKUP_TIME}` : ''}{PACKET_PICKUP_LOCATION ? `\n${PACKET_PICKUP_LOCATION}` : ''}
+                {'\n'}Includes: race bib + bandana
               </dd>
             </div>
           </dl>
@@ -106,7 +106,7 @@ export default function RaceDetailsPage() {
             <p>
               After approximately 8 miles, the course threads through north Provo and onto the BYU
               campus perimeter, where the final miles deliver a long, open stretch toward the
-              stadium finish — Y Mountain directly ahead, the crowd growing louder with every step.
+              stadium finish — Y Mountain directly ahead.
             </p>
           </div>
         </section>
@@ -198,7 +198,7 @@ export default function RaceDetailsPage() {
 
         <div className="pt-4">
           <Link href="/register" className="btn-primary">
-            Register Now
+            Register
           </Link>
         </div>
       </div>

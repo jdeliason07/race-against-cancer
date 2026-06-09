@@ -60,10 +60,8 @@ export const SOCIAL_TWITTER   = "[[https://twitter.com/YOURHANDLE]]";
 export const SOCIAL_YOUTUBE   = "[[https://youtube.com/@YOURCHANNEL]]";
 
 // --- SEO ----------------------------------------------------
-// Update SITE_URL when a custom domain is set; used by sitemap, robots, and metadataBase.
-// Note: the Vercel subdomain still carries the old name — update to a custom domain
-// (e.g. raceagainstcancers.org) to reflect the new name in the URL.
-export const SITE_URL         = "https://race-against-cancer.vercel.app";
+// Used by sitemap, robots.txt, metadataBase, and JSON-LD schema.
+export const SITE_URL         = "https://raceagainstcancers.org";
 export const META_DESCRIPTION =
   `Run for a reason. ${EVENT_NAME} — a half marathon & 5K on ${EVENT_DATE_DISPLAY}, benefiting ${CHARITY_NAME}. Register with a $${MIN_DONATION_AMOUNT} minimum donation.`;
 // Replace with a proper 1200×630 OG image before any public sharing

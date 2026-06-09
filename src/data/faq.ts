@@ -30,7 +30,7 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "When and where is check-in?",
-    answer: "Check-in is on race morning — Saturday, November 7, 2026 at 7:00 AM (one hour before the 8:00 AM start). The exact venue in downtown Provo will be announced closer to race day. Your bib and bandana will be available at check-in.",
+    answer: "Check-in is on race morning — Saturday, November 7, 2026 at 7:00 AM (one hour before the 8:00 AM start) in the Canyon Crest Elementary School parking lot at 4664 N Canyon Rd, Provo. Your bib and bandana will be available there.",
   },
   {
     question: "Where does my donation go?",

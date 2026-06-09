@@ -45,7 +45,7 @@ export const FIVE_K_LABEL          = "5K (3.1 mi)";
 // --- CHECK-IN -----------------------------------------------
 export const CHECK_IN_DATE     = "Saturday, November 7, 2026";
 export const CHECK_IN_TIME     = "7:00 AM (1 hour before race start)";
-export const CHECK_IN_LOCATION = "Downtown Provo — exact venue to be announced";
+export const CHECK_IN_LOCATION = "Canyon Crest Elementary School parking lot, 4664 N Canyon Rd, Provo";
 
 // --- CONTACT ------------------------------------------------
 export const CONTACT_EMAIL = "events@raceagainstcancers.org";

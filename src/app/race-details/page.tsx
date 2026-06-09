@@ -152,8 +152,8 @@ export default function RaceDetailsPage() {
               <p className="font-body text-sm font-bold uppercase tracking-widest text-pink mb-2">Getting to the start</p>
               <p className="font-body text-sm text-ash">
                 Because the 10K is point-to-point, runners are responsible for their own
-                transportation to the start line. Plan to arrive at check-in by 7:00 AM — race
-                starts promptly at 8:00 AM.
+                transportation to the start line. Check-in is in the Canyon Crest Elementary
+                School parking lot — plan to arrive by 7:00 AM. Race starts promptly at 8:00 AM.
               </p>
             </div>
           </div>

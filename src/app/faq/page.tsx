@@ -1,7 +1,8 @@
 import { Accordion } from '@/components/ui/Accordion';
 import { faqs } from '@/data/faq';
-import { CONTACT_EMAIL } from '@/config/site';
+import { CONTACT_PHONE } from '@/config/site';
 import Link from 'next/link';
+import { Phone } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -23,15 +24,16 @@ export default function FAQPage() {
         <Accordion items={faqs} />
 
         <div className="mt-16 rounded-card bg-blush p-8 text-center border border-petal">
-          <h2 className="font-display text-2xl uppercase text-ink mb-3">Still have a question?</h2>
+          <h2 className="font-display text-2xl uppercase text-ink mb-3">Please reach out</h2>
           <p className="font-body text-sm text-ash mb-6">
-            We&apos;re here. Reach out and we&apos;ll get back to you.
+            We&apos;re here to help. Give us a call or text.
           </p>
-          {CONTACT_EMAIL && !CONTACT_EMAIL.includes('[[') && (
-            <a href={`mailto:${CONTACT_EMAIL}`} className="btn-primary">
-              Email Us
-            </a>
-          )}
+          <a
+            href={`tel:${CONTACT_PHONE.replace(/-/g, '')}`}
+            className="btn-primary inline-flex items-center gap-2"
+          >
+            <Phone size={16} /> {CONTACT_PHONE}
+          </a>
         </div>
 
         <div className="mt-8 text-center">

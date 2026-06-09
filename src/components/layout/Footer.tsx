@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import {
-  CONTACT_EMAIL, SOCIAL_INSTAGRAM, SOCIAL_FACEBOOK,
-  SOCIAL_TWITTER, SOCIAL_YOUTUBE, CHARITY_NAME, EVENT_YEAR
+  SOCIAL_INSTAGRAM, SOCIAL_FACEBOOK,
+  SOCIAL_TWITTER, SOCIAL_YOUTUBE, CHARITY_NAME, EVENT_YEAR, CONTACT_PHONE
 } from '@/config/site';
-import { Mail } from 'lucide-react';
+import { Phone } from 'lucide-react';
 
 function IconInstagram({ size = 18 }: { size?: number }) {
   return (
@@ -57,15 +57,15 @@ export function Footer() {
           <p className="font-body text-xs text-white/40 tracking-widest uppercase">
             Benefiting {CHARITY_NAME}
           </p>
-          <nav className="flex items-center gap-5" aria-label="Footer navigation">
-            <Link href="/course" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Course</Link>
-            <Link href="/about" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">About</Link>
+          <nav className="flex flex-wrap items-center justify-center gap-5" aria-label="Footer navigation">
+            <Link href="/register" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Register</Link>
+            <Link href="/race-details" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Race Details</Link>
+            <Link href="/volunteer" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Volunteer</Link>
             <Link href="/faq" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">FAQ</Link>
-            {CONTACT_EMAIL && !CONTACT_EMAIL.includes('[[') && (
-              <a href={`mailto:${CONTACT_EMAIL}`} className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest flex items-center gap-1">
-                <Mail size={13} /> Contact
-              </a>
-            )}
+            <Link href="/about" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">About</Link>
+            <a href={`tel:${CONTACT_PHONE.replace(/-/g, '')}`} className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest flex items-center gap-1">
+              <Phone size={13} /> {CONTACT_PHONE}
+            </a>
           </nav>
           <div className="flex items-center gap-4">
             {SOCIAL_INSTAGRAM && !SOCIAL_INSTAGRAM.includes('[[') && (

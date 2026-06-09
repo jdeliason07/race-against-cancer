@@ -19,8 +19,8 @@ export const FIVE_K_START_TIME   = "TBD";
 export const EVENT_YEAR          = "2026";
 
 // --- LOCATION -----------------------------------------------
-export const EVENT_LOCATION_NAME    = "Provo Canyon";
-export const EVENT_LOCATION_ADDRESS = "Provo Canyon, UT";
+export const EVENT_LOCATION_NAME    = "Utah Lake State Park";
+export const EVENT_LOCATION_ADDRESS = "4400 W Center St, Provo, UT 84601";
 export const EVENT_LOCATION_MAPS_URL = "[[GOOGLE MAPS LINK]]";
 export const EVENT_COURSE_MAP_URL    = "[[COURSE MAP IMAGE OR LINK]]";
 export const COURSE_GPX_URL          = "/course.gpx";
@@ -48,6 +48,8 @@ export const PACKET_PICKUP_LOCATION = "";
 
 // --- CONTACT ------------------------------------------------
 export const CONTACT_EMAIL = "[[info@raceagainstcancer.org]]";
+export const CONTACT_PHONE = "858-774-2699";
+export const VOLUNTEER_FORM_URL = "[[REPLACE: Google Form URL for volunteer sign-up]]";
 
 // --- SOCIAL LINKS -------------------------------------------
 // Set to "" to hide that icon in the footer

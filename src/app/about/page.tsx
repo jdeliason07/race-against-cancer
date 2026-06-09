@@ -21,15 +21,13 @@ export default function AboutPage() {
       <div className="mx-auto max-w-3xl space-y-16 px-6 py-20">
         <section>
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">Why this exists</h2>
-          <p className="mb-4 font-body text-base leading-relaxed text-ash">
-            Cancer touches everyone. Race Against Cancer 2026 was built to turn that grief, that
-            anger, and that love into something that moves — literally. Every person who lines up
-            at the start is running for someone.
-          </p>
           <p className="font-body text-base leading-relaxed text-ash">
-            This isn&apos;t a race with a charity attached. The race is the donation. Every
-            registration, every dollar, goes directly to the cause. More details about our story
-            coming soon.
+            This all began one late, late night when some friends were talking. We talked about how
+            grateful we are for all of our blessings and how there must be a way we can give back.
+            Out of those ideas came this race. We just want to do something to help someone else
+            because we are aware of all that others have done for us. After talking with other
+            friends our excitement grew and decided to give this our best. Thank you for helping us
+            reach our goal to help someone else.
           </p>
         </section>
 

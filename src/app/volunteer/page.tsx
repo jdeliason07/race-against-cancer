@@ -1,5 +1,4 @@
-import { CONTACT_EMAIL, EVENT_DATE_DISPLAY } from '@/config/site';
-import { Mail } from 'lucide-react';
+import { VOLUNTEER_FORM_URL, EVENT_DATE_DISPLAY } from '@/config/site';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -8,6 +7,8 @@ export const metadata: Metadata = {
 };
 
 export default function VolunteerPage() {
+  const formReady = VOLUNTEER_FORM_URL && !VOLUNTEER_FORM_URL.includes('[[');
+
   return (
     <div className="bg-paper">
       {/* Hero */}
@@ -19,37 +20,36 @@ export default function VolunteerPage() {
           </h1>
           <p className="mx-auto mt-6 max-w-2xl font-body text-lg text-ash">
             You don&apos;t have to run to make race day happen. Volunteers are the engine behind
-            every aid station, every cheering section, and every medal placed around a
-            finisher&apos;s neck.
+            every aid station, every cheering section, and everything that makes this event go.
           </p>
         </div>
       </section>
 
-      <div className="mx-auto max-w-4xl px-6 py-20">
+      <div className="mx-auto max-w-3xl px-6 py-20 space-y-16">
 
-        {/* What to expect */}
-        <section className="mb-16">
-          <h2 className="mb-6 font-display text-3xl uppercase text-ink">What to expect</h2>
-          <div className="grid gap-6 sm:grid-cols-3">
-            {[
-              {
-                heading: 'When',
-                body: 'Race morning — Saturday, November 7, 2026. Additional shifts may be available the day before for packet pickup.',
-              },
-              {
-                heading: 'Where',
-                body: 'Provo Canyon, UT. Specific station assignments will be shared with confirmed volunteers ahead of race day.',
-              },
-              {
-                heading: 'What you get',
-                body: 'Post-race food, the satisfaction of making a real difference, and a front-row seat to something worth being part of.',
-              },
-            ].map((item) => (
-              <div key={item.heading} className="rounded-card border border-line bg-paper p-6">
-                <h3 className="mb-3 font-display text-xl uppercase text-ink">{item.heading}</h3>
-                <p className="font-body text-sm leading-relaxed text-ash">{item.body}</p>
+        {/* Volunteer info meeting */}
+        <section>
+          <h2 className="mb-6 font-display text-3xl uppercase text-ink">Volunteer Info Meeting</h2>
+          <div className="rounded-card border border-line bg-paper p-8">
+            <p className="font-body text-base leading-relaxed text-ash">
+              Before race day we&apos;re hosting a volunteer info meeting where we&apos;ll go over
+              all assignments, roles, and logistics. Attendance is strongly encouraged — it&apos;s
+              the best way to make sure race day runs smoothly.
+            </p>
+            <dl className="mt-6 space-y-3">
+              <div className="flex gap-4">
+                <dt className="w-20 shrink-0 font-body text-xs font-bold uppercase tracking-widest text-ash">Date</dt>
+                <dd className="font-body text-sm text-ink">Friday, November 6, 2026</dd>
               </div>
-            ))}
+              <div className="flex gap-4">
+                <dt className="w-20 shrink-0 font-body text-xs font-bold uppercase tracking-widest text-ash">Time</dt>
+                <dd className="font-body text-sm text-ink">10:00 AM</dd>
+              </div>
+              <div className="flex gap-4">
+                <dt className="w-20 shrink-0 font-body text-xs font-bold uppercase tracking-widest text-ash">Location</dt>
+                <dd className="font-body text-sm text-ink">Details coming soon</dd>
+              </div>
+            </dl>
           </div>
         </section>
 
@@ -59,19 +59,22 @@ export default function VolunteerPage() {
             Ready to volunteer?
           </h2>
           <p className="mx-auto mb-8 max-w-lg font-body text-sm text-white/60">
-            Send us an email and we&apos;ll get back to you with available roles and next steps.
+            Fill out the volunteer form below. We&apos;ll collect your name, phone number,
+            availability, and preferred shifts (Friday afternoon, Saturday morning, Saturday
+            afternoon, or any combination).
           </p>
-          {CONTACT_EMAIL && !CONTACT_EMAIL.includes('[[') ? (
+          {formReady ? (
             <a
-              href={`mailto:${CONTACT_EMAIL}?subject=Volunteer Interest — Race Against Cancer 2026`}
+              href={VOLUNTEER_FORM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn-primary"
             >
-              <Mail size={16} />
-              Email Us to Volunteer
+              Fill Out Volunteer Form
             </a>
           ) : (
             <p className="font-body text-sm text-white/40">
-              [[Set CONTACT_EMAIL in src/config/site.ts to enable this button]]
+              Volunteer sign-up form coming soon.
             </p>
           )}
         </section>

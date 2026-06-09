@@ -17,12 +17,8 @@ export const faqs: FAQItem[] = [
     answer: "The half marathon is 13.1 miles; the 5K is 3.1 miles. Both events start on the same morning and follow the same registration process. Choose whichever distance fits your training and goals.",
   },
   {
-    question: "Can I walk the 5K?",
-    answer: "Absolutely. The 5K is open to walkers of all paces. Come at whatever speed you can.",
-  },
-  {
     question: "What's included with registration?",
-    answer: "Every registered participant receives a race bib, finisher medal, and post-race refreshments. Details confirmed closer to race day.",
+    answer: "Every registered participant receives a race bib and a complimentary bandana. Details confirmed closer to race day.",
   },
   {
     question: "What is the refund policy?",
@@ -38,18 +34,10 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "Is this a timed race?",
-    answer: "Timing details will be confirmed closer to race day. Stay tuned for updates.",
-  },
-  {
-    question: "What should I expect on race day?",
-    answer: "Arrive early to check in and pick up your bib. Both races start from the same location in Provo Canyon. There will be aid stations along the course, a finish line celebration, and post-race refreshments.",
+    answer: "Yes — we have timers at the start and finish line. That said, the heart of this event is pushing yourself and giving to something bigger. It's not about winning or competing; it's about showing up.",
   },
   {
     question: "I can't run but I want to support. Can I just donate?",
-    answer: "Yes — please do. Contact us directly and we'll point you in the right direction. No registration required.",
-  },
-  {
-    question: "How do I volunteer?",
-    answer: "Volunteer sign-ups will open closer to race day. If you're interested, send us an email and we'll reach out when spots are available.",
+    answer: "Absolutely, and we would love for you to still come pick up a packet with your complimentary bandana and support other racers if you'd like.",
   },
 ];

@@ -64,7 +64,7 @@ export default async function HomePage() {
               {
                 step: '01',
                 heading: 'Choose your distance',
-                body: `Run the ${HALF_MARATHON_LABEL} or the ${FIVE_K_LABEL} — walkers welcome in the 5K.`,
+                body: `Run or walk the ${HALF_MARATHON_LABEL} or the ${FIVE_K_LABEL} — all paces and abilities welcome.`,
               },
               {
                 step: '02',
@@ -74,7 +74,7 @@ export default async function HomePage() {
               {
                 step: '03',
                 heading: 'Show up November 7',
-                body: `Race day is ${EVENT_DATE_DISPLAY}. You'll get a bib and finisher medal — and you'll have run for something real.`,
+                body: `Race day is ${EVENT_DATE_DISPLAY}. Lace up, show up, and run for something real.`,
               },
             ].map((item) => (
               <div key={item.step} className="rounded-card border border-petal bg-paper p-8">
@@ -153,31 +153,12 @@ export default async function HomePage() {
 
           <div className="mt-10">
             <Link href="/register" className="btn-primary px-10 py-5 text-base">
-              Register to Give
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA STRIP */}
-      <section className="bg-pink py-16">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <h2 className="font-display text-4xl uppercase text-white md:text-6xl">
-            Ready to show up?
-          </h2>
-          <p className="mt-4 font-body text-sm text-white/75">
-            {EVENT_DATE_DISPLAY} · {EVENT_LOCATION_NAME}
-          </p>
-          <div className="mt-8">
-            <Link
-              href="/register"
-              className="rounded-pill bg-white px-10 py-5 font-body text-base font-bold uppercase tracking-widest text-pink shadow-lg transition-colors hover:bg-blush"
-            >
               Register
             </Link>
           </div>
         </div>
       </section>
+
     </>
   );
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { CONTACT_PHONE, EVENT_YEAR, CHARITY_NAME, ORG_NAME } from '@/config/site';
+import { CONTACT_PHONE, CONTACT_EMAIL, EVENT_YEAR, CHARITY_NAME, ORG_NAME } from '@/config/site';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
@@ -117,12 +117,20 @@ export default function PrivacyPage() {
           <p className="font-body text-base leading-relaxed text-ash mb-4">
             Questions about this privacy policy or your data? Reach us at:
           </p>
-          <a
-            href={`tel:${CONTACT_PHONE.replace(/-/g, '')}`}
-            className="font-body text-sm font-bold uppercase tracking-widest text-pink hover:text-raspberry transition-colors"
-          >
-            {CONTACT_PHONE}
-          </a>
+          <div className="flex flex-col gap-2">
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="font-body text-sm font-bold uppercase tracking-widest text-pink hover:text-raspberry transition-colors"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            <a
+              href={`tel:${CONTACT_PHONE.replace(/-/g, '')}`}
+              className="font-body text-sm font-bold uppercase tracking-widest text-pink hover:text-raspberry transition-colors"
+            >
+              {CONTACT_PHONE}
+            </a>
+          </div>
         </section>
 
         <p className="font-body text-xs text-ash border-t border-line pt-8">

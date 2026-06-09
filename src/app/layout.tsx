@@ -4,7 +4,7 @@ import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import {
-  EVENT_NAME, META_DESCRIPTION, SITE_URL, OG_IMAGE_PATH
+  EVENT_NAME, META_DESCRIPTION, SITE_URL,
 } from '@/config/site';
 
 const anton = Anton({
@@ -29,14 +29,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: EVENT_NAME,
     description: META_DESCRIPTION,
-    images: [OG_IMAGE_PATH],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: EVENT_NAME,
     description: META_DESCRIPTION,
-    images: [OG_IMAGE_PATH],
   },
 };
 

@@ -49,7 +49,7 @@ export const CHECK_IN_TIME     = "7:00 AM (1 hour before race start)";
 export const CHECK_IN_LOCATION = "Downtown Provo — exact venue to be announced";
 
 // --- CONTACT ------------------------------------------------
-export const CONTACT_EMAIL = "[[info@raceagainstcancers.org]]";
+export const CONTACT_EMAIL = "events@raceagainstcancers.org";
 export const CONTACT_PHONE = "858-774-2699";
 export const VOLUNTEER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScX-3U-iBEHY7YoIp1Htsdfz-NnOafxxGssKFWVrKnv7hDumQ/viewform";
 

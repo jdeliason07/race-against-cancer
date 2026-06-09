@@ -25,11 +25,9 @@ export const EVENT_LOCATION_NAME     = "N Canyon Road, Provo";        // 10K sta
 export const EVENT_LOCATION_ADDRESS  = "4664 N Canyon Rd, Provo, UT 84604"; // in front of Canyon Crest Elementary
 export const FINISH_LOCATION_NAME    = "University Ave & Center St";   // 10K finish
 export const FINISH_LOCATION_ADDRESS = "University Ave & Center St, Provo, UT 84601";
-// 5K: loop — starts and finishes at Riverwoods (no shuttle needed)
+// 5K: loop — starts and finishes at Riverwoods
 export const FIVE_K_LOCATION_NAME    = "Riverwoods Shopping Center";
 export const FIVE_K_LOCATION_ADDRESS = "4931 N 300 W, Provo, UT 84604";
-// Shuttle: 10K runners bus from Provo Towne Centre Mall to the start
-export const SHUTTLE_LOCATION        = "Provo Towne Centre Mall, 1200 Towne Centre Blvd, Provo, UT 84601";
 // Set to "" until an official GPS recording of the 10K course exists —
 // the race-details page automatically shows "GPX Coming Soon" when empty.
 export const COURSE_GPX_URL          = "";

@@ -420,7 +420,7 @@ function StepAthleteInfo({
             Race Against Cancers Inc., its officers, directors, employees, agents, and volunteers;
             Huntsman Cancer Institute; all sponsors and co-sponsors of the Event; Provo City, Utah
             County, the State of Utah, and any other municipality or government agency whose property
-            and/or personnel are used in connection with the Event; and all shuttle, timing, and
+            and/or personnel are used in connection with the Event; and all timing, logistics, and
             other vendors providing services to the Event (collectively, the &ldquo;Releasees&rdquo;)
             from any and all liability, claims, demands, losses, or damages on account of injury to
             the Athlete or the Athlete&rsquo;s property, or resulting in the death of the Athlete,
@@ -432,7 +432,7 @@ function StepAthleteInfo({
             to safely participate in the Event. The Athlete is fully aware of the risks and hazards
             inherent in running a road race, including, without limitation: falls; contact with other
             participants, spectators, or vehicles; the condition of the road and course;
-            transportation to the start area by shuttle; and weather conditions such as heat, cold,
+            transportation to and from the event; and weather conditions such as heat, cold,
             wind, rain, snow, or ice. The Athlete voluntarily elects to participate knowing these
             risks and hereby assumes all risk of loss, damage, or injury that may be sustained while
             participating in the Event. The Athlete authorizes Event personnel to obtain or provide

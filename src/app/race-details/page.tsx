@@ -3,11 +3,10 @@ import {
   EVENT_LOCATION_ADDRESS, EVENT_DATE_ISO,
   FINISH_LOCATION_NAME, FINISH_LOCATION_ADDRESS,
   FIVE_K_LOCATION_NAME, FIVE_K_LOCATION_ADDRESS,
-  SHUTTLE_LOCATION,
   CHECK_IN_DATE, CHECK_IN_TIME, CHECK_IN_LOCATION,
   COURSE_GPX_URL, SITE_URL, ORG_NAME,
 } from '@/config/site';
-import { MapPin, Clock, Package, Download, Flag, Bus } from 'lucide-react';
+import { MapPin, Clock, Package, Download, Flag } from 'lucide-react';
 import Link from 'next/link';
 import { CourseMapSection, ElevationChartSection } from '@/components/course/CourseClientSections';
 import type { Metadata } from 'next';
@@ -115,17 +114,6 @@ export default function RaceDetailsPage() {
 
             <div className="rounded-card border border-line p-6">
               <div className="mb-2 flex items-center gap-2">
-                <Bus size={16} className="text-pink shrink-0" aria-hidden="true" />
-                <dt className="section-label">10K Shuttle</dt>
-              </div>
-              <dd className="font-body text-sm text-ink leading-relaxed">
-                Free shuttle to the 10K start<br />
-                <span className="text-ash text-xs">{SHUTTLE_LOCATION}</span>
-              </dd>
-            </div>
-
-            <div className="rounded-card border border-line p-6">
-              <div className="mb-2 flex items-center gap-2">
                 <Package size={16} className="text-pink shrink-0" aria-hidden="true" />
                 <dt className="section-label">Check-In</dt>
               </div>
@@ -161,12 +149,11 @@ export default function RaceDetailsPage() {
               into the heart of downtown.
             </p>
             <div className="rounded-card border border-petal bg-blush p-5 mt-4">
-              <p className="font-body text-sm font-bold uppercase tracking-widest text-pink mb-2">Shuttle required — 10K</p>
+              <p className="font-body text-sm font-bold uppercase tracking-widest text-pink mb-2">Getting to the start</p>
               <p className="font-body text-sm text-ash">
-                Because the 10K is point-to-point, a free shuttle takes runners from the finish
-                area to the start. Buses depart from <strong className="text-ink">Provo Towne Centre Mall</strong> and
-                run from 5:15 to 6:10 AM. Plan to arrive by 5:00 AM — no personal vehicles are
-                allowed at the start line, and the shuttle schedule is fixed.
+                Because the 10K is point-to-point, runners are responsible for their own
+                transportation to the start line. Plan to arrive at check-in by 7:00 AM — race
+                starts promptly at 8:00 AM.
               </p>
             </div>
           </div>
@@ -178,8 +165,8 @@ export default function RaceDetailsPage() {
           <div className="space-y-4 font-body text-base leading-relaxed text-ash">
             <p>
               The 5K is a flat, out-and-back loop starting and finishing at the Riverwoods
-              Shopping Center (Vivint Corporate Offices, 4931 N 300 W, Provo). No shuttle is
-              required — parking is available in the UCCU Credit Union lot at 360 W 4800 N.
+              Shopping Center (Vivint Corporate Offices, 4931 N 300 W, Provo). Parking is
+              available in the UCCU Credit Union lot at 360 W 4800 N.
             </p>
             <p>
               The course winds through the Riverwoods complex and onto the paved Provo River Trail,

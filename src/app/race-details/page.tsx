@@ -1,6 +1,6 @@
 import {
   EVENT_NAME, EVENT_DATE_DISPLAY, TEN_K_START_TIME, FIVE_K_START_TIME,
-  EVENT_LOCATION_ADDRESS, EVENT_DATE_ISO,
+  EVENT_LOCATION_NAME, EVENT_LOCATION_ADDRESS, EVENT_DATE_ISO,
   FINISH_LOCATION_NAME, FINISH_LOCATION_ADDRESS,
   FIVE_K_LOCATION_NAME, FIVE_K_LOCATION_ADDRESS,
   CHECK_IN_DATE, CHECK_IN_TIME, CHECK_IN_LOCATION,
@@ -45,7 +45,7 @@ const waves = [
 const aidStations = [
   { mile: 'Mile 2',    supplies: 'Water + sports drink' },
   { mile: 'Mile 4',    supplies: 'Water + sports drink' },
-  { mile: 'Finish',    supplies: 'Full recovery station — water, sports drink, and food' },
+  { mile: 'Finish',    supplies: 'Full recovery station — water and sports drink' },
 ];
 
 export default function RaceDetailsPage() {
@@ -85,7 +85,7 @@ export default function RaceDetailsPage() {
                 <dt className="section-label">10K Start</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed">
-                N Canyon Road, Provo<br />
+                {EVENT_LOCATION_NAME}<br />
                 <span className="text-ash text-xs">{EVENT_LOCATION_ADDRESS}</span>
               </dd>
             </div>
@@ -135,7 +135,7 @@ export default function RaceDetailsPage() {
               course, it is one of the cleanest and most runnable 10K routes in the state.
             </p>
             <p>
-              Runners start on North Canyon Road in front of Canyon Crest Elementary, at an
+              Runners start on North Canyon Road in front of Canyon Crest Elementary School, at an
               elevation of approximately 4,850 feet, and head north toward the mouth of Provo
               Canyon with the canyon walls rising ahead. At the canyon mouth the course makes
               its single left turn onto University Avenue (US-189) and follows it straight

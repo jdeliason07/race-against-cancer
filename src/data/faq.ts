@@ -14,11 +14,11 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "What's the difference between the 10K and the 5K?",
-    answer: "The 10K is 6.2 miles and follows a point-to-point, predominantly downhill route: it starts in front of Canyon Crest Elementary on N Canyon Road, runs to the mouth of Provo Canyon, then makes its single turn onto University Avenue and heads straight to the finish at Center Street in downtown Provo. The 5K is 3.1 miles and is a flat loop starting and finishing at the Riverwoods Shopping Center. Both events take place on November 7, 2026.",
+    answer: "The 10K is 6.2 miles and follows a point-to-point, predominantly downhill route: it starts in front of Canyon Crest Elementary School on N Canyon Road, runs to the mouth of Provo Canyon, then makes its single turn onto University Avenue and heads straight to the finish at Center Street in downtown Provo. The 5K is 3.1 miles and is a flat loop starting and finishing at the Riverwoods Shopping Center. Both events take place on November 7, 2026.",
   },
   {
     question: "How do I get to the 10K start line?",
-    answer: "Because the 10K is point-to-point, runners are responsible for their own transportation to the start line at Canyon Crest Elementary (4664 N Canyon Rd, Provo). Plan to arrive at check-in by 7:00 AM — the race starts promptly at 8:00 AM.",
+    answer: "Because the 10K is point-to-point, runners are responsible for their own transportation to the start line at Canyon Crest Elementary School (4664 N Canyon Rd, Provo). Plan to arrive at check-in by 7:00 AM — the race starts promptly at 8:00 AM.",
   },
   {
     question: "What's included with registration?",

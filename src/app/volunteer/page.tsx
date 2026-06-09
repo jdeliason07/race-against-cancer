@@ -8,6 +8,7 @@ export const metadata: Metadata = {
 
 export default function VolunteerPage() {
   const formReady = VOLUNTEER_FORM_URL && !VOLUNTEER_FORM_URL.includes('[[');
+  const embedUrl = formReady ? `${VOLUNTEER_FORM_URL}?embedded=true` : null;
 
   return (
     <div className="bg-paper">
@@ -53,29 +54,28 @@ export default function VolunteerPage() {
           </div>
         </section>
 
-        {/* Sign-up CTA */}
-        <section className="rounded-card bg-ink p-12 text-center">
-          <h2 className="mb-4 font-display text-3xl uppercase text-white">
-            Ready to volunteer?
-          </h2>
-          <p className="mx-auto mb-8 max-w-lg font-body text-sm text-white/60">
-            Fill out the volunteer form below. We&apos;ll collect your name, phone number,
-            availability, and preferred shifts (Friday afternoon, Saturday morning, Saturday
-            afternoon, or any combination).
-          </p>
-          {formReady ? (
-            <a
-              href={VOLUNTEER_FORM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary"
-            >
-              Fill Out Volunteer Form
-            </a>
+        {/* Embedded form */}
+        <section>
+          <h2 className="mb-6 font-display text-3xl uppercase text-ink">Sign Up to Volunteer</h2>
+          {embedUrl ? (
+            <div className="rounded-card border border-line overflow-hidden">
+              <iframe
+                src={embedUrl}
+                width="100%"
+                height="800"
+                frameBorder="0"
+                marginHeight={0}
+                marginWidth={0}
+                title="Volunteer Sign-Up Form"
+                className="block"
+              >
+                Loading…
+              </iframe>
+            </div>
           ) : (
-            <p className="font-body text-sm text-white/40">
-              Volunteer sign-up form coming soon.
-            </p>
+            <div className="flex h-40 items-center justify-center rounded-card border-2 border-dashed border-petal bg-mist">
+              <p className="font-body text-sm text-ash">Volunteer sign-up form coming soon.</p>
+            </div>
           )}
         </section>
 

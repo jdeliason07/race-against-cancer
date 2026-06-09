@@ -35,7 +35,6 @@ export const COURSE_GPX_URL          = "";
 // --- PLATFORM LINKS -----------------------------------------
 // Paste RunSignup or GiveButter URLs here — every button on the site points here
 export const REGISTRATION_URL = "[[REPLACE: registration platform URL (RunSignup/GiveButter)]]";
-export const DONATION_URL     = "[[REPLACE: donation platform URL (RunSignup/GiveButter)]]";
 
 // --- REGISTRATION -------------------------------------------
 export const MIN_DONATION_AMOUNT   = 99; // 10K minimum — canonical number

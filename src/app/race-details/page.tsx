@@ -1,10 +1,13 @@
 import {
-  EVENT_NAME, EVENT_DATE_DISPLAY, HALF_START_TIME, FIVE_K_START_TIME,
+  EVENT_NAME, EVENT_DATE_DISPLAY, TEN_K_START_TIME, FIVE_K_START_TIME,
   EVENT_LOCATION_ADDRESS, EVENT_DATE_ISO,
+  FINISH_LOCATION_NAME, FINISH_LOCATION_ADDRESS,
+  FIVE_K_LOCATION_NAME, FIVE_K_LOCATION_ADDRESS,
+  SHUTTLE_LOCATION,
   PACKET_PICKUP_DATE, PACKET_PICKUP_TIME, PACKET_PICKUP_LOCATION,
-  COURSE_GPX_URL, SITE_URL,
+  COURSE_GPX_URL, SITE_URL, ORG_NAME,
 } from '@/config/site';
-import { MapPin, Clock, Package, Download, Flag } from 'lucide-react';
+import { MapPin, Clock, Package, Download, Flag, Bus } from 'lucide-react';
 import Link from 'next/link';
 import { CourseMapSection, ElevationChartSection } from '@/components/course/CourseClientSections';
 import type { Metadata } from 'next';
@@ -14,21 +17,6 @@ export const metadata: Metadata = {
   description: `Course info, start times, packet pickup, and logistics for Race Against Cancers 2026 on ${EVENT_DATE_DISPLAY}.`,
 };
 
-const waves = [
-  { wave: 'Wave 1', time: '8:00 AM', pace: 'Sub-9:00 min/mile' },
-  { wave: 'Wave 2', time: '8:05 AM', pace: '9:00–11:00 min/mile' },
-  { wave: 'Wave 3', time: '8:10 AM', pace: '11:00–13:00 min/mile' },
-  { wave: 'Wave 4', time: '8:15 AM', pace: '13:00+ min/mile / run-walkers' },
-];
-
-const aidStations = [
-  { mile: 'Mile 3',    supplies: 'Water + electrolytes' },
-  { mile: 'Mile 6',    supplies: 'Water + electrolytes' },
-  { mile: 'Mile 9',    supplies: 'Water + electrolytes' },
-  { mile: 'Mile 11.5', supplies: 'Water + electrolytes' },
-  { mile: 'Finish',    supplies: 'Full recovery station — water and food' },
-];
-
 const courseJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SportsEvent',
@@ -36,17 +24,30 @@ const courseJsonLd = {
   startDate: EVENT_DATE_ISO,
   location: {
     '@type': 'Place',
-    name: 'Utah Lake State Park',
+    name: FINISH_LOCATION_NAME,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: EVENT_LOCATION_ADDRESS,
+      streetAddress: FINISH_LOCATION_ADDRESS,
       addressLocality: 'Provo',
       addressRegion: 'UT',
       addressCountry: 'US',
     },
   },
+  organizer: { '@type': 'Organization', name: ORG_NAME },
   url: `${SITE_URL}/race-details`,
 };
+
+const waves = [
+  { wave: 'Wave 1', time: '7:00 AM', pace: 'Sub-8:00 min/mile' },
+  { wave: 'Wave 2', time: '7:05 AM', pace: '8:00–10:00 min/mile' },
+  { wave: 'Wave 3', time: '7:10 AM', pace: '10:00+ min/mile / run-walkers' },
+];
+
+const aidStations = [
+  { mile: 'Mile 2',    supplies: 'Water + sports drink' },
+  { mile: 'Mile 4',    supplies: 'Water + sports drink' },
+  { mile: 'Finish',    supplies: 'Full recovery station — water, sports drink, and food' },
+];
 
 export default function RaceDetailsPage() {
   return (
@@ -55,6 +56,7 @@ export default function RaceDetailsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}
       />
+
       <section className="bg-mist py-20 border-b border-line">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <p className="section-label mb-4">{EVENT_DATE_DISPLAY}</p>
@@ -73,28 +75,55 @@ export default function RaceDetailsPage() {
                 <dt className="section-label">Start Times</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed">
-                Half Marathon: 8:00 AM (Wave 1) · 8:05 (W2) · 8:10 (W3) · 8:15 (W4)<br />
+                10K: {TEN_K_START_TIME}<br />
                 5K: {FIVE_K_START_TIME}
               </dd>
             </div>
+
             <div className="rounded-card border border-line p-6">
               <div className="mb-2 flex items-center gap-2">
                 <MapPin size={16} className="text-pink shrink-0" aria-hidden="true" />
-                <dt className="section-label">Start Location</dt>
+                <dt className="section-label">10K Start</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed">
-                Utah Lake State Park<br />{EVENT_LOCATION_ADDRESS}
+                N Canyon Road, Provo<br />
+                <span className="text-ash text-xs">{EVENT_LOCATION_ADDRESS}</span>
               </dd>
             </div>
+
             <div className="rounded-card border border-line p-6">
               <div className="mb-2 flex items-center gap-2">
                 <Flag size={16} className="text-pink shrink-0" aria-hidden="true" />
-                <dt className="section-label">Finish Location</dt>
+                <dt className="section-label">Finish Line</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed">
-                LaVell Edwards Stadium<br />BYU Campus, Provo, UT
+                {FINISH_LOCATION_NAME}<br />
+                <span className="text-ash text-xs">{FINISH_LOCATION_ADDRESS}</span>
               </dd>
             </div>
+
+            <div className="rounded-card border border-line p-6">
+              <div className="mb-2 flex items-center gap-2">
+                <MapPin size={16} className="text-pink shrink-0" aria-hidden="true" />
+                <dt className="section-label">5K Start & Finish</dt>
+              </div>
+              <dd className="font-body text-sm text-ink leading-relaxed">
+                {FIVE_K_LOCATION_NAME}<br />
+                <span className="text-ash text-xs">{FIVE_K_LOCATION_ADDRESS}</span>
+              </dd>
+            </div>
+
+            <div className="rounded-card border border-line p-6">
+              <div className="mb-2 flex items-center gap-2">
+                <Bus size={16} className="text-pink shrink-0" aria-hidden="true" />
+                <dt className="section-label">10K Shuttle</dt>
+              </div>
+              <dd className="font-body text-sm text-ink leading-relaxed">
+                Free shuttle to the 10K start<br />
+                <span className="text-ash text-xs">{SHUTTLE_LOCATION}</span>
+              </dd>
+            </div>
+
             <div className="rounded-card border border-line p-6">
               <div className="mb-2 flex items-center gap-2">
                 <Package size={16} className="text-pink shrink-0" aria-hidden="true" />
@@ -108,41 +137,65 @@ export default function RaceDetailsPage() {
           </dl>
         </section>
 
-        {/* The Route */}
+        {/* 10K Route */}
         <section>
-          <h2 className="mb-6 font-display text-3xl uppercase text-ink">The Route</h2>
+          <h2 className="mb-6 font-display text-3xl uppercase text-ink">The 10K Course</h2>
           <div className="space-y-4 font-body text-base leading-relaxed text-ash">
             <p>
-              Race Against Cancers follows the Provo River Parkway — one of Utah Valley&rsquo;s
-              most beloved multi-use trails — for the majority of its 13.1 miles. The course is
-              nearly flat throughout, making it accessible to first-time half marathoners while
-              rewarding experienced runners with a fast, PR-friendly surface.
+              The 10K is a point-to-point, predominantly downhill course that drops approximately
+              284 feet over 6.2 miles through Provo, Utah. With only one turn on the entire
+              course, it is one of the cleanest and most runnable 10K routes in the state.
             </p>
             <p>
-              The race departs Utah Lake State Park and immediately picks up the paved Parkway
-              trail, winding northeast through cottonwood groves and riverside parks as the river
-              narrows and the Wasatch Mountains fill the horizon ahead. Through the heart of
-              Provo, the trail passes through a corridor of neighborhood parks and green space,
-              largely shielded from traffic, with mountain views opening and closing through the
-              tree canopy.
+              Runners start on North Canyon Road near the mouth of Provo Canyon, at an elevation
+              of approximately 4,788 feet. From there the course makes a single left turn onto
+              University Avenue (US-189) and follows it straight south through Provo. The
+              consistent, gentle downhill grade makes this course fast for all paces.
             </p>
             <p>
-              After approximately 8 miles, the course threads through north Provo and onto the BYU
-              campus perimeter, where the final miles deliver a long, open stretch toward the
-              stadium finish — Y Mountain directly ahead.
+              The finish line sits at the intersection of University Avenue and Center Street in
+              downtown Provo, in front of the Utah County Courthouse, at an elevation of
+              4,504 feet. The final stretch is lined with spectators as runners pour into
+              the heart of downtown.
+            </p>
+            <div className="rounded-card border border-petal bg-blush p-5 mt-4">
+              <p className="font-body text-sm font-bold uppercase tracking-widest text-pink mb-2">Shuttle required — 10K</p>
+              <p className="font-body text-sm text-ash">
+                Because the 10K is point-to-point, a free shuttle takes runners from the finish
+                area to the start. Buses depart from <strong className="text-ink">Provo Towne Centre Mall</strong> beginning
+                at approximately 5:15 AM. Plan to arrive by 5:00 AM. Do not be late — the shuttle
+                schedule is fixed.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* 5K Route */}
+        <section>
+          <h2 className="mb-6 font-display text-3xl uppercase text-ink">The 5K Course</h2>
+          <div className="space-y-4 font-body text-base leading-relaxed text-ash">
+            <p>
+              The 5K is a flat, out-and-back loop starting and finishing at the Riverwoods
+              Shopping Center (Vivint Corporate Offices, 4931 N 300 W, Provo). No shuttle is
+              required — parking is available in the UCCU Credit Union lot at 360 W 4800 N.
+            </p>
+            <p>
+              The course winds through the Riverwoods complex and onto the paved Provo River Trail,
+              following the river south before looping back through the neighborhood to the finish.
+              Net elevation change is essentially zero — a fast, flat course suitable for all levels.
             </p>
           </div>
         </section>
 
         {/* Elevation profile */}
         <section>
-          <h2 className="mb-6 font-display text-3xl uppercase text-ink">Elevation Profile</h2>
+          <h2 className="mb-6 font-display text-3xl uppercase text-ink">10K Elevation Profile</h2>
           <ElevationChartSection />
         </section>
 
         {/* Map */}
         <section>
-          <h2 className="mb-6 font-display text-3xl uppercase text-ink">Course Map</h2>
+          <h2 className="mb-6 font-display text-3xl uppercase text-ink">10K Course Map</h2>
           <CourseMapSection />
           <div className="mt-4 flex flex-wrap gap-3">
             {COURSE_GPX_URL ? (
@@ -159,12 +212,20 @@ export default function RaceDetailsPage() {
               </span>
             )}
             <a
-              href="https://maps.google.com/?q=Utah+Lake+State+Park,+4400+W+Center+St,+Provo,+UT+84601"
+              href="https://maps.google.com/?q=N+Canyon+Rd,+Provo,+UT+84604"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary inline-flex items-center gap-2 text-xs"
             >
-              <MapPin size={14} /> Get Directions to Start
+              <MapPin size={14} /> Directions to 10K Start
+            </a>
+            <a
+              href="https://maps.google.com/?q=4931+N+300+W,+Provo,+UT+84604"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost inline-flex items-center gap-2 text-xs"
+            >
+              <MapPin size={14} /> Directions to 5K Start
             </a>
           </div>
         </section>
@@ -175,7 +236,7 @@ export default function RaceDetailsPage() {
             <Clock size={22} className="shrink-0 text-pink" />
             <h2 className="font-display text-3xl uppercase text-ink">Wave Starts</h2>
           </div>
-          <p className="mb-6 font-body text-sm text-ash">Half Marathon — {EVENT_DATE_DISPLAY}</p>
+          <p className="mb-6 font-body text-sm text-ash">10K — {EVENT_DATE_DISPLAY}</p>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[480px] border-collapse font-body text-sm">
               <thead>
@@ -202,7 +263,7 @@ export default function RaceDetailsPage() {
         <section>
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">Aid Stations</h2>
           <p className="mb-4 font-body text-xs font-bold uppercase tracking-widest text-ash">
-            Locations subject to confirmation
+            10K — locations subject to confirmation
           </p>
           <div className="space-y-0">
             {aidStations.map((a, i) => (
@@ -220,9 +281,7 @@ export default function RaceDetailsPage() {
         </section>
 
         <div className="pt-4">
-          <Link href="/register" className="btn-primary">
-            Register
-          </Link>
+          <Link href="/register" className="btn-primary">Register</Link>
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 import { createPaymentIntent } from './actions';
-import { MIN_DONATION_AMOUNT, MIN_DONATION_5K } from '@/config/site';
+import { MIN_DONATION_AMOUNT, MIN_DONATION_5K, TEN_K_LABEL, FIVE_K_LABEL } from '@/config/site';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -51,7 +51,7 @@ const stripeAppearance = {
 };
 
 type Step = 1 | 2 | 3 | 4;
-type RaceType = 'half' | '5k' | null;
+type RaceType = '10k' | '5k' | null;
 
 interface FormData {
   firstName: string;
@@ -105,8 +105,8 @@ function StepRaceSelection({
 
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         {([
-          { key: 'half' as const, label: 'Half Marathon', sub: `13.1 mi · $${MIN_DONATION_AMOUNT}+ donation` },
-          { key: '5k' as const, label: '5K', sub: `3.1 mi · $${MIN_DONATION_5K}+ donation` },
+          { key: '10k' as const, label: '10K', sub: `6.2 mi · $${MIN_DONATION_AMOUNT}+ donation` },
+          { key: '5k' as const,  label: '5K',  sub: `3.1 mi · $${MIN_DONATION_5K}+ donation` },
         ]).map((race) => (
           <button
             key={race.key}
@@ -177,7 +177,7 @@ function StepAthleteInfo({
   loading: boolean;
 }) {
   const [touched, setTouched] = useState<Partial<Record<keyof FormData, boolean>>>({});
-  const minDonation = raceType === '5k' ? MIN_DONATION_5K : MIN_DONATION_AMOUNT;
+  const minDonation = raceType === '5k' ? MIN_DONATION_5K : MIN_DONATION_AMOUNT; // 10k uses MIN_DONATION_AMOUNT
 
   const update = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: e.target.value });
@@ -442,7 +442,7 @@ function StepAthleteInfo({
             there shall be no refund of the entry fee or any other costs of the Athlete in connection
             with the event. The Athlete warrants that all statements made herein are true and correct
             and understands that Releasees have relied on them in allowing the Athlete to participate
-            in the Marathon.
+            in the event.
           </p>
           <p className="font-bold uppercase">
             BY COMPLETING THE REGISTRATION PROCESS IN ANY FORM (ONLINE, IN-PERSON, MAIL, ETC), THE
@@ -528,7 +528,7 @@ function PaymentForm({
     }
   };
 
-  const raceLabel = raceType === 'half' ? 'Half Marathon (13.1 mi)' : '5K (3.1 mi)';
+  const raceLabel = raceType === '10k' ? TEN_K_LABEL : FIVE_K_LABEL;
 
   return (
     <div>
@@ -631,7 +631,7 @@ function StepConfirmation({
   donationAmount: number;
   bandanaColor: string;
 }) {
-  const raceLabel = raceType === 'half' ? 'Half Marathon (13.1 mi)' : '5K (3.1 mi)';
+  const raceLabel = raceType === '10k' ? TEN_K_LABEL : FIVE_K_LABEL;
 
   return (
     <div className="text-center">
@@ -756,7 +756,7 @@ export function RegisterFlow() {
           raceType={raceType}
           setRaceType={setRaceType}
           onNext={() => {
-            setDonationAmount(raceType === '5k' ? MIN_DONATION_5K : MIN_DONATION_AMOUNT);
+            setDonationAmount(raceType === '5k' ? MIN_DONATION_5K : MIN_DONATION_AMOUNT); // 10k uses MIN_DONATION_AMOUNT
             setStep(2);
           }}
         />

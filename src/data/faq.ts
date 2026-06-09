@@ -6,19 +6,23 @@ export interface FAQItem {
 export const faqs: FAQItem[] = [
   {
     question: "What is the registration fee?",
-    answer: "There is no flat entry fee. Registration requires a minimum $100 donation to Huntsman Cancer Institute for the half marathon, or a minimum $49 donation for the 5K. We warmly encourage you to give as much more as you're willing — every dollar goes directly to the cause.",
+    answer: "There is no flat entry fee. Registration requires a minimum $100 donation to Huntsman Cancer Institute for the 10K, or a minimum $49 donation for the 5K. We warmly encourage you to give as much more as you're willing — every dollar goes directly to the cause.",
   },
   {
     question: "Can I register without fundraising?",
     answer: "Yes. There is no peer-to-peer fundraising requirement. Your donation at registration is all that's needed. You won't be asked to recruit other donors or hit a fundraising goal.",
   },
   {
-    question: "What's the difference between the half marathon and the 5K?",
-    answer: "The half marathon is 13.1 miles; the 5K is 3.1 miles. Both events start on the same morning and follow the same registration process. Choose whichever distance fits your training and goals.",
+    question: "What's the difference between the 10K and the 5K?",
+    answer: "The 10K is 6.2 miles and follows a point-to-point, predominantly downhill route from N Canyon Road to University Ave & Center Street in downtown Provo — with only one turn on the entire course. The 5K is 3.1 miles and is a flat loop starting and finishing at the Riverwoods Shopping Center. Both events take place on November 7, 2026.",
+  },
+  {
+    question: "Does the 10K require a shuttle?",
+    answer: "Yes. Because the 10K is point-to-point, a free shuttle takes runners from the finish area to the start. Buses depart from Provo Towne Centre Mall (1200 Towne Centre Blvd) starting at approximately 5:15 AM. Plan to arrive by 5:00 AM — the shuttle schedule is fixed.",
   },
   {
     question: "What's included with registration?",
-    answer: "Every registered participant receives a race bib and a complimentary bandana. Details confirmed closer to race day.",
+    answer: "Every registered participant receives a race bib and a complimentary bandana. Additional details confirmed closer to race day.",
   },
   {
     question: "What is the refund policy?",
@@ -26,7 +30,7 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "When and where is packet pickup?",
-    answer: "Packet pickup is Friday, November 6, 2026 from 3:00–5:00 PM at LaVell Edwards Stadium on the BYU campus. Your bib and bandana will be available there. You must pick up your packet before race day.",
+    answer: "Packet pickup is Friday, November 6, 2026 from 3:00–5:00 PM. The exact venue in downtown Provo will be announced closer to race day. Your bib and bandana will be available there. You must pick up your packet before race day.",
   },
   {
     question: "Where does my donation go?",

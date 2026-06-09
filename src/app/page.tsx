@@ -2,15 +2,15 @@ import Link from 'next/link';
 import {
   EVENT_NAME, EVENT_DATE_DISPLAY, EVENT_DATE_ISO,
   CHARITY_NAME, MIN_DONATION_AMOUNT,
-  HALF_MARATHON_LABEL, FIVE_K_LABEL,
-  EVENT_LOCATION_NAME,
-  SITE_URL,
+  TEN_K_LABEL, FIVE_K_LABEL,
+  EVENT_LOCATION_NAME, FINISH_LOCATION_NAME,
+  ORG_NAME, SITE_URL,
 } from '@/config/site';
 import { getDonationTotal } from '@/lib/getDonationTotal';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Race Against Cancers 2026 — Half Marathon & 5K',
+  title: 'Race Against Cancers 2026 — 10K & 5K',
 };
 
 export const revalidate = 300; // refresh every 5 minutes
@@ -21,17 +21,17 @@ const eventJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SportsEvent',
   name: EVENT_NAME,
-  description: `A half marathon & 5K charity race benefiting ${CHARITY_NAME}. Run the Provo River Parkway from Utah Lake State Park to LaVell Edwards Stadium.`,
+  description: `A 10K & 5K charity race benefiting ${CHARITY_NAME}. Run through Provo, Utah on ${EVENT_DATE_DISPLAY}.`,
   startDate: EVENT_DATE_ISO,
-  endDate: '2026-11-07T14:00:00-07:00',
+  endDate: '2026-11-07T12:00:00-07:00',
   eventStatus: 'https://schema.org/EventScheduled',
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   location: {
     '@type': 'Place',
-    name: EVENT_LOCATION_NAME,
+    name: 'University Ave & Center St',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: '4400 W Center St',
+      streetAddress: 'University Ave & Center St',
       addressLocality: 'Provo',
       addressRegion: 'UT',
       postalCode: '84601',
@@ -40,7 +40,7 @@ const eventJsonLd = {
   },
   organizer: {
     '@type': 'Organization',
-    name: 'Race Against Cancers',
+    name: ORG_NAME,
     url: SITE_URL,
   },
   offers: {
@@ -79,19 +79,15 @@ export default async function HomePage() {
           </h1>
 
           <p className="mt-8 max-w-xl font-body text-lg text-ash">
-            A half marathon & 5K benefiting {CHARITY_NAME}. Your registration
+            A 10K & 5K benefiting {CHARITY_NAME}. Your registration
             is a direct donation — every dollar goes to the cause.
           </p>
 
           <div className="mt-10">
-            <Link
-              href="/register"
-              className="btn-primary px-10 py-5 text-base"
-            >
+            <Link href="/register" className="btn-primary px-10 py-5 text-base">
               Register
             </Link>
           </div>
-
         </div>
       </section>
 
@@ -108,7 +104,7 @@ export default async function HomePage() {
               {
                 step: '01',
                 heading: 'Choose your distance',
-                body: `Run or walk the ${HALF_MARATHON_LABEL} or the ${FIVE_K_LABEL} — all paces and abilities welcome.`,
+                body: `Run the ${TEN_K_LABEL} through Provo, or take on the ${FIVE_K_LABEL} loop — all paces and abilities welcome.`,
               },
               {
                 step: '02',
@@ -128,14 +124,8 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-
           <div className="mt-10 text-center">
-            <Link
-              href="/register"
-              className="btn-primary"
-            >
-              Register
-            </Link>
+            <Link href="/register" className="btn-primary">Register</Link>
           </div>
         </div>
       </section>
@@ -150,9 +140,9 @@ export default async function HomePage() {
           </div>
           <dl className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { dt: 'Events',   dd: `${HALF_MARATHON_LABEL} + ${FIVE_K_LABEL}` },
+              { dt: 'Events',   dd: `${TEN_K_LABEL} + ${FIVE_K_LABEL}` },
               { dt: 'Date',     dd: EVENT_DATE_DISPLAY },
-              { dt: 'Location', dd: EVENT_LOCATION_NAME },
+              { dt: 'Start',    dd: EVENT_LOCATION_NAME },
               { dt: 'Entry',    dd: `$${MIN_DONATION_AMOUNT}+ — all to ${CHARITY_NAME}` },
             ].map((fact) => (
               <div key={fact.dt} className="rounded-card border border-line p-6">
@@ -209,7 +199,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
     </>
   );
 }

@@ -49,7 +49,7 @@ export function Footer() {
             RACE<span className="text-pink">AGAINST</span>CANCERS
           </p>
           <p className="mt-4 font-body text-sm text-white/55 tracking-widest uppercase">
-            Half Marathon & 5K · November 7, 2026
+            10K & 5K · November 7, 2026
           </p>
         </div>
 

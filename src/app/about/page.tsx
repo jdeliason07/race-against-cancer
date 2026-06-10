@@ -22,12 +22,10 @@ export default function AboutPage() {
         <section>
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">Why this exists</h2>
           <p className="font-body text-base leading-relaxed text-ash">
-            This all began one late, late night when some friends were talking. We talked about how
-            grateful we are for all of our blessings and how there must be a way we can give back.
-            Out of those ideas came this race. We just want to do something to help someone else
-            because we are aware of all that others have done for us. After talking with other
-            friends our excitement grew and decided to give this our best. Thank you for helping us
-            reach our goal to help someone else.
+            One late night, a group of friends realized how grateful we were for our blessings.
+            Inspired to give back, we created this race to help others—motivated by the kindness
+            shown to us. Our excitement grew as we shared the idea, leading us to commit fully.
+            Thank you for joining us in our mission to give back.
           </p>
         </section>
 

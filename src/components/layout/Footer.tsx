@@ -45,7 +45,7 @@ export function Footer() {
     <footer className="bg-ink text-white">
       <div className="mx-auto max-w-7xl px-6 py-16">
         <div className="mb-12 text-center">
-          <p className="font-display text-5xl uppercase leading-none md:text-7xl">
+          <p className="font-display text-[clamp(28px,9vw,72px)] uppercase leading-none">
             RACE<span className="text-pink">AGAINST</span>CANCERS
           </p>
           <p className="mt-4 font-body text-sm text-white/55 tracking-widest uppercase">

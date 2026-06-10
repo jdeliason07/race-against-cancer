@@ -37,9 +37,10 @@ export default function FAQPage() {
             </a>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="btn-ghost inline-flex items-center gap-2"
+              className="btn-primary inline-flex max-w-full items-center gap-2"
             >
-              <Mail size={16} /> {CONTACT_EMAIL}
+              <Mail size={16} className="shrink-0" />
+              <span className="break-all normal-case">{CONTACT_EMAIL}</span>
             </a>
           </div>
         </div>

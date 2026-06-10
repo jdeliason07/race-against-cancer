@@ -32,18 +32,18 @@ export function Header() {
       <div className="bg-pink py-1.5" aria-hidden="true" />
 
       <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
           <Link
             href="/"
-            className="font-display text-lg uppercase tracking-wide text-ink transition-colors hover:text-pink"
+            className="font-display text-base uppercase tracking-wide text-ink transition-colors hover:text-pink sm:text-lg"
             aria-label="Race Against Cancers — Home"
           >
             RACE<span className="text-pink">AGAINST</span>CANCERS
           </Link>
 
           {/* Register button + hamburger */}
-          <div className="flex items-center gap-3">
-            <Link href="/register" className="btn-primary py-3 px-5 text-xs">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link href="/register" className="btn-primary py-3 px-4 text-xs sm:px-5">
               Register
             </Link>
 

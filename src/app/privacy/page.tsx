@@ -120,7 +120,7 @@ export default function PrivacyPage() {
           <div className="flex flex-col gap-2">
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="font-body text-sm font-bold uppercase tracking-widest text-pink hover:text-raspberry transition-colors"
+              className="font-body text-sm font-bold tracking-widest text-pink hover:text-raspberry transition-colors break-all"
             >
               {CONTACT_EMAIL}
             </a>

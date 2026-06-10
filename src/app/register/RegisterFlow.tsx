@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import Link from 'next/link';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
@@ -709,9 +710,9 @@ function StepConfirmation({
         Check your email for a receipt from Stripe.
       </p>
 
-      <a href="/" className="btn-primary">
+      <Link href="/" className="btn-primary">
         Back to Home
-      </a>
+      </Link>
     </div>
   );
 }

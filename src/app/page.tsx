@@ -3,7 +3,7 @@ import {
   EVENT_NAME, EVENT_DATE_DISPLAY, EVENT_DATE_ISO,
   CHARITY_NAME, MIN_DONATION_AMOUNT,
   TEN_K_LABEL, FUN_RUN_LABEL,
-  EVENT_LOCATION_NAME, FINISH_LOCATION_NAME,
+  EVENT_LOCATION_NAME, FUN_RUN_LOCATION_NAME,
   ORG_NAME, SITE_URL,
 } from '@/config/site';
 import { getDonationTotal } from '@/lib/getDonationTotal';
@@ -142,7 +142,7 @@ export default async function HomePage() {
             {[
               { dt: 'Events',   dd: `${TEN_K_LABEL} + ${FUN_RUN_LABEL}` },
               { dt: 'Date',     dd: EVENT_DATE_DISPLAY },
-              { dt: 'Start',    dd: EVENT_LOCATION_NAME },
+              { dt: 'Start',    dd: `10K: ${EVENT_LOCATION_NAME} · Fun Run: ${FUN_RUN_LOCATION_NAME}` },
               { dt: 'Entry',    dd: `$${MIN_DONATION_AMOUNT}+ — all to ${CHARITY_NAME}` },
             ].map((fact) => (
               <div key={fact.dt} className="rounded-card border border-line p-6">

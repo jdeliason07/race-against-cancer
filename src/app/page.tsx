@@ -2,15 +2,15 @@ import Link from 'next/link';
 import {
   EVENT_NAME, EVENT_DATE_DISPLAY, EVENT_DATE_ISO,
   CHARITY_NAME, MIN_DONATION_AMOUNT,
-  HALF_MARATHON_LABEL, FIVE_K_LABEL,
-  EVENT_LOCATION_NAME, EVENT_LOCATION_ADDRESS,
-  SITE_URL,
+  TEN_K_LABEL, FUN_RUN_LABEL,
+  EVENT_LOCATION_NAME, FINISH_LOCATION_NAME,
+  ORG_NAME, SITE_URL,
 } from '@/config/site';
 import { getDonationTotal } from '@/lib/getDonationTotal';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Race Against Cancers 2026 — Half Marathon & 5K',
+  title: 'Race Against Cancers 2026 — 10K & Fun Run',
 };
 
 export const revalidate = 300; // refresh every 5 minutes
@@ -21,7 +21,7 @@ const eventJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SportsEvent',
   name: EVENT_NAME,
-  description: `A half marathon & 5K charity race benefiting ${CHARITY_NAME}. Run the Provo River Parkway from Utah Lake State Park to LaVell Edwards Stadium.`,
+  description: `A 10K & Fun Run charity race benefiting ${CHARITY_NAME}. Run through Provo, Utah on ${EVENT_DATE_DISPLAY}.`,
   startDate: EVENT_DATE_ISO,
   endDate: '2026-11-07T14:00:00-07:00',
   eventStatus: 'https://schema.org/EventScheduled',
@@ -79,7 +79,7 @@ export default async function HomePage() {
           </h1>
 
           <p className="mt-8 max-w-xl font-body text-lg text-ash">
-            A half marathon & 5K benefiting {CHARITY_NAME}. Your registration
+            A 10K & Fun Run benefiting {CHARITY_NAME}. Your registration
             is a direct donation — every dollar goes to the cause.
           </p>
 
@@ -108,7 +108,7 @@ export default async function HomePage() {
               {
                 step: '01',
                 heading: 'Choose your distance',
-                body: `Run or walk the ${HALF_MARATHON_LABEL} or the ${FIVE_K_LABEL} — all paces and abilities welcome.`,
+                body: `Run the ${TEN_K_LABEL} through Provo, or join the ${FUN_RUN_LABEL} from LaVell Edwards Stadium to downtown — all paces and abilities welcome.`,
               },
               {
                 step: '02',
@@ -150,7 +150,7 @@ export default async function HomePage() {
           </div>
           <dl className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { dt: 'Events',   dd: `${HALF_MARATHON_LABEL} + ${FIVE_K_LABEL}` },
+              { dt: 'Events',   dd: `${TEN_K_LABEL} + ${FUN_RUN_LABEL}` },
               { dt: 'Date',     dd: EVENT_DATE_DISPLAY },
               { dt: 'Location', dd: EVENT_LOCATION_NAME },
               { dt: 'Entry',    dd: `$${MIN_DONATION_AMOUNT}+ — all to ${CHARITY_NAME}` },

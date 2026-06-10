@@ -12,18 +12,24 @@ export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 
 // --- EVENT --------------------------------------------------
 export const EVENT_NAME          = "Race Against Cancers 2026";
-export const EVENT_DATE_ISO      = "2026-11-07T08:00:00-07:00"; // MST = UTC-7
+export const EVENT_DATE_ISO      = "2026-11-07T08:00:00-07:00"; // 10K & Fun Run start 8:00 AM MST
 export const EVENT_DATE_DISPLAY  = "Saturday, November 7, 2026";
-export const HALF_START_TIME     = "8:00 AM";
-export const FIVE_K_START_TIME   = "To be announced";
+export const TEN_K_START_TIME    = "8:00 AM";
+export const FUN_RUN_START_TIME  = "8:00 AM";
 export const EVENT_YEAR          = "2026";
 
 // --- LOCATION -----------------------------------------------
-export const EVENT_LOCATION_NAME    = "Utah Lake State Park";
-export const EVENT_LOCATION_ADDRESS = "4400 W Center St, Provo, UT 84601";
-export const EVENT_LOCATION_MAPS_URL = "[[GOOGLE MAPS LINK]]";
-export const EVENT_COURSE_MAP_URL    = "[[COURSE MAP IMAGE OR LINK]]";
-export const COURSE_GPX_URL          = "/course.gpx";
+// 10K: point-to-point — start near mouth of Provo Canyon, finish downtown Provo
+export const EVENT_LOCATION_NAME     = "Canyon Crest Elementary School";   // 10K start
+export const EVENT_LOCATION_ADDRESS  = "4664 N Canyon Rd, Provo, UT 84604";
+export const FINISH_LOCATION_NAME    = "University Ave & Center St";   // shared finish
+export const FINISH_LOCATION_ADDRESS = "University Ave & Center St, Provo, UT 84601";
+// Fun Run: point-to-point ~2 mi — starts at LaVell Edwards Stadium, shares finish with 10K
+export const FUN_RUN_LOCATION_NAME    = "LaVell Edwards Stadium";
+export const FUN_RUN_LOCATION_ADDRESS = "LaVell Edwards Stadium, Provo, UT 84602";
+// Set to "" until an official GPS recording of the 10K course exists —
+// the race-details page automatically shows "GPX Coming Soon" when empty.
+export const COURSE_GPX_URL          = "";
 
 // --- PLATFORM LINKS -----------------------------------------
 // Paste RunSignup or GiveButter URLs here — every button on the site points here
@@ -31,16 +37,10 @@ export const REGISTRATION_URL = "[[REPLACE: registration platform URL (RunSignup
 export const DONATION_URL     = "[[REPLACE: donation platform URL (RunSignup/GiveButter)]]";
 
 // --- REGISTRATION -------------------------------------------
-export const MIN_DONATION_AMOUNT   = 100; // half marathon minimum — canonical number
-export const MIN_DONATION_5K       = 49;  // 5K minimum
-export const HALF_MARATHON_LABEL   = "Half Marathon (13.1 mi)";
-export const FIVE_K_LABEL          = "5K (3.1 mi)";
-export const REGISTRATION_INCLUDES = [
-  "[[Event T-Shirt]]",
-  "[[Race Bib with timing chip]]",
-  "[[Finisher Medal]]",
-  "[[Post-race refreshments]]",
-];
+export const MIN_DONATION_AMOUNT   = 99; // 10K minimum — canonical number
+export const MIN_DONATION_FUN_RUN  = 49;  // Fun Run minimum
+export const TEN_K_LABEL           = "10K (6.2 mi)";
+export const FUN_RUN_LABEL         = "Fun Run (~2 mi)";
 
 // --- PACKET PICKUP ------------------------------------------
 export const PACKET_PICKUP_DATE     = "Friday, November 6, 2026";
@@ -63,6 +63,4 @@ export const SOCIAL_YOUTUBE   = "[[https://youtube.com/@YOURCHANNEL]]";
 // Used by sitemap, robots.txt, metadataBase, and JSON-LD schema.
 export const SITE_URL         = "https://raceagainstcancers.org";
 export const META_DESCRIPTION =
-  `Run for a reason. ${EVENT_NAME} — a half marathon & 5K on ${EVENT_DATE_DISPLAY}, benefiting ${CHARITY_NAME}. Register with a $${MIN_DONATION_AMOUNT} minimum donation.`;
-// Replace with a proper 1200×630 OG image before any public sharing
-export const OG_IMAGE_PATH    = "/images/huntsman-logo.jpg";
+  `Run for a reason. ${EVENT_NAME} — a 10K & Fun Run on ${EVENT_DATE_DISPLAY}, benefiting ${CHARITY_NAME}. Register with a $${MIN_DONATION_AMOUNT} minimum donation.`;

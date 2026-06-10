@@ -1,8 +1,10 @@
 import {
-  EVENT_NAME, EVENT_DATE_DISPLAY, HALF_START_TIME, FIVE_K_START_TIME,
-  EVENT_LOCATION_ADDRESS, EVENT_DATE_ISO,
-  PACKET_PICKUP_DATE, PACKET_PICKUP_TIME, PACKET_PICKUP_LOCATION,
-  COURSE_GPX_URL, SITE_URL,
+  EVENT_NAME, EVENT_DATE_DISPLAY, TEN_K_START_TIME, FUN_RUN_START_TIME,
+  EVENT_LOCATION_NAME, EVENT_LOCATION_ADDRESS, EVENT_DATE_ISO,
+  FINISH_LOCATION_NAME, FINISH_LOCATION_ADDRESS,
+  FUN_RUN_LOCATION_NAME, FUN_RUN_LOCATION_ADDRESS,
+  CHECK_IN_DATE, CHECK_IN_TIME, CHECK_IN_LOCATION,
+  COURSE_GPX_URL, SITE_URL, ORG_NAME,
 } from '@/config/site';
 import { MapPin, Clock, Package, Download, Flag } from 'lucide-react';
 import Link from 'next/link';
@@ -73,8 +75,8 @@ export default function RaceDetailsPage() {
                 <dt className="section-label">Start Times</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed">
-                Half Marathon: 8:00 AM (Wave 1) · 8:05 (W2) · 8:10 (W3) · 8:15 (W4)<br />
-                5K: {FIVE_K_START_TIME}
+                10K: {TEN_K_START_TIME}<br />
+                Fun Run: {FUN_RUN_START_TIME}
               </dd>
             </div>
             <div className="rounded-card border border-line p-6">
@@ -95,14 +97,27 @@ export default function RaceDetailsPage() {
                 LaVell Edwards Stadium<br />BYU Campus, Provo, UT
               </dd>
             </div>
+
+            <div className="rounded-card border border-line p-6">
+              <div className="mb-2 flex items-center gap-2">
+                <MapPin size={16} className="text-pink shrink-0" aria-hidden="true" />
+                <dt className="section-label">Fun Run Start</dt>
+              </div>
+              <dd className="font-body text-sm text-ink leading-relaxed">
+                {FUN_RUN_LOCATION_NAME}<br />
+                <span className="text-ash text-xs">{FUN_RUN_LOCATION_ADDRESS}</span>
+              </dd>
+            </div>
+
             <div className="rounded-card border border-line p-6">
               <div className="mb-2 flex items-center gap-2">
                 <Package size={16} className="text-pink shrink-0" aria-hidden="true" />
                 <dt className="section-label">Packet Pickup</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed whitespace-pre-line">
-                {PACKET_PICKUP_DATE}{PACKET_PICKUP_TIME ? `\n${PACKET_PICKUP_TIME}` : ''}{PACKET_PICKUP_LOCATION ? `\n${PACKET_PICKUP_LOCATION}` : ''}
-                {'\n'}Includes: race bib + bandana
+                <span className="font-semibold">10K:</span> {CHECK_IN_DATE}{CHECK_IN_TIME ? `\n${CHECK_IN_TIME}` : ''}{CHECK_IN_LOCATION ? `\n${CHECK_IN_LOCATION}` : ''}
+                {'\n\n'}<span className="font-semibold">Fun Run:</span> {CHECK_IN_DATE}{'\n'}7:30 AM · LaVell Edwards Stadium
+                {'\n\n'}Includes: race bib + bandana
               </dd>
             </div>
           </dl>
@@ -127,10 +142,45 @@ export default function RaceDetailsPage() {
               tree canopy.
             </p>
             <p>
-              After approximately 8 miles, the course threads through north Provo and onto the BYU
-              campus perimeter, where the final miles deliver a long, open stretch toward the
-              stadium finish — Y Mountain directly ahead.
+              The finish line sits at the intersection of University Avenue and Center Street in
+              downtown Provo, in front of the Utah County Courthouse, at an elevation of
+              roughly 4,567 feet. The final stretch is lined with spectators as runners pour
+              into the heart of downtown.
             </p>
+            <div className="rounded-card border border-petal bg-blush p-5 mt-4">
+              <p className="font-body text-sm font-bold uppercase tracking-widest text-pink mb-2">Getting to the start</p>
+              <p className="font-body text-sm text-ash">
+                Because the 10K is point-to-point, runners are responsible for their own
+                transportation to the start line. Check-in is in the Canyon Crest Elementary
+                School parking lot — plan to arrive by 7:00 AM. Race starts promptly at 8:00 AM.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Fun Run Route */}
+        <section>
+          <h2 className="mb-6 font-display text-3xl uppercase text-ink">The Fun Run Course</h2>
+          <div className="space-y-4 font-body text-base leading-relaxed text-ash">
+            <p>
+              The Fun Run is a ~2-mile point-to-point course starting at LaVell Edwards Stadium
+              on the BYU campus. Participants follow University Avenue south through Provo,
+              sharing the final stretch with the 10K and crossing the same finish line at
+              University Avenue and Center Street in downtown Provo.
+            </p>
+            <p>
+              The course is predominantly downhill along a straight, wide road — accessible for
+              all paces and fitness levels. Whether you&rsquo;re a casual walker or a first-time
+              runner, this is your chance to cross a finish line for a great cause.
+            </p>
+            <div className="rounded-card border border-petal bg-blush p-5 mt-4">
+              <p className="font-body text-sm font-bold uppercase tracking-widest text-pink mb-2">Getting to the start</p>
+              <p className="font-body text-sm text-ash">
+                Check-in for the Fun Run is at LaVell Edwards Stadium — plan to arrive by 7:30 AM.
+                The race starts promptly at 8:00 AM. Participants are responsible for their own
+                transportation to the stadium.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -164,7 +214,15 @@ export default function RaceDetailsPage() {
               rel="noopener noreferrer"
               className="btn-primary inline-flex items-center gap-2 text-xs"
             >
-              <MapPin size={14} /> Get Directions to Start
+              <MapPin size={14} /> Directions to 10K Start
+            </a>
+            <a
+              href="https://maps.google.com/?q=LaVell+Edwards+Stadium,+Provo,+UT+84602"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost inline-flex items-center gap-2 text-xs"
+            >
+              <MapPin size={14} /> Directions to Fun Run Start
             </a>
           </div>
         </section>

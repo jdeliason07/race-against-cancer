@@ -9,7 +9,7 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 import { createPaymentIntent } from './actions';
-import { MIN_DONATION_AMOUNT, MIN_DONATION_5K } from '@/config/site';
+import { MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN, TEN_K_LABEL, FUN_RUN_LABEL } from '@/config/site';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -51,7 +51,7 @@ const stripeAppearance = {
 };
 
 type Step = 1 | 2 | 3 | 4;
-type RaceType = 'half' | '5k' | null;
+type RaceType = '10k' | 'fun-run' | null;
 
 interface FormData {
   firstName: string;
@@ -105,8 +105,8 @@ function StepRaceSelection({
 
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         {([
-          { key: 'half' as const, label: 'Half Marathon', sub: `13.1 mi · $${MIN_DONATION_AMOUNT}+ donation` },
-          { key: '5k' as const, label: '5K', sub: `3.1 mi · $${MIN_DONATION_5K}+ donation` },
+          { key: '10k' as const,      label: '10K',      sub: `6.2 mi · $${MIN_DONATION_AMOUNT}+ donation` },
+          { key: 'fun-run' as const,  label: 'Fun Run',  sub: `~2 mi · $${MIN_DONATION_FUN_RUN}+ donation` },
         ]).map((race) => (
           <button
             key={race.key}
@@ -177,7 +177,7 @@ function StepAthleteInfo({
   loading: boolean;
 }) {
   const [touched, setTouched] = useState<Partial<Record<keyof FormData, boolean>>>({});
-  const minDonation = raceType === '5k' ? MIN_DONATION_5K : MIN_DONATION_AMOUNT;
+  const minDonation = raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT;
 
   const update = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: e.target.value });
@@ -408,41 +408,60 @@ function StepAthleteInfo({
           tabIndex={0}
         >
           <p className="mb-3 font-bold uppercase">
-            ALL PARTICIPANTS IN THE EVENT AND RELATED EVENTS ARE REQUIRED TO ASSUME ALL RISK OF
-            PARTICIPATION BY AGREEING TO THIS RELEASE AT TIME OF ONLINE REGISTRATION OR BY SIGNING
-            THIS RELEASE AND WAIVER OF LIABILITY AGREEMENT
+            ALL PARTICIPANTS IN THE RACE AGAINST CANCERS 10K &amp; FUN RUN AND RELATED EVENTS ARE
+            REQUIRED TO ASSUME ALL RISKS OF PARTICIPATION BY AGREEING TO THIS RELEASE AND WAIVER
+            OF LIABILITY AGREEMENT AT THE TIME OF ONLINE REGISTRATION.
           </p>
           <p className="mb-3">
-            The undersigned athlete (&ldquo;Athlete&rdquo;) on behalf of himself/herself and on behalf of the
-            Athlete&rsquo;s personal representatives, assigns, heirs, executors, hereby fully and forever
-            releases, waives, discharges and covenants not to sue Skol Sporting Management, Skol
-            Events, the race organizer, management company, individual, and/or municipality associated
-            directly or indirectly with this event, including all municipal agencies whose property
-            and/or personnel are used and all other sponsoring or co-sponsoring companies or
-            individuals related to the event (collectively, &ldquo;Releasees&rdquo;) from all liability to the
-            Athlete and his/her personal representatives, assigns, heirs, and executors, for all
-            loss(es) or damage(s) and any and all claims or demands therefore, on account of injury to
-            the Athlete or property or resulting in the death of an Athlete, whether caused by the
-            active or passive negligence of all or any of the Releasees or otherwise, in connection
-            with the Athlete&rsquo;s participation in the event. The Athlete represents and warrants that
-            he/she is in good physical condition and is able to safely participate in the event. The
-            Athlete is fully aware of the risks and hazards inherent in participating in the event and
-            hereby elects to voluntarily compete in the event, knowing the risks associated with the
-            event, including, without limitation, weather conditions such as high heat and/or humidity,
-            wind, hail, rain, snow, flood, traffic and the condition of the road, all such risks being
-            known and appreciated by the Athlete. The Athlete hereby assumes all risks of loss(es),
-            damage(s), or injury(ies) that may be sustained by him/her while participating in the
-            event. The Athlete agrees to the use of his/her name and photograph in broadcasts,
-            newspapers, brochures, and other media compensation. The Athlete acknowledges that the
-            entry fee is non-refundable and non-transferable. In the event the event is delayed or
-            prevented by reason of fire, threatened or actual strike, labor difficulty, work stoppage,
-            pandemic, insurrection, war, public disaster, flood, unavoidable casualty, acts of God or
-            the elements (including, without limitation, hurricanes, floods, tornadoes and
-            earthquakes), or any other cause beyond the control of the race organizer and management,
-            there shall be no refund of the entry fee or any other costs of the Athlete in connection
-            with the event. The Athlete warrants that all statements made herein are true and correct
-            and understands that Releasees have relied on them in allowing the Athlete to participate
-            in the Marathon.
+            In consideration of being permitted to participate in the Race Against Cancers 10K &amp;
+            Fun Run (the &ldquo;Event&rdquo;), the undersigned athlete (&ldquo;Athlete&rdquo;), on behalf of
+            himself/herself and the Athlete&rsquo;s personal representatives, heirs, executors, and
+            assigns, hereby fully and forever releases, waives, discharges, and covenants not to sue
+            Race Against Cancers Inc., its officers, directors, employees, agents, and volunteers;
+            Huntsman Cancer Institute; all sponsors and co-sponsors of the Event; Provo City, Utah
+            County, the State of Utah, and any other municipality or government agency whose property
+            and/or personnel are used in connection with the Event; and all timing, logistics, and
+            other vendors providing services to the Event (collectively, the &ldquo;Releasees&rdquo;)
+            from any and all liability, claims, demands, losses, or damages on account of injury to
+            the Athlete or the Athlete&rsquo;s property, or resulting in the death of the Athlete,
+            whether caused by the active or passive negligence of any of the Releasees or otherwise,
+            arising out of or in connection with the Athlete&rsquo;s participation in the Event.
+          </p>
+          <p className="mb-3">
+            The Athlete represents and warrants that he/she is in good physical condition and is able
+            to safely participate in the Event. The Athlete is fully aware of the risks and hazards
+            inherent in running a road race, including, without limitation: falls; contact with other
+            participants, spectators, or vehicles; the condition of the road and course;
+            transportation to and from the event; and weather conditions such as heat, cold,
+            wind, rain, snow, or ice. The Athlete voluntarily elects to participate knowing these
+            risks and hereby assumes all risk of loss, damage, or injury that may be sustained while
+            participating in the Event. The Athlete authorizes Event personnel to obtain or provide
+            emergency medical treatment on his/her behalf if needed, and agrees to be responsible for
+            the cost of any such treatment.
+          </p>
+          <p className="mb-3">
+            The Athlete grants Race Against Cancers Inc. permission to use his/her name, image,
+            voice, and likeness in photographs, video, broadcasts, and other media for purposes of
+            promoting the Event, without compensation.
+          </p>
+          <p className="mb-3">
+            The Athlete acknowledges that the registration payment is a charitable donation
+            benefiting Huntsman Cancer Institute and is non-refundable. A registration may be
+            transferred to another participant until October 1, 2026 by contacting the Event
+            organizers; no transfers will be processed after that date. If the Event is delayed,
+            modified, or canceled by reason of fire, strike, work stoppage, pandemic, insurrection,
+            war, public disaster, flood, unavoidable casualty, extreme weather, acts of God, or any
+            other cause beyond the control of Race Against Cancers Inc., there shall be no refund of
+            the donation or any other costs incurred by the Athlete in connection with the Event.
+          </p>
+          <p className="mb-3">
+            If the Athlete is under 18 years of age, this agreement must be accepted by the
+            Athlete&rsquo;s parent or legal guardian, who agrees to its terms on the minor&rsquo;s
+            behalf. This agreement is governed by the laws of the State of Utah. If any portion of
+            this agreement is held invalid, the remainder shall continue in full force and effect.
+            The Athlete warrants that all statements made during registration are true and correct
+            and understands that the Releasees have relied on them in permitting the Athlete to
+            participate in the Event.
           </p>
           <p className="font-bold uppercase">
             BY COMPLETING THE REGISTRATION PROCESS IN ANY FORM (ONLINE, IN-PERSON, MAIL, ETC), THE
@@ -528,7 +547,7 @@ function PaymentForm({
     }
   };
 
-  const raceLabel = raceType === 'half' ? 'Half Marathon (13.1 mi)' : '5K (3.1 mi)';
+  const raceLabel = raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL;
 
   return (
     <div>
@@ -631,7 +650,7 @@ function StepConfirmation({
   donationAmount: number;
   bandanaColor: string;
 }) {
-  const raceLabel = raceType === 'half' ? 'Half Marathon (13.1 mi)' : '5K (3.1 mi)';
+  const raceLabel = raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL;
 
   return (
     <div className="text-center">
@@ -756,7 +775,7 @@ export function RegisterFlow() {
           raceType={raceType}
           setRaceType={setRaceType}
           onNext={() => {
-            setDonationAmount(raceType === '5k' ? MIN_DONATION_5K : MIN_DONATION_AMOUNT);
+            setDonationAmount(raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT);
             setStep(2);
           }}
         />

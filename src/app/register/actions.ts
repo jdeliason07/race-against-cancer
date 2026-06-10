@@ -1,6 +1,6 @@
 'use server';
 import Stripe from 'stripe';
-import { EVENT_NAME, MIN_DONATION_AMOUNT, MIN_DONATION_5K } from '@/config/site';
+import { EVENT_NAME, MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN } from '@/config/site';
 
 export async function createPaymentIntent(registrationData: {
   raceType: string;
@@ -20,7 +20,7 @@ export async function createPaymentIntent(registrationData: {
 
   // Enforce minimum on the server — UI minimum can be bypassed
   const minCents =
-    (registrationData.raceType === '5k' ? MIN_DONATION_5K : MIN_DONATION_AMOUNT) * 100;
+    (registrationData.raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT) * 100;
   if (registrationData.amount < minCents) {
     return {
       error: `Minimum donation for this event is $${minCents / 100}. Please increase your donation amount.`,

@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { EVENT_DATE_DISPLAY, CHARITY_NAME } from '@/config/site';
 
-export const alt = 'Race Against Cancers 2026 — 10K & 5K · Benefiting Huntsman Cancer Institute';
+export const alt = 'Race Against Cancers 2026 — 10K & Fun Run · Benefiting Huntsman Cancer Institute';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -36,7 +36,7 @@ export default async function Image() {
 
         {/* Date & distance */}
         <div style={{ display: 'flex', marginTop: '28px', fontFamily: 'sans-serif', fontSize: '26px', color: '#6E5C64', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-          10K &amp; 5K · {EVENT_DATE_DISPLAY}
+          10K &amp; Fun Run · {EVENT_DATE_DISPLAY}
         </div>
 
         {/* Charity */}

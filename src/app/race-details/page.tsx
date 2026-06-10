@@ -1,8 +1,8 @@
 import {
-  EVENT_NAME, EVENT_DATE_DISPLAY, TEN_K_START_TIME, FIVE_K_START_TIME,
+  EVENT_NAME, EVENT_DATE_DISPLAY, TEN_K_START_TIME, FUN_RUN_START_TIME,
   EVENT_LOCATION_NAME, EVENT_LOCATION_ADDRESS, EVENT_DATE_ISO,
   FINISH_LOCATION_NAME, FINISH_LOCATION_ADDRESS,
-  FIVE_K_LOCATION_NAME, FIVE_K_LOCATION_ADDRESS,
+  FUN_RUN_LOCATION_NAME, FUN_RUN_LOCATION_ADDRESS,
   CHECK_IN_DATE, CHECK_IN_TIME, CHECK_IN_LOCATION,
   COURSE_GPX_URL, SITE_URL, ORG_NAME,
 } from '@/config/site';
@@ -75,7 +75,7 @@ export default function RaceDetailsPage() {
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed">
                 10K: {TEN_K_START_TIME}<br />
-                5K: {FIVE_K_START_TIME}
+                Fun Run: {FUN_RUN_START_TIME}
               </dd>
             </div>
 
@@ -104,11 +104,11 @@ export default function RaceDetailsPage() {
             <div className="rounded-card border border-line p-6">
               <div className="mb-2 flex items-center gap-2">
                 <MapPin size={16} className="text-pink shrink-0" aria-hidden="true" />
-                <dt className="section-label">5K Start & Finish</dt>
+                <dt className="section-label">Fun Run Start</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed">
-                {FIVE_K_LOCATION_NAME}<br />
-                <span className="text-ash text-xs">{FIVE_K_LOCATION_ADDRESS}</span>
+                {FUN_RUN_LOCATION_NAME}<br />
+                <span className="text-ash text-xs">{FUN_RUN_LOCATION_ADDRESS}</span>
               </dd>
             </div>
 
@@ -118,8 +118,9 @@ export default function RaceDetailsPage() {
                 <dt className="section-label">Check-In</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed whitespace-pre-line">
-                {CHECK_IN_DATE}{CHECK_IN_TIME ? `\n${CHECK_IN_TIME}` : ''}{CHECK_IN_LOCATION ? `\n${CHECK_IN_LOCATION}` : ''}
-                {'\n'}Includes: race bib + bandana
+                <span className="font-semibold">10K:</span> {CHECK_IN_DATE}{CHECK_IN_TIME ? `\n${CHECK_IN_TIME}` : ''}{CHECK_IN_LOCATION ? `\n${CHECK_IN_LOCATION}` : ''}
+                {'\n\n'}<span className="font-semibold">Fun Run:</span> {CHECK_IN_DATE}{'\n'}7:30 AM · LaVell Edwards Stadium
+                {'\n\n'}Includes: race bib + bandana
               </dd>
             </div>
           </dl>
@@ -159,20 +160,29 @@ export default function RaceDetailsPage() {
           </div>
         </section>
 
-        {/* 5K Route */}
+        {/* Fun Run Route */}
         <section>
-          <h2 className="mb-6 font-display text-3xl uppercase text-ink">The 5K Course</h2>
+          <h2 className="mb-6 font-display text-3xl uppercase text-ink">The Fun Run Course</h2>
           <div className="space-y-4 font-body text-base leading-relaxed text-ash">
             <p>
-              The 5K is a flat, out-and-back loop starting and finishing at the Riverwoods
-              Shopping Center (Vivint Corporate Offices, 4931 N 300 W, Provo). Parking is
-              available in the UCCU Credit Union lot at 360 W 4800 N.
+              The Fun Run is a ~2-mile point-to-point course starting at LaVell Edwards Stadium
+              on the BYU campus. Participants follow University Avenue south through Provo,
+              sharing the final stretch with the 10K and crossing the same finish line at
+              University Avenue and Center Street in downtown Provo.
             </p>
             <p>
-              The course winds through the Riverwoods complex and onto the paved Provo River Trail,
-              following the river south before looping back through the neighborhood to the finish.
-              Net elevation change is essentially zero — a fast, flat course suitable for all levels.
+              The course is predominantly downhill along a straight, wide road — accessible for
+              all paces and fitness levels. Whether you&rsquo;re a casual walker or a first-time
+              runner, this is your chance to cross a finish line for a great cause.
             </p>
+            <div className="rounded-card border border-petal bg-blush p-5 mt-4">
+              <p className="font-body text-sm font-bold uppercase tracking-widest text-pink mb-2">Getting to the start</p>
+              <p className="font-body text-sm text-ash">
+                Check-in for the Fun Run is at LaVell Edwards Stadium — plan to arrive by 7:30 AM.
+                The race starts promptly at 8:00 AM. Participants are responsible for their own
+                transportation to the stadium.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -209,12 +219,12 @@ export default function RaceDetailsPage() {
               <MapPin size={14} /> Directions to 10K Start
             </a>
             <a
-              href="https://maps.google.com/?q=4931+N+300+W,+Provo,+UT+84604"
+              href="https://maps.google.com/?q=LaVell+Edwards+Stadium,+Provo,+UT+84602"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-ghost inline-flex items-center gap-2 text-xs"
             >
-              <MapPin size={14} /> Directions to 5K Start
+              <MapPin size={14} /> Directions to Fun Run Start
             </a>
           </div>
         </section>

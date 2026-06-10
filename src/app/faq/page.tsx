@@ -28,19 +28,21 @@ export default function FAQPage() {
           <p className="font-body text-sm text-ash mb-6">
             We&apos;re here to help. Call, text, or email us.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-col items-center gap-3">
             <a
               href={`tel:${CONTACT_PHONE.replace(/-/g, '')}`}
-              className="btn-primary inline-flex items-center gap-2"
+              className="inline-flex items-center gap-2 font-body text-sm font-bold tracking-widest text-pink transition-colors hover:text-raspberry"
             >
               <Phone size={16} /> {CONTACT_PHONE}
             </a>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="btn-primary inline-flex max-w-full items-center gap-2"
+              className="inline-flex max-w-full items-center gap-2 font-body text-sm font-bold tracking-widest text-pink transition-colors hover:text-raspberry"
             >
               <Mail size={16} className="shrink-0" />
-              <span className="break-all normal-case">{CONTACT_EMAIL}</span>
+              <span className="tracking-normal">
+                {CONTACT_EMAIL.split('@')[0]}@<wbr />{CONTACT_EMAIL.split('@')[1]}
+              </span>
             </a>
           </div>
         </div>

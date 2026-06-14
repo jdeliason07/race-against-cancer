@@ -50,6 +50,11 @@ export const CHECK_IN_LOCATION = "Canyon Crest Elementary School parking lot, 46
 // --- CONTACT ------------------------------------------------
 export const CONTACT_EMAIL = "events@raceagainstcancers.org";
 export const CONTACT_PHONE = "858-774-2699";
+// Venmo @username (WITHOUT the leading @) used for the "Pay with Venmo" checkout
+// option. Venmo payments are recorded as PENDING and must be manually confirmed
+// in the Stripe Dashboard once the transfer arrives. Leave the placeholder to
+// hide the Venmo option entirely.
+export const VENMO_USERNAME = "[[REPLACE: Venmo @username without the @]]";
 export const VOLUNTEER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScX-3U-iBEHY7YoIp1Htsdfz-NnOafxxGssKFWVrKnv7hDumQ/viewform";
 
 // --- SOCIAL LINKS -------------------------------------------

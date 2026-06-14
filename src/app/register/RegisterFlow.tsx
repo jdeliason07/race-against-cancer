@@ -6,11 +6,25 @@ import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
   PaymentElement,
+  ExpressCheckoutElement,
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-import { createPaymentIntent } from './actions';
-import { MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN, TEN_K_LABEL, FUN_RUN_LABEL } from '@/config/site';
+import { createPaymentIntent, markVenmoPending } from './actions';
+import { cn } from '@/lib/utils';
+import {
+  MIN_DONATION_AMOUNT,
+  MIN_DONATION_FUN_RUN,
+  TEN_K_LABEL,
+  FUN_RUN_LABEL,
+  VENMO_USERNAME,
+  EVENT_NAME,
+} from '@/config/site';
+
+const venmoUsername =
+  VENMO_USERNAME && !VENMO_USERNAME.includes('[[') ? VENMO_USERNAME : '';
+
+type CompletedMethod = 'card' | 'venmo';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -506,12 +520,25 @@ function StepAthleteInfo({
   );
 }
 
+// Build a Venmo deep link that prefills the recipient, amount, and note.
+function venmoPayUrl(amount: number, note: string) {
+  const params = new URLSearchParams({
+    txn: 'pay',
+    audience: 'private',
+    recipients: venmoUsername,
+    amount: String(amount),
+    note,
+  });
+  return `https://venmo.com/?${params.toString()}`;
+}
+
 // Inner payment form (must be inside <Elements>)
 function PaymentForm({
   raceType,
   formData,
   donationAmount,
   bandanaColor,
+  paymentIntentId,
   onSuccess,
   onBack,
 }: {
@@ -519,15 +546,20 @@ function PaymentForm({
   formData: FormData;
   donationAmount: number;
   bandanaColor: string;
-  onSuccess: () => void;
+  paymentIntentId: string;
+  onSuccess: (method: CompletedMethod) => void;
   onBack: () => void;
 }) {
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [method, setMethod] = useState<CompletedMethod>('card');
+  const [expressAvailable, setExpressAvailable] = useState(false);
 
-  const handleSubmit = async () => {
+  // Shared Stripe confirmation used by both the card form and the
+  // Express Checkout (Google Pay / Apple Pay / Link) button.
+  const confirmStripe = async () => {
     if (!stripe || !elements) return;
     setSubmitting(true);
     setPaymentError(null);
@@ -539,7 +571,7 @@ function PaymentForm({
     });
 
     if (paymentIntent?.status === 'succeeded') {
-      onSuccess();
+      onSuccess('card');
     } else if (error) {
       setPaymentError(error.message ?? 'Payment failed. Please try again.');
       setSubmitting(false);
@@ -548,7 +580,26 @@ function PaymentForm({
     }
   };
 
+  const handleVenmoSubmit = async () => {
+    setSubmitting(true);
+    setPaymentError(null);
+    const result = await markVenmoPending(paymentIntentId);
+    if ('ok' in result) {
+      onSuccess('venmo');
+    } else {
+      setPaymentError(result.error);
+      setSubmitting(false);
+    }
+  };
+
   const raceLabel = raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL;
+  const venmoNote = `${EVENT_NAME} — ${formData.firstName} ${formData.lastName}`.trim();
+
+  const tabClass = (active: boolean) =>
+    cn(
+      'flex-1 rounded-card border-2 px-4 py-3 font-body text-sm font-bold uppercase tracking-widest transition-colors',
+      active ? 'border-pink bg-blush text-pink' : 'border-line bg-paper text-ash hover:border-petal',
+    );
 
   return (
     <div>
@@ -572,34 +623,105 @@ function PaymentForm({
 
       <h2 className="font-display text-3xl uppercase text-ink mb-6">Payment</h2>
 
-      <div className="mb-6">
-        <PaymentElement />
-      </div>
-
-      {paymentError && (
-        <p className="mb-4 rounded-card border border-red-200 bg-red-50 px-4 py-3 font-body text-sm text-red-700" role="alert">
-          {paymentError}
-        </p>
+      {/* Method selector — only shown when Venmo is configured */}
+      {venmoUsername && (
+        <div className="mb-6 flex gap-3" role="group" aria-label="Choose a payment method">
+          <button type="button" onClick={() => setMethod('card')} aria-pressed={method === 'card'} className={tabClass(method === 'card')}>
+            Card / Google Pay
+          </button>
+          <button type="button" onClick={() => setMethod('venmo')} aria-pressed={method === 'venmo'} className={tabClass(method === 'venmo')}>
+            Venmo
+          </button>
+        </div>
       )}
 
-      <div className="flex gap-3">
-        <button
-          type="button"
-          onClick={onBack}
-          disabled={submitting}
-          className="btn-ghost flex-1"
-        >
-          Back
-        </button>
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={submitting || !stripe || !elements}
-          className="btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          {submitting ? 'Processing…' : 'Complete Registration'}
-        </button>
-      </div>
+      {method === 'card' ? (
+        <>
+          {/* Express Checkout — prominent Google Pay / Apple Pay / Link buttons */}
+          <div className={expressAvailable ? 'mb-2' : 'hidden'}>
+            <ExpressCheckoutElement
+              onReady={({ availablePaymentMethods }) => setExpressAvailable(!!availablePaymentMethods)}
+              onConfirm={confirmStripe}
+            />
+          </div>
+          {expressAvailable && (
+            <div className="my-5 flex items-center gap-3" aria-hidden="true">
+              <span className="h-px flex-1 bg-line" />
+              <span className="font-body text-xs uppercase tracking-widest text-ash">or pay with card</span>
+              <span className="h-px flex-1 bg-line" />
+            </div>
+          )}
+
+          <div className="mb-6">
+            <PaymentElement />
+          </div>
+
+          {paymentError && (
+            <p className="mb-4 rounded-card border border-red-200 bg-red-50 px-4 py-3 font-body text-sm text-red-700" role="alert">
+              {paymentError}
+            </p>
+          )}
+
+          <div className="flex gap-3">
+            <button type="button" onClick={onBack} disabled={submitting} className="btn-ghost flex-1">
+              Back
+            </button>
+            <button
+              type="button"
+              onClick={confirmStripe}
+              disabled={submitting || !stripe || !elements}
+              className="btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {submitting ? 'Processing…' : 'Complete Registration'}
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Venmo — pay out-of-band, registration held pending confirmation */}
+          <div className="mb-6 rounded-card border border-line bg-mist p-6">
+            <p className="font-body text-sm text-ash leading-relaxed">
+              Send your <span className="font-bold text-ink">${donationAmount}</span> donation to
+              {' '}<span className="font-bold text-ink">@{venmoUsername}</span> in the Venmo app, then
+              tap the button below. Your spot is held while we confirm your payment.
+            </p>
+            <ol className="mt-4 space-y-1 font-body text-sm text-ash list-decimal pl-5">
+              <li>Open Venmo and send <span className="font-bold text-ink">${donationAmount}</span> to <span className="font-bold text-ink">@{venmoUsername}</span></li>
+              <li>Add the note: <span className="font-bold text-ink">{venmoNote}</span></li>
+              <li>Come back and confirm below</li>
+            </ol>
+            <a
+              href={venmoPayUrl(donationAmount, venmoNote)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary mt-5 inline-flex w-full"
+              style={{ backgroundColor: '#008CFF' }}
+            >
+              Open Venmo to Pay ${donationAmount}
+            </a>
+          </div>
+
+          {paymentError && (
+            <p className="mb-4 rounded-card border border-red-200 bg-red-50 px-4 py-3 font-body text-sm text-red-700" role="alert">
+              {paymentError}
+            </p>
+          )}
+
+          <div className="flex gap-3">
+            <button type="button" onClick={onBack} disabled={submitting} className="btn-ghost flex-1">
+              Back
+            </button>
+            <button
+              type="button"
+              onClick={handleVenmoSubmit}
+              disabled={submitting}
+              className="btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {submitting ? 'Submitting…' : "I've Sent My Venmo Payment"}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -607,6 +729,7 @@ function PaymentForm({
 // Step 3 — Payment (wrapper that provides Elements context)
 function StepPayment({
   clientSecret,
+  paymentIntentId,
   raceType,
   formData,
   donationAmount,
@@ -615,11 +738,12 @@ function StepPayment({
   onBack,
 }: {
   clientSecret: string;
+  paymentIntentId: string;
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
   bandanaColor: string;
-  onSuccess: () => void;
+  onSuccess: (method: CompletedMethod) => void;
   onBack: () => void;
 }) {
   return (
@@ -632,6 +756,7 @@ function StepPayment({
         formData={formData}
         donationAmount={donationAmount}
         bandanaColor={bandanaColor}
+        paymentIntentId={paymentIntentId}
         onSuccess={onSuccess}
         onBack={onBack}
       />
@@ -645,13 +770,16 @@ function StepConfirmation({
   formData,
   donationAmount,
   bandanaColor,
+  method,
 }: {
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
   bandanaColor: string;
+  method: CompletedMethod;
 }) {
   const raceLabel = raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL;
+  const pending = method === 'venmo';
 
   return (
     <div className="text-center">
@@ -675,9 +803,13 @@ function StepConfirmation({
         </svg>
       </div>
 
-      <h2 className="font-display text-4xl uppercase text-ink mb-2">You&rsquo;re Registered!</h2>
+      <h2 className="font-display text-4xl uppercase text-ink mb-2">
+        {pending ? 'Almost There!' : 'You’re Registered!'}
+      </h2>
       <p className="font-body text-base text-ash mb-8">
-        Thank you for signing up for Race Against Cancers 2026.
+        {pending
+          ? 'Thanks! We’ve received your registration and will confirm your spot once your Venmo payment comes through.'
+          : 'Thank you for signing up for Race Against Cancers 2026.'}
       </p>
 
       {/* Summary */}
@@ -707,7 +839,9 @@ function StepConfirmation({
       </div>
 
       <p className="mb-8 font-body text-sm text-ash">
-        Check your email for a receipt from Stripe.
+        {pending
+          ? 'We’ll email you once your Venmo payment is confirmed. Questions? Just reply to that email.'
+          : 'Check your email for a receipt from Stripe.'}
       </p>
 
       <Link href="/" className="btn-primary">
@@ -734,6 +868,8 @@ export function RegisterFlow() {
   });
   const [waiverAgreed, setWaiverAgreed] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
+  const [completedMethod, setCompletedMethod] = useState<CompletedMethod>('card');
   const [loadingIntent, setLoadingIntent] = useState(false);
   const [intentError, setIntentError] = useState<string | null>(null);
 
@@ -758,6 +894,7 @@ export function RegisterFlow() {
         setIntentError(result.error);
       } else {
         setClientSecret(result.clientSecret);
+        setPaymentIntentId(result.paymentIntentId);
         setStep(3);
       }
     } catch (err) {
@@ -806,14 +943,18 @@ export function RegisterFlow() {
         </>
       )}
 
-      {step === 3 && clientSecret && (
+      {step === 3 && clientSecret && paymentIntentId && (
         <StepPayment
           clientSecret={clientSecret}
+          paymentIntentId={paymentIntentId}
           raceType={raceType}
           formData={formData}
           donationAmount={donationAmount}
           bandanaColor={bandanaColor}
-          onSuccess={() => setStep(4)}
+          onSuccess={(method) => {
+            setCompletedMethod(method);
+            setStep(4);
+          }}
           onBack={() => setStep(2)}
         />
       )}
@@ -824,6 +965,7 @@ export function RegisterFlow() {
           formData={formData}
           donationAmount={donationAmount}
           bandanaColor={bandanaColor}
+          method={completedMethod}
         />
       )}
     </div>

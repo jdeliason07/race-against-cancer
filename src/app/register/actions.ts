@@ -13,7 +13,7 @@ export async function createPaymentIntent(registrationData: {
   dob: string;
   emergencyName: string;
   emergencyPhone: string;
-}): Promise<{ clientSecret: string } | { error: string }> {
+}): Promise<{ clientSecret: string; paymentIntentId: string } | { error: string }> {
   if (!process.env.STRIPE_SECRET_KEY) {
     return { error: 'Payment is not configured yet. Please contact the race organizer.' };
   }
@@ -33,6 +33,9 @@ export async function createPaymentIntent(registrationData: {
     const intent = await stripe.paymentIntents.create({
       amount: registrationData.amount,
       currency: 'usd',
+      // Enables card + wallet methods (Google Pay / Apple Pay / Link) that are
+      // turned on in the Stripe Dashboard, so the Express Checkout button works.
+      automatic_payment_methods: { enabled: true },
       receipt_email: registrationData.email,
       description: `${EVENT_NAME} — ${registrationData.raceType}`,
       metadata: {
@@ -52,9 +55,40 @@ export async function createPaymentIntent(registrationData: {
       },
     });
 
-    return { clientSecret: intent.client_secret! };
+    return { clientSecret: intent.client_secret!, paymentIntentId: intent.id };
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unexpected error creating payment.';
+    return { error: message };
+  }
+}
+
+// Venmo can't be charged through Stripe, so the athlete pays out-of-band via
+// the Venmo app. We flag the existing PaymentIntent as a pending Venmo payment
+// so it shows up in the Stripe Dashboard (with all registration details) for
+// the organizer to manually confirm once the Venmo transfer arrives.
+export async function markVenmoPending(paymentIntentId: string): Promise<
+  { ok: true } | { error: string }
+> {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return { error: 'Payment is not configured yet. Please contact the race organizer.' };
+  }
+  if (!paymentIntentId) {
+    return { error: 'Missing registration reference. Please go back and try again.' };
+  }
+
+  try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    await stripe.paymentIntents.update(paymentIntentId, {
+      description: `${EVENT_NAME} — Venmo (pending manual confirmation)`,
+      metadata: {
+        paymentMethod: 'venmo',
+        venmoStatus: 'pending_manual_confirmation',
+        venmoSubmittedAt: new Date().toISOString(),
+      },
+    });
+    return { ok: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unexpected error recording Venmo payment.';
     return { error: message };
   }
 }

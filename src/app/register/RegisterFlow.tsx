@@ -653,7 +653,17 @@ function PaymentForm({
           )}
 
           <div className="mb-6">
-            <PaymentElement />
+            <PaymentElement
+              options={{
+                // Tabs layout shows the card fields directly with the other
+                // methods as a simple list — instead of the accordion that
+                // collapses into a recognized Link account. Wallets (incl.
+                // Link / Google Pay) already live in the Express Checkout
+                // button above, so suppress them here to avoid duplication.
+                layout: 'tabs',
+                wallets: { applePay: 'never', googlePay: 'never' },
+              }}
+            />
           </div>
 
           {paymentError && (

@@ -61,6 +61,7 @@ export function Footer() {
             <Link href="/register" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Register</Link>
             <Link href="/race-details" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Race Details</Link>
 <Link href="/volunteer" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Volunteer</Link>
+            <Link href="/sponsor" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Sponsor</Link>
             <Link href="/faq" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">FAQ</Link>
             <Link href="/about" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">About</Link>
             <Link href="/privacy" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Privacy</Link>

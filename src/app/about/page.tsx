@@ -88,7 +88,7 @@ export default function AboutPage() {
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">Our goal</h2>
           <div className="rounded-card border-2 border-pink bg-blush p-8 text-center">
             <p className="font-display text-[clamp(56px,10vw,96px)] uppercase leading-none text-ink">
-              $100,000
+              $500,000
             </p>
             <p className="mt-4 font-body text-base text-ash">
               That&apos;s what we&apos;re raising for Intermountain Cancer Center Utah Valley. Every

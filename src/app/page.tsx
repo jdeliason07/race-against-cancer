@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export const revalidate = 300; // refresh every 5 minutes
 
-const GOAL = 100000;
+const GOAL = 500000;
 
 const eventJsonLd = {
   '@context': 'https://schema.org',
@@ -159,7 +159,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-3xl px-6 text-center">
           <p className="section-label mb-6">Our goal</p>
           <p className="font-display text-[clamp(64px,12vw,120px)] uppercase leading-none text-ink">
-            $100,000
+            $500,000
           </p>
           <p className="mt-6 max-w-lg mx-auto font-body text-base text-ash">
             That&rsquo;s what we&rsquo;re raising for the cause. Every registration gets us closer.
@@ -180,7 +180,7 @@ export default async function HomePage() {
               aria-valuenow={pct}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-label={`${pct}% of $100,000 goal raised`}
+              aria-label={`${pct}% of $500,000 goal raised`}
             >
               <div
                 className="h-full rounded-pill bg-pink transition-all duration-700"
@@ -188,7 +188,7 @@ export default async function HomePage() {
               />
             </div>
             <div className="mt-2 text-right">
-              <span className="font-body text-xs text-ash">Goal: $100,000</span>
+              <span className="font-body text-xs text-ash">Goal: $500,000</span>
             </div>
           </div>
 

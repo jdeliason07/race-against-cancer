@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { EVENT_DATE_DISPLAY, CHARITY_NAME } from '@/config/site';
 
-export const alt = 'Race Against Cancers 2026 — 10K & Fun Run · Benefiting Huntsman Cancer Institute';
+export const alt = 'Race Against Cancers 2026 — 10K & Fun Run · Benefiting Intermountain Cancer Center Utah Valley';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 

@@ -37,26 +37,26 @@ export default function AboutPage() {
           {/* Logo */}
           <div className="mb-8 flex justify-center">
             <Image
-              src="/images/huntsman-logo.jpg"
-              alt="Huntsman Cancer Institute — University of Utah"
-              width={280}
-              height={200}
+              src="/images/intermountain-health-logo.svg"
+              alt="Intermountain Health"
+              width={320}
+              height={98}
               className="object-contain"
+              unoptimized
             />
           </div>
 
           <p className="mb-4 font-body text-base leading-relaxed text-ash">
-            Huntsman Cancer Institute (HCI) at the University of Utah is one of the nation&apos;s
-            leading cancer research and treatment centers. Founded through the vision and generosity
-            of Jon M. Huntsman Sr. — himself a cancer survivor — HCI is dedicated to understanding
-            cancer from its beginnings in our genes, finding ways to prevent and cure cancer, and
-            providing the best possible care for people with cancer.
+            Intermountain Cancer Center Utah Valley, in Provo, brings comprehensive cancer care
+            close to home for Utah County. Part of Intermountain Health, the center treats more
+            than 20 forms of cancer with a team of multidisciplinary experts, advanced technology,
+            and seamless coordination across every step of a patient&apos;s journey.
           </p>
           <p className="mb-6 font-body text-base leading-relaxed text-ash">
-            As a National Cancer Institute (NCI)-designated cancer center, HCI conducts pioneering
-            research, offers state-of-the-art treatment, and serves patients and families across
-            Utah and the Intermountain West. Their work in cancer genetics, precision medicine, and
-            prevention has put Utah on the global map for cancer research.
+            The center offers medical, radiation, and surgical oncology alongside supportive
+            services like patient navigation, nutrition, palliative care, survivorship programs,
+            and access to clinical trials. Free support groups and wellness classes help patients
+            and families find strength in community throughout treatment and beyond.
           </p>
 
           <a
@@ -65,7 +65,7 @@ export default function AboutPage() {
             rel="noopener noreferrer"
             className="font-body text-sm font-bold uppercase tracking-widest text-pink transition-colors hover:text-raspberry"
           >
-            Visit Huntsman Cancer Institute →
+            Visit Intermountain Cancer Center Utah Valley →
           </a>
         </section>
 
@@ -76,10 +76,10 @@ export default function AboutPage() {
               100% of donations to {CHARITY_NAME}
             </p>
             <p className="font-body text-sm leading-relaxed text-ash">
-              Every dollar from every registration goes directly to Huntsman Cancer Institute.
-              Event operations are covered separately so that your registration is a pure donation
-              to the cause. We are actively seeking sponsors who share our belief that fighting
-              cancer is worth every dollar.
+              Every dollar from every registration goes directly to Intermountain Cancer Center
+              Utah Valley. Event operations are covered separately so that your registration is a
+              pure donation to the cause. We are actively seeking sponsors who share our belief that
+              fighting cancer is worth every dollar.
             </p>
           </div>
         </section>
@@ -91,8 +91,9 @@ export default function AboutPage() {
               $100,000
             </p>
             <p className="mt-4 font-body text-base text-ash">
-              That&apos;s what we&apos;re raising for Huntsman Cancer Institute. Every registration
-              is a direct donation — no overhead, no middleman. Every dollar goes straight to the fight.
+              That&apos;s what we&apos;re raising for Intermountain Cancer Center Utah Valley. Every
+              registration is a direct donation — no overhead, no middleman. Every dollar goes
+              straight to the fight.
             </p>
           </div>
         </section>

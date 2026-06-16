@@ -6,8 +6,8 @@
 // ============================================================
 
 // --- CHARITY ------------------------------------------------
-export const CHARITY_NAME = "Huntsman Cancer Institute";
-export const CHARITY_URL  = "https://huntsmancancer.org";
+export const CHARITY_NAME = "Intermountain Cancer Center Utah Valley";
+export const CHARITY_URL  = "https://intermountainhealthcare.org/locations/utah-valley-clinic/cancer-center-utah-valley";
 export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 
 // --- EVENT --------------------------------------------------

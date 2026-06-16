@@ -433,7 +433,7 @@ function StepAthleteInfo({
             himself/herself and the Athlete&rsquo;s personal representatives, heirs, executors, and
             assigns, hereby fully and forever releases, waives, discharges, and covenants not to sue
             Race Against Cancers Inc., its officers, directors, employees, agents, and volunteers;
-            Huntsman Cancer Institute; all sponsors and co-sponsors of the Event; Provo City, Utah
+            Intermountain Cancer Center Utah Valley; all sponsors and co-sponsors of the Event; Provo City, Utah
             County, the State of Utah, and any other municipality or government agency whose property
             and/or personnel are used in connection with the Event; and all timing, logistics, and
             other vendors providing services to the Event (collectively, the &ldquo;Releasees&rdquo;)
@@ -461,7 +461,7 @@ function StepAthleteInfo({
           </p>
           <p className="mb-3">
             The Athlete acknowledges that the registration payment is a charitable donation
-            benefiting Huntsman Cancer Institute and is non-refundable. A registration may be
+            benefiting Intermountain Cancer Center Utah Valley and is non-refundable. A registration may be
             transferred to another participant until October 1, 2026 by contacting the Event
             organizers; no transfers will be processed after that date. If the Event is delayed,
             modified, or canceled by reason of fire, strike, work stoppage, pandemic, insurrection,

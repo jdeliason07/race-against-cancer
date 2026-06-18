@@ -4,7 +4,7 @@ import {
   CHARITY_NAME, MIN_DONATION_AMOUNT,
   TEN_K_LABEL, FUN_RUN_LABEL,
   EVENT_LOCATION_NAME, FUN_RUN_LOCATION_NAME,
-  ORG_NAME, SITE_URL,
+  ORG_NAME, SITE_URL, REGISTRATION_OPEN,
 } from '@/config/site';
 import { getDonationTotal } from '@/lib/getDonationTotal';
 import type { Metadata } from 'next';
@@ -85,7 +85,7 @@ export default async function HomePage() {
 
           <div className="mt-10">
             <Link href="/register" className="btn-primary px-10 py-5 text-base">
-              Register
+              {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
             </Link>
           </div>
         </div>
@@ -125,7 +125,7 @@ export default async function HomePage() {
             ))}
           </div>
           <div className="mt-10 text-center">
-            <Link href="/register" className="btn-primary">Register</Link>
+            <Link href="/register" className="btn-primary">{REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}</Link>
           </div>
         </div>
       </section>
@@ -194,7 +194,7 @@ export default async function HomePage() {
 
           <div className="mt-10">
             <Link href="/register" className="btn-primary px-10 py-5 text-base">
-              Register
+              {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
             </Link>
           </div>
         </div>

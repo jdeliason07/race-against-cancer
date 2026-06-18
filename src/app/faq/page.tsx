@@ -1,6 +1,6 @@
 import { Accordion } from '@/components/ui/Accordion';
 import { faqs } from '@/data/faq';
-import { CONTACT_PHONE, CONTACT_EMAIL } from '@/config/site';
+import { CONTACT_PHONE, CONTACT_EMAIL, REGISTRATION_OPEN } from '@/config/site';
 import Link from 'next/link';
 import { Phone, Mail } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -49,7 +49,7 @@ export default function FAQPage() {
 
         <div className="mt-8 text-center">
           <Link href="/register" className="btn-primary">
-            Register
+            {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
           </Link>
         </div>
       </div>

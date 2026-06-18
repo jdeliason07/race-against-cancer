@@ -4,7 +4,7 @@ import {
   FINISH_LOCATION_NAME, FINISH_LOCATION_ADDRESS,
   FUN_RUN_LOCATION_NAME, FUN_RUN_LOCATION_ADDRESS,
   CHECK_IN_DATE, CHECK_IN_TIME, CHECK_IN_LOCATION,
-  COURSE_GPX_URL, SITE_URL, ORG_NAME,
+  COURSE_GPX_URL, SITE_URL, ORG_NAME, REGISTRATION_OPEN,
 } from '@/config/site';
 import { MapPin, Clock, Package, Download, Flag } from 'lucide-react';
 import Link from 'next/link';
@@ -280,7 +280,7 @@ export default function RaceDetailsPage() {
         </section>
 
         <div className="pt-4">
-          <Link href="/register" className="btn-primary">Register</Link>
+          <Link href="/register" className="btn-primary">{REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}</Link>
         </div>
       </div>
     </div>

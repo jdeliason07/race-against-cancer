@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { CHARITY_NAME, CHARITY_URL } from '@/config/site';
+import { CHARITY_NAME, CHARITY_URL, REGISTRATION_OPEN } from '@/config/site';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -100,7 +100,7 @@ export default function AboutPage() {
 
         <div className="pt-4">
           <Link href="/register" className="btn-primary">
-            Register
+            {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
           </Link>
         </div>
       </div>

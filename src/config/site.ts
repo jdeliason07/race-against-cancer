@@ -36,6 +36,12 @@ export const COURSE_GPX_URL          = "";
 // Paste RunSignup or GiveButter URLs here — every button on the site points here
 export const REGISTRATION_URL = "[[REPLACE: registration platform URL (RunSignup/GiveButter)]]";
 
+// --- REGISTRATION GATE --------------------------------------
+// Flip REGISTRATION_OPEN to true when registration goes live.
+// Update REGISTRATION_OPENS_DATE to change the copy on the pre-signup page.
+export const REGISTRATION_OPEN       = false;
+export const REGISTRATION_OPENS_DATE = 'August 1, 2026';
+
 // --- REGISTRATION -------------------------------------------
 export const MIN_DONATION_AMOUNT   = 99; // 10K minimum — canonical number
 export const MIN_DONATION_FUN_RUN  = 49;  // Fun Run minimum

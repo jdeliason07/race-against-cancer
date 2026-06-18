@@ -8,8 +8,6 @@ export async function submitPreSignup(data: {
   firstName: string;
   lastName: string;
   email: string;
-  phone?: string;
-  raceInterest?: string;
 }): Promise<PreSignupResult> {
   if (!process.env.STRIPE_SECRET_KEY) {
     return { error: 'Service temporarily unavailable. Please email us directly.' };
@@ -27,12 +25,10 @@ export async function submitPreSignup(data: {
   await stripe.customers.create({
     email: data.email.trim(),
     name: `${data.firstName.trim()} ${data.lastName.trim()}`,
-    phone: data.phone?.trim() || undefined,
     description: `Pre-signup — ${EVENT_NAME}`,
     metadata: {
       source: 'pre-signup-form',
       event: EVENT_NAME,
-      raceInterest: data.raceInterest || 'not-specified',
       submittedAt: new Date().toISOString(),
     },
   });

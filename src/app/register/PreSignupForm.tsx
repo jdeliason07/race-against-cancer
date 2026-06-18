@@ -7,13 +7,11 @@ type FormState = {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
-  raceInterest: string;
 };
 
 export function PreSignupForm() {
   const [form, setForm] = useState<FormState>({
-    firstName: '', lastName: '', email: '', phone: '', raceInterest: '',
+    firstName: '', lastName: '', email: '',
   });
   const [pending, setPending] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -51,6 +49,9 @@ export function PreSignupForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+      <p className="font-body text-sm text-ash/70">
+        Only 2,000 spots available — be first in line when registration opens.
+      </p>
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
           <label htmlFor="firstName" className="font-body text-xs font-semibold uppercase tracking-widest text-ash">
@@ -98,38 +99,6 @@ export function PreSignupForm() {
           onChange={update('email')}
           className="rounded-pill border border-line bg-paper px-6 py-4 font-body text-base text-ink placeholder:text-ash/60 focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/15"
         />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="phone" className="font-body text-xs font-semibold uppercase tracking-widest text-ash">
-          Phone <span className="normal-case tracking-normal font-normal text-ash/60">(optional)</span>
-        </label>
-        <input
-          id="phone"
-          type="tel"
-          autoComplete="tel"
-          placeholder="555-555-5555"
-          value={form.phone}
-          onChange={update('phone')}
-          className="rounded-pill border border-line bg-paper px-6 py-4 font-body text-base text-ink placeholder:text-ash/60 focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/15"
-        />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="raceInterest" className="font-body text-xs font-semibold uppercase tracking-widest text-ash">
-          Which race interests you? <span className="normal-case tracking-normal font-normal text-ash/60">(optional)</span>
-        </label>
-        <select
-          id="raceInterest"
-          value={form.raceInterest}
-          onChange={update('raceInterest')}
-          className="rounded-pill border border-line bg-paper px-6 py-4 font-body text-base text-ink focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/15"
-        >
-          <option value="">Select one…</option>
-          <option value="10k">10K (6.2 mi)</option>
-          <option value="fun-run">Fun Run (~2 mi)</option>
-          <option value="not-sure">Not sure yet</option>
-        </select>
       </div>
 
       {error && (

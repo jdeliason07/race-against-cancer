@@ -5,7 +5,7 @@ import { Menu, X } from 'lucide-react';
 import { REGISTRATION_OPEN } from '@/config/site';
 
 const navLinks = [
-  { href: '/register', label: REGISTRATION_OPEN ? 'Register' : 'Pre-Sign Up' },
+  { href: '/register', label: REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist' },
   { href: '/race-details',  label: 'Race Details' },
   { href: '/volunteer',     label: 'Become a Volunteer' },
   { href: '/sponsor',       label: 'Become a Sponsor' },
@@ -46,7 +46,7 @@ export function Header() {
           {/* Register button + hamburger */}
           <div className="flex items-center gap-2 sm:gap-3">
             <Link href="/register" className="btn-primary py-3 px-4 text-xs sm:px-5">
-              {REGISTRATION_OPEN ? 'Register' : 'Pre-Sign Up'}
+              {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
             </Link>
 
             {/* Hamburger */}

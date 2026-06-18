@@ -43,6 +43,7 @@ export const REGISTRATION_OPEN       = false;
 export const REGISTRATION_OPENS_DATE = 'August 1, 2026';
 
 // --- REGISTRATION -------------------------------------------
+export const TOTAL_SPOTS           = 2000;
 export const MIN_DONATION_AMOUNT   = 99; // 10K minimum — canonical number
 export const MIN_DONATION_FUN_RUN  = 49;  // Fun Run minimum
 export const TEN_K_LABEL           = "10K (6.2 mi)";

@@ -9,7 +9,7 @@ type FormState = {
   email: string;
 };
 
-export function PreSignupForm() {
+export function PreSignupForm({ spotsRemaining }: { spotsRemaining: number }) {
   const [form, setForm] = useState<FormState>({
     firstName: '', lastName: '', email: '',
   });
@@ -50,7 +50,7 @@ export function PreSignupForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
       <p className="font-body text-sm text-ash/70">
-        Only 2,000 spots available — be first in line when registration opens.
+        Only {spotsRemaining.toLocaleString()} spots left — be first in line when registration opens.
       </p>
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">

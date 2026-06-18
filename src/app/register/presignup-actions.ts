@@ -1,5 +1,6 @@
 'use server';
 import Stripe from 'stripe';
+import { revalidatePath } from 'next/cache';
 import { EVENT_NAME } from '@/config/site';
 
 export type PreSignupResult = { ok: true } | { error: string };
@@ -33,5 +34,6 @@ export async function submitPreSignup(data: {
     },
   });
 
+  revalidatePath('/register');
   return { ok: true };
 }

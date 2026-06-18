@@ -3,8 +3,11 @@ import {
   CHARITY_NAME, MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN,
   REGISTRATION_OPEN, REGISTRATION_OPENS_DATE,
 } from '@/config/site';
+import { getSpotsRemaining } from '@/lib/getSpotsRemaining';
 import { RegisterFlow } from './RegisterFlow';
 import { PreSignupForm } from './PreSignupForm';
+
+export const revalidate = 60;
 
 export const metadata: Metadata = REGISTRATION_OPEN
   ? {
@@ -16,8 +19,9 @@ export const metadata: Metadata = REGISTRATION_OPEN
       description: `Registration opens ${REGISTRATION_OPENS_DATE}. Join the waitlist to be notified the moment registration goes live for Race Against Cancers 2026.`,
     };
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
   if (!REGISTRATION_OPEN) {
+    const spotsRemaining = await getSpotsRemaining();
     return (
       <div className="bg-paper min-h-screen">
         <section className="border-b border-line bg-mist py-16">
@@ -32,7 +36,7 @@ export default function RegisterPage() {
           </div>
         </section>
         <div className="mx-auto max-w-2xl px-6 py-16">
-          <PreSignupForm />
+          <PreSignupForm spotsRemaining={spotsRemaining} />
         </div>
       </div>
     );

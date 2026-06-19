@@ -119,7 +119,7 @@ export default function RaceDetailsPage() {
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed whitespace-pre-line">
                 <span className="font-semibold">10K:</span> {CHECK_IN_DATE}{CHECK_IN_TIME ? `\n${CHECK_IN_TIME}` : ''}{CHECK_IN_LOCATION ? `\n${CHECK_IN_LOCATION}` : ''}
-                {'\n\n'}<span className="font-semibold">Fun Run:</span> {CHECK_IN_DATE}{'\n'}7:30 AM · LaVell Edwards Stadium
+                {'\n\n'}<span className="font-semibold">Fun Run:</span> {CHECK_IN_DATE}{'\n'}7:00 AM · LaVell Edwards Stadium
                 {'\n\n'}Includes: race bib + bandana
               </dd>
             </div>
@@ -178,7 +178,7 @@ export default function RaceDetailsPage() {
             <div className="rounded-card border border-petal bg-blush p-5 mt-4">
               <p className="font-body text-sm font-bold uppercase tracking-widest text-pink mb-2">Getting to the start</p>
               <p className="font-body text-sm text-ash">
-                Check-in for the Fun Run is at LaVell Edwards Stadium — plan to arrive by 7:30 AM.
+                Check-in for the Fun Run is at LaVell Edwards Stadium — plan to arrive by 7:00 AM.
                 The race starts promptly at 8:00 AM. Participants are responsible for their own
                 transportation to the stadium.
               </p>

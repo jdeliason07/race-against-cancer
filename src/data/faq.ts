@@ -22,7 +22,7 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "How do I get to the Fun Run start?",
-    answer: "The Fun Run starts at LaVell Edwards Stadium on the BYU campus in Provo. Participants are responsible for their own transportation to the stadium. Check-in is at the stadium — plan to arrive by 7:30 AM. The race starts promptly at 8:00 AM.",
+    answer: "The Fun Run starts at LaVell Edwards Stadium on the BYU campus in Provo. Participants are responsible for their own transportation to the stadium. Check-in is at the stadium — plan to arrive by 7:00 AM. The race starts promptly at 8:00 AM.",
   },
   {
     question: "What's included with registration?",
@@ -34,7 +34,7 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "When and where is check-in?",
-    answer: "Check-in is on race morning — Saturday, November 7, 2026. 10K check-in is at 7:00 AM in the Canyon Crest Elementary School parking lot (4664 N Canyon Rd, Provo). Fun Run check-in is at 7:30 AM at LaVell Edwards Stadium. Your bib and bandana will be available at your respective check-in location.",
+    answer: "Check-in is on race morning — Saturday, November 7, 2026. 10K check-in is at 7:00 AM in the Canyon Crest Elementary School parking lot (4664 N Canyon Rd, Provo). Fun Run check-in is at 7:00 AM at LaVell Edwards Stadium. Your bib and bandana will be available at your respective check-in location.",
   },
   {
     question: "Where does my donation go?",

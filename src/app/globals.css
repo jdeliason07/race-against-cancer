@@ -1,25 +1,52 @@
 @import "tailwindcss";
 
+/* ============================================================
+   SUNNY TIDES — THEME
+   "The feeling of warm light on cold water."
+   Ratio guide: ~60% water neutrals, 30% blue, 10% gold pops.
+   ============================================================ */
+
 @theme {
-  /* Brand Colors */
-  --color-pink: #F0307A;
-  --color-raspberry: #C81A60;
-  --color-petal: #F8B4D0;
-  --color-blush: #FDE7F0;
-  --color-ink: #1C1719;
-  --color-paper: #FFFFFF;
-  --color-mist: #FFF6FA;
-  --color-ash: #6E5C64;
-  --color-line: #ECE2E6;
+  /* --- Core palette --- */
+  --color-tide: #60B2F5;        /* Tide Blue — primary */
+  --color-deep-tide: #3D96E0;   /* Deep Tide — blue text at large sizes */
+  --color-sun: #F7DF75;         /* Sun Gold — accent */
+  --color-low-sun: #F2C94C;     /* Low Sun — dark gold */
+  --color-seafoam: #BFDBDD;     /* Seafoam — neutral */
+  --color-seaglass: #D7ECF0;    /* Sea Glass — surface */
+  --color-ink: #173A47;         /* Deep Water — text / ink */
+  --color-paper: #FBFEFF;       /* Salt White — base */
+  --color-white: #FFFFFF;
 
-  /* Fonts */
-  --font-display: var(--font-anton), sans-serif;
-  --font-body: var(--font-saira), sans-serif;
+  /* Muted ink for secondary copy (Deep Water @ ~70%) */
+  --color-ash: #4A6670;
+  --color-line: #DCEAEC;        /* hairlines on seaglass world */
 
-  /* Border Radius */
-  --radius-card: 14px;
+  /* --- Product tie-dye spectrum --- */
+  --color-wave: #6FAED9;        /* Wave Blue */
+  --color-lime: #7FC44E;        /* Sea Lime */
+  --color-sunset: #E98A33;      /* Sunset Orange */
+  --color-shell: #EF87A2;       /* Shell Pink */
+  --color-orchid: #B05CB0;      /* Orchid */
+  --color-canvas: #F0E6A8;      /* Butter Canvas — undyed */
+
+  /* --- Fonts --- */
+  --font-display: var(--font-fredoka), system-ui, sans-serif;
+  --font-body: var(--font-hanken), system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
+
+  /* --- Type scale (1.25 ratio) --- */
+  --text-label: 0.75rem;   /* 12 */
+  --text-base: 1rem;       /* 16 body */
+  --text-lead: 1.25rem;    /* 20 */
+  --text-h3: 1.875rem;     /* 30 */
+  --text-h2: 2.875rem;     /* 46 */
+  --text-h1: 4rem;         /* 64 */
+
+  /* --- Radius — rounded forms, nothing trying too hard --- */
+  --radius-card: 20px;
   --radius-pill: 999px;
-  --radius-chip: 20px;
+  --radius-chip: 12px;
 }
 
 @layer base {
@@ -27,13 +54,22 @@
     scroll-behavior: smooth;
   }
 
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  /* Headlines: chunky and rounded */
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
-    *,
-    *::before,
-    *::after {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
@@ -41,30 +77,40 @@
   }
 
   *:focus-visible {
-    outline: 2px solid #F0307A;
+    outline: 2px solid var(--color-deep-tide);
     outline-offset: 3px;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 }
 
 @layer components {
+  /* Sun Gold + Deep Water is the highest-energy pairing — used sparingly */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-pill bg-pink px-7 py-4 font-body text-sm font-bold uppercase tracking-widest text-white transition-colors duration-200 hover:bg-raspberry focus-visible:bg-raspberry;
+    @apply inline-flex items-center justify-center gap-2 rounded-pill bg-sun px-7 py-4 font-mono text-sm font-bold uppercase tracking-[0.12em] text-ink transition-all duration-200 hover:bg-low-sun hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0;
+  }
+
+  .btn-tide {
+    @apply inline-flex items-center justify-center gap-2 rounded-pill bg-tide px-7 py-4 font-mono text-sm font-bold uppercase tracking-[0.12em] text-white transition-all duration-200 hover:bg-deep-tide hover:-translate-y-0.5 disabled:opacity-50;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-pill border-2 border-pink px-7 py-4 font-body text-sm font-bold uppercase tracking-widest text-pink transition-colors duration-200 hover:bg-pink hover:text-white;
+    @apply inline-flex items-center justify-center gap-2 rounded-pill border-2 border-ink/15 bg-transparent px-7 py-4 font-mono text-sm font-bold uppercase tracking-[0.12em] text-ink transition-colors duration-200 hover:border-ink/40 hover:bg-white;
   }
 
-  .btn-donate {
-    @apply inline-flex items-center justify-center gap-2 rounded-pill bg-ink px-7 py-4 font-body text-sm font-bold uppercase tracking-widest text-white transition-colors duration-200 hover:bg-ash;
+  /* Space Mono labels = the surf-shop price-tag feel */
+  .label {
+    @apply font-mono text-label font-normal uppercase tracking-[0.2em] text-ash;
   }
 
   .section-label {
-    @apply font-body text-xs font-bold uppercase tracking-[0.34em] text-pink;
+    @apply font-mono text-label font-bold uppercase tracking-[0.28em] text-deep-tide;
   }
 
-  .rule-line {
-    @apply flex items-center gap-4 text-pink;
+  .pricetag {
+    @apply font-mono text-base font-bold tracking-tight text-ink;
+  }
+
+  .card {
+    @apply rounded-card bg-white ring-1 ring-line;
   }
 }

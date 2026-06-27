@@ -1,15 +1,24 @@
 import { MetadataRoute } from 'next';
 import { SITE_URL } from '@/config/site';
+import { PRODUCTS } from '@/data/products';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    { url: SITE_URL,                           lastModified: new Date(), changeFrequency: 'weekly',  priority: 1   },
-    { url: `${SITE_URL}/register`,             lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${SITE_URL}/race-details`,         lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-{ url: `${SITE_URL}/volunteer`,            lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${SITE_URL}/sponsor`,              lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${SITE_URL}/about`,                lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
-    { url: `${SITE_URL}/faq`,                  lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    { url: `${SITE_URL}/privacy`,              lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
+  const now = new Date();
+  const staticRoutes: MetadataRoute.Sitemap = [
+    { url: SITE_URL, lastModified: now, changeFrequency: 'weekly', priority: 1 },
+    { url: `${SITE_URL}/shop`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${SITE_URL}/shop/totes`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${SITE_URL}/shop/jewelry`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${SITE_URL}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${SITE_URL}/contact`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
   ];
+
+  const productRoutes: MetadataRoute.Sitemap = PRODUCTS.map((p) => ({
+    url: `${SITE_URL}/product/${p.slug}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: 0.7,
+  }));
+
+  return [...staticRoutes, ...productRoutes];
 }

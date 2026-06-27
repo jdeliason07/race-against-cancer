@@ -1,60 +1,55 @@
 import { ImageResponse } from 'next/og';
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import { EVENT_DATE_DISPLAY, CHARITY_NAME } from '@/config/site';
+import { BRAND_NAME, BRAND_TAGLINE } from '@/config/site';
 
-export const alt = 'Race Against Cancers 2026 — 10K & Fun Run · Benefiting Intermountain Cancer Center Utah Valley';
+export const alt = 'Sunny Tides — hand-dyed totes and beach-day goods';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 export default async function Image() {
-  const antonFont = await readFile(join(process.cwd(), 'public/fonts/Anton-Regular.ttf'));
-
   return new ImageResponse(
     (
       <div
         style={{
-          background: '#FFFFFF',
+          background: '#D7ECF0',
           width: '100%',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '60px 80px',
+          fontFamily: 'sans-serif',
         }}
       >
-        {/* Pink accent bar */}
-        <div style={{ display: 'flex', width: '80px', height: '6px', background: '#F0307A', marginBottom: '48px', borderRadius: '999px' }} />
+        {/* Sun stamp */}
+        <svg width="160" height="150" viewBox="0 0 100 90">
+          {Array.from({ length: 9 }).map((_, i) => {
+            const a = Math.PI + (i / 8) * Math.PI;
+            return (
+              <line
+                key={i}
+                x1={50 + Math.cos(a) * 22}
+                y1={52 + Math.sin(a) * 22}
+                x2={50 + Math.cos(a) * 30}
+                y2={52 + Math.sin(a) * 30}
+                stroke="#F7DF75"
+                strokeWidth={3.2}
+                strokeLinecap="round"
+              />
+            );
+          })}
+          <path d="M30 52 A20 20 0 0 1 70 52 Z" fill="#F7DF75" />
+          <path d="M14 64 q9 -7 18 0 t18 0 t18 0" fill="none" stroke="#173A47" strokeWidth={3.4} strokeLinecap="round" />
+          <path d="M14 76 q9 -7 18 0 t18 0 t18 0" fill="none" stroke="#173A47" strokeWidth={3.4} strokeLinecap="round" />
+        </svg>
 
-        {/* RACE AGAINST CANCERS */}
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '0px', lineHeight: 1 }}>
-          <span style={{ fontFamily: 'Anton', fontSize: '96px', color: '#1C1719', letterSpacing: '-0.01em' }}>RACE</span>
-          <span style={{ fontFamily: 'Anton', fontSize: '96px', color: '#F0307A', letterSpacing: '-0.01em' }}>AGAINST</span>
-          <span style={{ fontFamily: 'Anton', fontSize: '96px', color: '#1C1719', letterSpacing: '-0.01em' }}>CANCERS</span>
+        <div style={{ display: 'flex', marginTop: 28, fontSize: 92, fontWeight: 700, color: '#173A47', letterSpacing: '-0.02em' }}>
+          {BRAND_NAME}
         </div>
-
-        {/* Date & distance */}
-        <div style={{ display: 'flex', marginTop: '28px', fontFamily: 'sans-serif', fontSize: '26px', color: '#6E5C64', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-          10K &amp; Fun Run · {EVENT_DATE_DISPLAY}
-        </div>
-
-        {/* Charity */}
-        <div style={{ display: 'flex', marginTop: '12px', fontFamily: 'sans-serif', fontSize: '18px', color: '#F0307A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
-          Benefiting {CHARITY_NAME}
+        <div style={{ display: 'flex', marginTop: 8, fontSize: 30, color: '#3D96E0', textTransform: 'uppercase', letterSpacing: '0.18em' }}>
+          {BRAND_TAGLINE}
         </div>
       </div>
     ),
-    {
-      ...size,
-      fonts: [
-        {
-          name: 'Anton',
-          data: antonFont,
-          style: 'normal',
-          weight: 400,
-        },
-      ],
-    }
+    { ...size },
   );
 }

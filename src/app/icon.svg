@@ -1,3 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <circle cx="16" cy="16" r="16" fill="#F0307A"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" rx="22" fill="#173A47"/>
+  <g transform="translate(0 6)">
+    <line x1="28.0" y1="35.4" x2="22.7" y2="30.1" stroke="#F7DF75" stroke-width="3.4" stroke-linecap="round"/>
+    <line x1="33.2" y1="31.2" x2="29.6" y2="24.7" stroke="#F7DF75" stroke-width="3.4" stroke-linecap="round"/>
+    <line x1="40.1" y1="29.0" x2="38.6" y2="21.9" stroke="#F7DF75" stroke-width="3.4" stroke-linecap="round"/>
+    <line x1="50.0" y1="28.0" x2="50.0" y2="20.0" stroke="#F7DF75" stroke-width="3.4" stroke-linecap="round"/>
+    <line x1="59.9" y1="29.0" x2="61.4" y2="21.9" stroke="#F7DF75" stroke-width="3.4" stroke-linecap="round"/>
+    <line x1="66.8" y1="31.2" x2="70.4" y2="24.7" stroke="#F7DF75" stroke-width="3.4" stroke-linecap="round"/>
+    <line x1="72.0" y1="35.4" x2="77.3" y2="30.1" stroke="#F7DF75" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M30 48 A20 20 0 0 1 70 48 Z" fill="#F7DF75"/>
+    <path d="M16 60 q9 -7 18 0 t18 0 t18 0" fill="none" stroke="#60B2F5" stroke-width="3.6" stroke-linecap="round"/>
+    <path d="M16 72 q9 -7 18 0 t18 0 t18 0" fill="none" stroke="#60B2F5" stroke-width="3.6" stroke-linecap="round"/>
+  </g>
 </svg>

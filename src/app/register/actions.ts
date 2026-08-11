@@ -15,7 +15,6 @@ import {
   getStripe,
   isRegistered,
 } from '@/lib/stripeRegistration';
-import { ensureReferralCode, resolveReferrer } from '@/lib/referral';
 
 // A 'use server' module may only export async functions, so anything shared
 // beyond the actions themselves has to live outside this file.
@@ -34,7 +33,7 @@ interface RegistrationInput {
   emergencyPhone: string;
   guardianName: string; // required when the athlete is under 18 on race day
   waiverAgreed: boolean;
-  referredBy: string; // referral code or referrer's email; '' when nobody
+  referredByName: string; // full name of whoever referred them; '' when nobody
 }
 
 /**
@@ -75,9 +74,7 @@ async function upsertAthleteCustomer(
 
 export async function createPaymentIntent(
   registrationData: RegistrationInput,
-): Promise<
-  { clientSecret: string; paymentIntentId: string; referralCode: string } | { error: string }
-> {
+): Promise<{ clientSecret: string; paymentIntentId: string } | { error: string }> {
   const stripe = getStripe();
   if (!stripe) {
     return { error: 'Payment is not configured yet. Please contact the race organizer.' };
@@ -135,23 +132,11 @@ export async function createPaymentIntent(
       phone,
     );
 
-    // Resolve who referred them before taking payment. A typo'd code is worth
-    // stopping for — the alternative is silently costing their friend a reward.
-    const referrer = REFERRAL_ENABLED
-      ? await resolveReferrer(stripe, registrationData.referredBy)
-      : null;
-    if (REFERRAL_ENABLED && registrationData.referredBy.trim() && !referrer) {
-      return {
-        error:
-          "We couldn't find that referral code or email. Double-check it, or clear the field to keep going without one.",
-      };
-    }
-    if (referrer && referrer.customer.id === customer.id) {
-      return { error: "You can't refer yourself — that spot goes to a friend." };
-    }
-
-    // Their own code, so the confirmation screen can hand them a link to share.
-    const referralCode = REFERRAL_ENABLED ? await ensureReferralCode(stripe, customer) : '';
+    // Just a name — there's nobody to look up and nothing to validate, so the
+    // weekly report groups these by name and you decide what counts.
+    const referredByName = REFERRAL_ENABLED
+      ? registrationData.referredByName.trim().replace(/\s+/g, ' ').slice(0, 100)
+      : '';
 
     const intent = await stripe.paymentIntents.create({
       amount: registrationData.amount,
@@ -180,19 +165,13 @@ export async function createPaymentIntent(
         waiverAgreedBy: isMinor ? registrationData.guardianName.trim() : 'athlete',
         waiverAgreedAt: new Date().toISOString(),
         waiverVersion: WAIVER_VERSION,
-        referralCode,
         // Copied onto the customer by the webhook, so a referral only counts
         // once the payment actually succeeds.
-        referredByCode: referrer?.code ?? '',
-        referredByEmail: referrer?.customer.email ?? '',
+        referredByName,
       },
     });
 
-    return {
-      clientSecret: intent.client_secret!,
-      paymentIntentId: intent.id,
-      referralCode,
-    };
+    return { clientSecret: intent.client_secret!, paymentIntentId: intent.id };
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unexpected error creating payment.';
     return { error: message };

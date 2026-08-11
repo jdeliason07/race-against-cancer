@@ -1,14 +1,10 @@
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import {
   CHARITY_NAME, MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN,
   REGISTRATION_OPEN, REGISTRATION_OPENS_LABEL,
 } from '@/config/site';
-import { getSpotsRemaining } from '@/lib/getSpotsRemaining';
 import { RegisterFlow } from './RegisterFlow';
 import { PreSignupForm } from './PreSignupForm';
-
-export const revalidate = 60;
 
 const opensCopy = `Registration opens ${REGISTRATION_OPENS_LABEL}`;
 
@@ -22,9 +18,8 @@ export const metadata: Metadata = REGISTRATION_OPEN
       description: `${opensCopy}. Join the waitlist to be notified the moment registration goes live for Race Against Cancers 2026.`,
     };
 
-export default async function RegisterPage() {
+export default function RegisterPage() {
   if (!REGISTRATION_OPEN) {
-    const spotsRemaining = await getSpotsRemaining();
     return (
       <div className="bg-paper min-h-screen">
         <section className="border-b border-line bg-mist py-16">
@@ -34,12 +29,12 @@ export default async function RegisterPage() {
               Join the Waitlist
             </h1>
             <p className="mt-4 font-body text-base text-ash">
-              Be the first to know when registration opens — and lock in your spot.
+              Be the first to know the moment registration opens.
             </p>
           </div>
         </section>
         <div className="mx-auto max-w-2xl px-6 py-16">
-          <PreSignupForm spotsRemaining={spotsRemaining} />
+          <PreSignupForm />
         </div>
       </div>
     );
@@ -57,11 +52,7 @@ export default async function RegisterPage() {
         </div>
       </section>
       <div className="mx-auto max-w-2xl px-6 py-16">
-        {/* RegisterFlow reads ?ref= via useSearchParams, which needs a Suspense
-            boundary so this page can still be prerendered. */}
-        <Suspense fallback={null}>
-          <RegisterFlow />
-        </Suspense>
+        <RegisterFlow />
       </div>
     </div>
   );

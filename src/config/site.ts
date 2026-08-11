@@ -44,19 +44,18 @@ export const REGISTRATION_OPENS_DATE = '';
 export const REGISTRATION_OPENS_LABEL = REGISTRATION_OPENS_DATE || 'soon';
 
 // --- REGISTRATION -------------------------------------------
-export const TOTAL_SPOTS           = 2000;
+// The race has no attendance cap — registration stays open regardless of
+// how many people sign up.
 export const MIN_DONATION_AMOUNT   = 99; // 10K minimum — canonical number
 export const MIN_DONATION_FUN_RUN  = 49;  // Fun Run minimum
 export const TEN_K_LABEL           = "10K (6.2 mi)";
 export const FUN_RUN_LABEL         = "Fun Run (~2 mi)";
 
 // --- REFERRAL INCENTIVE -------------------------------------
-// Every registrant gets a referral code and a shareable link. When someone
-// registers through that link (or names them in the "who referred you" box),
-// the referrer earns the reward below — unlimited times.
+// Registrants name whoever referred them in a box on the form. Each named
+// person earns the reward below — unlimited times. A report of who referred
+// how many is emailed weekly by /api/referral-report.
 // Set REFERRAL_REWARD to "" to switch the whole program off site-wide.
-// Run `node --env-file=.env.local scripts/referral-report.mjs` to see who
-// has earned what.
 export const REFERRAL_REWARD: string = "$10 In-N-Out gift card";
 export const REFERRAL_ENABLED = REFERRAL_REWARD !== "";
 

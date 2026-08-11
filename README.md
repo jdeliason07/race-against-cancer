@@ -42,25 +42,32 @@ That flag — not the browser — is what makes a registration official, and it'
 counter from counting one person as both a waitlist signup and a registrant.
 
 ### Referral rewards
-Every registrant gets a 6-character referral code and a link (`/register?ref=CODE`) on their
-confirmation screen. A friend who registers through that link — or who types the code or the
-referrer's email into "Who referred you?" — is credited to them, unlimited times.
+Registrants type their referrer's full name into a "Who referred you?" box. The name is written
+to the referred person's Stripe customer record (`referredByName`) **by the webhook**, so a
+referral only counts once their payment succeeds.
 
-Attribution is written to the referred person's Stripe customer record (`referredByCode`,
-`referredByEmail`) **by the webhook**, so a referral only counts once the friend's payment
-succeeds. Rewards are counted from those records rather than tracked as a running tally, so a
-repeated webhook delivery can't inflate anyone's total.
+`/api/referral-report` emails a tally every Monday (the cron lives in `vercel.json`): each
+referrer, how many they brought that week, their all-time total, and who they referred. Counts are
+derived from the records each run rather than kept as a running tally, so a repeated webhook
+delivery can't inflate anyone's total. Names typed by registrants aren't verified — the report
+lists who each person referred so you can skim before sending gift cards.
 
-To see who has earned what:
+Needs `CRON_SECRET`, `RESEND_API_KEY`, `REPORT_EMAIL_TO`, and `REPORT_EMAIL_FROM` (see
+`src/env.example`). Resend is called over plain `fetch`, so swapping in another email provider
+means changing one function in the route. To run it on demand:
 ```bash
-node --env-file=.env.local scripts/referral-report.mjs
+curl -H "Authorization: Bearer $CRON_SECRET" https://<your-domain>/api/referral-report
 ```
-Set `REFERRAL_REWARD` to `""` in `src/config/site.ts` to switch the program off everywhere —
-the form field, the confirmation screen, the FAQ entry, and the waitlist copy all disappear.
+
+Set `REFERRAL_REWARD` to `""` in `src/config/site.ts` to switch the program off everywhere — the
+form field, the FAQ entry, the waitlist copy, and the weekly email all stop.
 
 Venmo payments are a manual step: the athlete pays in the app, the PaymentIntent is marked
-`venmoStatus = pending_manual_confirmation`, and it holds a spot but isn't counted in the donation
-total until an organizer confirms it in the Stripe Dashboard.
+`venmoStatus = pending_manual_confirmation`, and it isn't counted in the donation total until an
+organizer confirms it in the Stripe Dashboard.
+
+The race has **no attendance cap** — there is no spots-remaining counter and nothing turns
+registration off once a number is hit.
 
 ---
 
@@ -98,7 +105,6 @@ official GPS recording of the 10K course exists.
 - Payments run through Stripe in-house: server actions in `src/app/register/` create the
   PaymentIntent, `src/app/api/stripe/webhook/` records the result. See "Opening registration" above.
 - Otherwise static + server components, deployable to Vercel.
-- The waitlist and registration counters (`src/lib/getSpotsRemaining.ts`,
-  `src/lib/getDonationTotal.ts`) read live from Stripe and are cached for 60s by the
-  `revalidate` export on the pages that use them.
+- The donation total on the home page (`src/lib/getDonationTotal.ts`) reads live from Stripe and
+  is cached by the `revalidate` export on that page.
 - All external CTAs read from `site.ts` — change a URL once, it updates everywhere.

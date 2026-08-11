@@ -35,20 +35,6 @@ export function isRegistered(customer: Stripe.Customer): boolean {
 }
 
 /**
- * A spot is taken once payment succeeds — or as soon as a Venmo payment is
- * submitted, since the UI promises the spot is held while we confirm it.
- * Venmo intents stay unconfirmed until an organizer captures them by hand.
- */
-export function holdsSpot(intent: Stripe.PaymentIntent): boolean {
-  if (intent.metadata?.event !== EVENT_NAME) return false;
-  if (intent.status === 'succeeded') return true;
-  return (
-    intent.metadata?.venmoStatus === 'pending_manual_confirmation' &&
-    intent.status !== 'canceled'
-  );
-}
-
-/**
  * Walks every PaymentIntent belonging to this event.
  *
  * Uses search rather than listing the whole account so Stripe does the

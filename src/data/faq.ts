@@ -15,12 +15,12 @@ export const faqs: FAQItem[] = [
     question: "When does registration open?",
     answer: REGISTRATION_OPEN
       ? "Registration is open now — head to the registration page to claim your spot."
-      : `Registration opens ${REGISTRATION_OPENS_LABEL}. Join the waitlist with your name, email, and phone number and we'll email and text you the moment it goes live, so you can claim a spot before they run out.`,
+      : `Registration opens ${REGISTRATION_OPENS_LABEL}. Join the waitlist with your name, email, and phone number and we'll email and text you the moment it goes live.`,
   },
   ...(REFERRAL_ENABLED
     ? [{
         question: "How does the referral reward work?",
-        answer: `Once you register, you get a referral code and a link to share. Every friend who completes a registration through your link — or who enters your code or email in the "who referred you" box — earns you a ${REFERRAL_REWARD}. There's no cap: refer ten friends, get ten gift cards. Referrals count once your friend's registration is paid, and we'll be in touch about getting your cards to you.`,
+        answer: `Tell your friends to put your full name in the "Who referred you?" box when they register. Every friend who registers and names you earns you a ${REFERRAL_REWARD}. There's no cap — refer ten friends, get ten gift cards. Referrals count once your friend's registration is paid, and we'll be in touch about getting your cards to you.`,
       }]
     : []),
   {

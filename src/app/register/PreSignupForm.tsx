@@ -10,7 +10,7 @@ type FormState = {
   phone: string;
 };
 
-export function PreSignupForm({ spotsRemaining }: { spotsRemaining: number }) {
+export function PreSignupForm() {
   const [form, setForm] = useState<FormState>({
     firstName: '', lastName: '', email: '', phone: '',
   });
@@ -46,9 +46,9 @@ export function PreSignupForm({ spotsRemaining }: { spotsRemaining: number }) {
         </p>
         {REFERRAL_ENABLED && (
           <p className="mt-4 font-body text-sm text-ash">
-            <span className="font-bold text-ink">Bring a friend when it does:</span> once you
-            register, every friend who registers through your referral link earns you a{' '}
-            {REFERRAL_REWARD} — unlimited.
+            <span className="font-bold text-ink">Bring a friend when it does:</span> every friend
+            who registers and puts your name in the &ldquo;Who referred you?&rdquo; box earns you
+            a {REFERRAL_REWARD} — unlimited.
           </p>
         )}
       </div>
@@ -58,7 +58,7 @@ export function PreSignupForm({ spotsRemaining }: { spotsRemaining: number }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
       <p className="font-body text-sm text-ash/70">
-        Only {spotsRemaining.toLocaleString()} spots left — be first in line when registration opens.
+        Add your details and we&rsquo;ll reach out the moment registration opens.
       </p>
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">

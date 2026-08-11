@@ -51,6 +51,13 @@ async function recordSuccessfulRegistration(
       waiverAgreedBy: intent.metadata.waiverAgreedBy ?? '',
       waiverAgreedAt: intent.metadata.waiverAgreedAt ?? '',
       waiverVersion: intent.metadata.waiverVersion ?? '',
+      referralCode: intent.metadata.referralCode ?? '',
+      // Writing the attribution here — rather than when the intent was created
+      // — is what makes a referral count only for a completed registration.
+      // Rewards are derived by counting these, never by incrementing a tally,
+      // so a duplicate webhook delivery can't inflate anyone's total.
+      referredByCode: intent.metadata.referredByCode ?? '',
+      referredByEmail: intent.metadata.referredByEmail ?? '',
     },
   });
 

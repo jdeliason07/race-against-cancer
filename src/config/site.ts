@@ -50,6 +50,16 @@ export const MIN_DONATION_FUN_RUN  = 49;  // Fun Run minimum
 export const TEN_K_LABEL           = "10K (6.2 mi)";
 export const FUN_RUN_LABEL         = "Fun Run (~2 mi)";
 
+// --- REFERRAL INCENTIVE -------------------------------------
+// Every registrant gets a referral code and a shareable link. When someone
+// registers through that link (or names them in the "who referred you" box),
+// the referrer earns the reward below — unlimited times.
+// Set REFERRAL_REWARD to "" to switch the whole program off site-wide.
+// Run `node --env-file=.env.local scripts/referral-report.mjs` to see who
+// has earned what.
+export const REFERRAL_REWARD: string = "$10 In-N-Out gift card";
+export const REFERRAL_ENABLED = REFERRAL_REWARD !== "";
+
 // --- CHECK-IN -----------------------------------------------
 export const CHECK_IN_DATE     = "Saturday, November 7, 2026";
 export const CHECK_IN_TIME     = "7:00 AM (1 hour before race start)";

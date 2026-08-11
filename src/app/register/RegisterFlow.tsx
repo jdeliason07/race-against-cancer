@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
@@ -19,6 +20,9 @@ import {
   FUN_RUN_LABEL,
   VENMO_USERNAME,
   EVENT_NAME,
+  REFERRAL_ENABLED,
+  REFERRAL_REWARD,
+  SITE_URL,
 } from '@/config/site';
 
 const venmoUsername =
@@ -77,6 +81,11 @@ interface FormData {
   emergencyName: string;
   emergencyPhone: string;
   guardianName: string;
+  referredBy: string;
+}
+
+export function referralShareUrl(code: string): string {
+  return `${SITE_URL}/register?ref=${code}`;
 }
 
 // Step progress indicator
@@ -377,6 +386,28 @@ function StepAthleteInfo({
             aria-describedby={fieldError('guardianName') ? 'guardianName-error' : undefined}
           />
           {fieldError('guardianName') && <p id="guardianName-error" className={errorClass}>{fieldError('guardianName')}</p>}
+        </div>
+      )}
+
+      {REFERRAL_ENABLED && (
+        <div className="mb-6">
+          <label htmlFor="referredBy" className={labelClass}>
+            Who referred you? <span className="font-normal normal-case tracking-normal">(optional)</span>
+          </label>
+          <p className="mb-2 font-body text-sm text-ash">
+            Enter their referral code or the email they registered with, and we&rsquo;ll send them a{' '}
+            {REFERRAL_REWARD}. If a friend sent you a link, this is already filled in.
+          </p>
+          <input
+            id="referredBy"
+            type="text"
+            value={formData.referredBy}
+            onChange={update('referredBy')}
+            className={inputClass}
+            autoComplete="off"
+            autoCapitalize="characters"
+            placeholder="Referral code or email"
+          />
         </div>
       )}
 
@@ -808,18 +839,71 @@ function StepPayment({
 }
 
 // Step 4 — Confirmation
+// Shown on the confirmation screen — their code, the link to share, and a
+// one-tap copy button.
+function ReferralShare({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  const url = referralShareUrl(code);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // Clipboard blocked (insecure context, denied permission) — the link is
+      // on screen and selectable, so there's nothing to recover from.
+    }
+  };
+
+  return (
+    <div className="mb-8 rounded-card border-2 border-pink bg-blush p-6 text-left">
+      <p className="font-display text-xl uppercase text-ink">
+        Earn a {REFERRAL_REWARD}
+      </p>
+      <p className="mt-2 font-body text-sm leading-relaxed text-ash">
+        Share your link. Every friend who registers through it earns you a {REFERRAL_REWARD} —
+        as many times as you can get people to sign up.
+      </p>
+
+      <p className="mt-4 font-body text-xs font-bold uppercase tracking-widest text-ash">
+        Your referral code
+      </p>
+      <p className="font-display text-3xl uppercase tracking-widest text-pink">{code}</p>
+
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <input
+          readOnly
+          value={url}
+          aria-label="Your referral link"
+          onFocus={(e) => e.currentTarget.select()}
+          className="w-full rounded-card border border-petal bg-white px-4 py-3 font-body text-sm text-ink"
+        />
+        <button type="button" onClick={copy} className="btn-primary shrink-0 px-6">
+          {copied ? 'Copied!' : 'Copy link'}
+        </button>
+      </div>
+      <p aria-live="polite" className="sr-only">
+        {copied ? 'Referral link copied to clipboard' : ''}
+      </p>
+    </div>
+  );
+}
+
 function StepConfirmation({
   raceType,
   formData,
   donationAmount,
   bandanaColor,
   method,
+  referralCode,
 }: {
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
   bandanaColor: string;
   method: CompletedMethod;
+  referralCode: string;
 }) {
   const raceLabel = raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL;
   const pending = method === 'venmo';
@@ -881,6 +965,8 @@ function StepConfirmation({
         </dl>
       </div>
 
+      {REFERRAL_ENABLED && referralCode && !pending && <ReferralShare code={referralCode} />}
+
       <p className="mb-8 font-body text-sm text-ash">
         {pending
           ? 'We’ll email you once your Venmo payment is confirmed. Questions? Just reply to that email.'
@@ -896,6 +982,10 @@ function StepConfirmation({
 
 // Main orchestrator
 export function RegisterFlow() {
+  // A referral link lands as /register?ref=CODE. Read it on the client so the
+  // page stays statically rendered.
+  const referredByParam = useSearchParams().get('ref') ?? '';
+
   const [step, setStep] = useState<Step>(1);
   const [raceType, setRaceType] = useState<RaceType>(null);
   const [bandanaColor, setBandanaColor] = useState('');
@@ -909,15 +999,19 @@ export function RegisterFlow() {
     emergencyName: '',
     emergencyPhone: '',
     guardianName: '',
+    referredBy: referredByParam.trim().toUpperCase(),
   });
   const [waiverAgreed, setWaiverAgreed] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
   const [completedMethod, setCompletedMethod] = useState<CompletedMethod>('card');
+  const [referralCode, setReferralCode] = useState('');
   const [loadingIntent, setLoadingIntent] = useState(false);
   const [intentError, setIntentError] = useState<string | null>(null);
 
-  const handleStep2ToStep3 = useCallback(async () => {
+  // Not memoized by hand — the React Compiler handles that, and a manual
+  // useCallback here blocks it from optimizing the component at all.
+  const handleStep2ToStep3 = async () => {
     if (!raceType) return;
     setLoadingIntent(true);
     setIntentError(null);
@@ -935,12 +1029,14 @@ export function RegisterFlow() {
         emergencyPhone: formData.emergencyPhone,
         guardianName: formData.guardianName,
         waiverAgreed,
+        referredBy: formData.referredBy,
       });
       if ('error' in result) {
         setIntentError(result.error);
       } else {
         setClientSecret(result.clientSecret);
         setPaymentIntentId(result.paymentIntentId);
+        setReferralCode(result.referralCode);
         setStep(3);
       }
     } catch (err) {
@@ -948,7 +1044,7 @@ export function RegisterFlow() {
     } finally {
       setLoadingIntent(false);
     }
-  }, [raceType, bandanaColor, donationAmount, formData, waiverAgreed]);
+  };
 
   return (
     <div>
@@ -1012,6 +1108,7 @@ export function RegisterFlow() {
           donationAmount={donationAmount}
           bandanaColor={bandanaColor}
           method={completedMethod}
+          referralCode={referralCode}
         />
       )}
     </div>

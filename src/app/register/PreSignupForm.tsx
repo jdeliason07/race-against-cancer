@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { submitPreSignup } from './presignup-actions';
-import { REGISTRATION_OPENS_DATE } from '@/config/site';
+import { REFERRAL_ENABLED, REFERRAL_REWARD, REGISTRATION_OPENS_DATE } from '@/config/site';
 
 type FormState = {
   firstName: string;
@@ -41,9 +41,16 @@ export function PreSignupForm({ spotsRemaining }: { spotsRemaining: number }) {
       <div className="rounded-card border-2 border-pink bg-blush p-10 text-center">
         <p className="font-display text-3xl uppercase text-ink mb-4">You&rsquo;re on the list!</p>
         <p className="font-body text-base text-ash">
-          We&rsquo;ll email you as soon as registration opens
+          We&rsquo;ll email and text you as soon as registration opens
           {REGISTRATION_OPENS_DATE ? ` around ${REGISTRATION_OPENS_DATE}` : ''}.
         </p>
+        {REFERRAL_ENABLED && (
+          <p className="mt-4 font-body text-sm text-ash">
+            <span className="font-bold text-ink">Bring a friend when it does:</span> once you
+            register, every friend who registers through your referral link earns you a{' '}
+            {REFERRAL_REWARD} — unlimited.
+          </p>
+        )}
       </div>
     );
   }

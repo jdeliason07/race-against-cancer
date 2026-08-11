@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import {
   CHARITY_NAME, MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN,
@@ -56,7 +57,11 @@ export default async function RegisterPage() {
         </div>
       </section>
       <div className="mx-auto max-w-2xl px-6 py-16">
-        <RegisterFlow />
+        {/* RegisterFlow reads ?ref= via useSearchParams, which needs a Suspense
+            boundary so this page can still be prerendered. */}
+        <Suspense fallback={null}>
+          <RegisterFlow />
+        </Suspense>
       </div>
     </div>
   );

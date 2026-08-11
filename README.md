@@ -41,6 +41,23 @@ calls the webhook, which copies those details onto the customer and flags it `re
 That flag — not the browser — is what makes a registration official, and it's what keeps the spots
 counter from counting one person as both a waitlist signup and a registrant.
 
+### Referral rewards
+Every registrant gets a 6-character referral code and a link (`/register?ref=CODE`) on their
+confirmation screen. A friend who registers through that link — or who types the code or the
+referrer's email into "Who referred you?" — is credited to them, unlimited times.
+
+Attribution is written to the referred person's Stripe customer record (`referredByCode`,
+`referredByEmail`) **by the webhook**, so a referral only counts once the friend's payment
+succeeds. Rewards are counted from those records rather than tracked as a running tally, so a
+repeated webhook delivery can't inflate anyone's total.
+
+To see who has earned what:
+```bash
+node --env-file=.env.local scripts/referral-report.mjs
+```
+Set `REFERRAL_REWARD` to `""` in `src/config/site.ts` to switch the program off everywhere —
+the form field, the confirmation screen, the FAQ entry, and the waitlist copy all disappear.
+
 Venmo payments are a manual step: the athlete pays in the app, the PaymentIntent is marked
 `venmoStatus = pending_manual_confirmation`, and it holds a spot but isn't counted in the donation
 total until an organizer confirms it in the Stripe Dashboard.

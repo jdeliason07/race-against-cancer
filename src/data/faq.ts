@@ -1,4 +1,9 @@
-import { REGISTRATION_OPEN, REGISTRATION_OPENS_LABEL } from '@/config/site';
+import {
+  REFERRAL_ENABLED,
+  REFERRAL_REWARD,
+  REGISTRATION_OPEN,
+  REGISTRATION_OPENS_LABEL,
+} from '@/config/site';
 
 export interface FAQItem {
   question: string;
@@ -12,6 +17,12 @@ export const faqs: FAQItem[] = [
       ? "Registration is open now — head to the registration page to claim your spot."
       : `Registration opens ${REGISTRATION_OPENS_LABEL}. Join the waitlist with your name, email, and phone number and we'll email and text you the moment it goes live, so you can claim a spot before they run out.`,
   },
+  ...(REFERRAL_ENABLED
+    ? [{
+        question: "How does the referral reward work?",
+        answer: `Once you register, you get a referral code and a link to share. Every friend who completes a registration through your link — or who enters your code or email in the "who referred you" box — earns you a ${REFERRAL_REWARD}. There's no cap: refer ten friends, get ten gift cards. Referrals count once your friend's registration is paid, and we'll be in touch about getting your cards to you.`,
+      }]
+    : []),
   {
     question: "What is the registration fee?",
     answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Intermountain Cancer Center Utah Valley for the 10K, or a minimum $49 donation for the Fun Run. We warmly encourage you to give as much more as you're willing.",

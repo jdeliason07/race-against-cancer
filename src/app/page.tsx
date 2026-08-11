@@ -80,7 +80,7 @@ export default async function HomePage() {
 
           <p className="mt-8 max-w-xl font-body text-lg text-ash">
             A 10K & Fun Run benefiting {CHARITY_NAME}. Your registration
-            is a direct donation — every dollar goes to the cause.
+            is a donation to the cause.
           </p>
 
           <div className="mt-10">
@@ -109,7 +109,7 @@ export default async function HomePage() {
               {
                 step: '02',
                 heading: 'Register to give',
-                body: `Your registration fee is a direct donation to ${CHARITY_NAME}. Give as much as you're willing — every dollar goes straight to the cause.`,
+                body: `Your registration fee is a donation to ${CHARITY_NAME}. Give as much as you're willing.`,
               },
               {
                 step: '03',

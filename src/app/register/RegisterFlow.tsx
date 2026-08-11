@@ -421,7 +421,7 @@ function StepAthleteInfo({
           Donation Amount
         </label>
         <p className="mb-3 font-body text-sm text-ash">
-          Minimum ${minDonation} — every dollar goes directly to the cause. Give more if you&rsquo;re able.
+          Minimum ${minDonation}. Give more if you&rsquo;re able.
         </p>
         <input
           id="donationAmount"

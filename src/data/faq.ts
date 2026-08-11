@@ -6,7 +6,7 @@ export interface FAQItem {
 export const faqs: FAQItem[] = [
   {
     question: "What is the registration fee?",
-    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Intermountain Cancer Center Utah Valley for the 10K, or a minimum $49 donation for the Fun Run. We warmly encourage you to give as much more as you're willing — every dollar goes directly to the cause.",
+    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Intermountain Cancer Center Utah Valley for the 10K, or a minimum $49 donation for the Fun Run. We warmly encourage you to give as much more as you're willing.",
   },
   {
     question: "Can I register without fundraising?",
@@ -38,7 +38,7 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "Where does my donation go?",
-    answer: "100% of donations benefit Intermountain Cancer Center Utah Valley in Provo. Every dollar from registration goes directly to them — no overhead fund, no middleman.",
+    answer: "Donations from registration benefit Intermountain Cancer Center Utah Valley in Provo. We are seeking sponsors to cover the cost of putting on the race, so that as much of what you give as possible reaches the cancer center.",
   },
   {
     question: "Is this a timed race?",

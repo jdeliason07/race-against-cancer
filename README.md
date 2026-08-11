@@ -47,77 +47,41 @@ total until an organizer confirms it in the Stripe Dashboard.
 
 ---
 
-## What you MUST fill in before launch
+## Editing content
 
-All content lives in two places:
-- **`src/config/site.ts`** — event facts, links, contacts, social handles
-- **`src/data/episodes.ts`** — the 20 documentary episodes
-- **`src/data/faq.ts`** — FAQ answers
+Content lives in two places:
+- **`src/config/site.ts`** — event facts, links, contacts, social handles. The one file to edit
+  for most changes; everything on the site reads from it.
+- **`src/data/faq.ts`** — FAQ questions and answers.
 
-Search for `[[` to find every placeholder across the codebase.
+### Still unfilled
+Placeholders are written as `[[...]]`. Run `grep -rn '\[\[' src/` to list them; as of now:
 
-### `src/config/site.ts`
-| Constant | What to fill in |
-|---|---|
-| `CHARITY_NAME` | The charity's official name |
-| `CHARITY_URL` | Charity website URL |
-| `CHARITY_EIN` | EIN or 501(c)(3) number |
-| `HALF_START_TIME` | e.g. "7:30 AM" |
-| `FIVE_K_START_TIME` | e.g. "8:00 AM" |
-| `EVENT_LOCATION_NAME` | Venue name |
-| `EVENT_LOCATION_ADDRESS` | Full street address |
-| `EVENT_LOCATION_MAPS_URL` | Google Maps link |
-| `EVENT_COURSE_MAP_URL` | Course map image URL or link |
-| `REGISTRATION_INCLUDES` | List of swag/perks in each array item |
-| `PACKET_PICKUP_DATE` | e.g. "Friday, November 6, 2026" |
-| `PACKET_PICKUP_TIME` | e.g. "12:00 PM – 7:00 PM" |
-| `PACKET_PICKUP_LOCATION` | Full address |
-| `CONTACT_EMAIL` | Your contact email |
-| `SOCIAL_INSTAGRAM` | Full Instagram profile URL |
-| `SOCIAL_FACEBOOK` | Full Facebook page URL |
-| `SOCIAL_TWITTER` | Full Twitter/X profile URL |
-| `SOCIAL_YOUTUBE` | Full YouTube channel URL |
-| `EMAIL_SIGNUP_EMBED` | Paste Mailchimp/Beehiiv/ConvertKit embed HTML |
-| `SITE_URL` | Your production domain, e.g. https://raceagainstcancer.org |
+| Constant | What to fill in | If left as-is |
+|---|---|---|
+| `CHARITY_EIN` | EIN / 501(c)(3) number | Not currently shown anywhere on the site |
+| `VENMO_USERNAME` | Venmo handle, without the `@` | The Venmo checkout option is hidden entirely |
+| `SOCIAL_INSTAGRAM` | Full profile URL | That icon is hidden in the footer |
+| `SOCIAL_FACEBOOK` | Full page URL | That icon is hidden in the footer |
+| `SOCIAL_TWITTER` | Full profile URL | That icon is hidden in the footer |
+| `SOCIAL_YOUTUBE` | Full channel URL | That icon is hidden in the footer |
 
-### `src/data/episodes.ts`
-For each of the 20 episodes, fill in:
-- `personName` — the person's name
-- `title` — episode title
-- `description` — 1–2 sentence summary of their story
-- `videoId` — YouTube video ID (the part after `v=`) or Vimeo video ID
-- `videoProvider` — `"youtube"` or `"vimeo"`
-- `releaseDate` — pre-set Oct 18 through Nov 6, confirm or adjust
+`COURSE_GPX_URL` is intentionally empty — the race-details page shows "GPX Coming Soon" until an
+official GPS recording of the 10K course exists.
 
-### `src/data/faq.ts`
-Fill in the `answer` field for each FAQ item, especially:
-- Refund policy
-- Packet pickup details
-- What to expect on race day
-- Volunteering info
-- Charity fund usage specifics
-
-### Assets to add
-| File | What it is |
-|---|---|
-| `public/logo.svg` | Brand logo SVG |
-| `public/favicon.ico` | Favicon (generate from logo) |
-| `public/images/og-image.jpg` | Social share image (1200×630px) |
-| `public/images/hero-bg.jpg` | Optional hero background photo |
-| `public/images/video-placeholder.jpg` | Fallback for Vimeo episode thumbnails |
-
-### About page (`src/app/about/page.tsx`)
-Fill in the `[[REPLACE: ...]]` blocks for:
-- Founding story
-- Charity description
-- Fund transparency statement
-- Documentary background
+### Branding assets
+- **Favicon:** `src/app/icon.svg`.
+- **Social share image:** generated at build time by `src/app/opengraph-image.tsx` — it's code, not
+  a JPG, so edit that file rather than dropping in an image.
+- `public/images/` holds the Intermountain Health logo; `public/fonts/` holds the display typeface.
 
 ---
 
 ## Architecture notes
 - Payments run through Stripe in-house: server actions in `src/app/register/` create the
   PaymentIntent, `src/app/api/stripe/webhook/` records the result. See "Opening registration" above.
-- Otherwise static + server components, deployable to Vercel
-- Episode daily-drip logic: `isReleased()` in `src/lib/utils.ts` compares episode `releaseDate` against today's date. Episodes auto-unlock when their date arrives.
-- All external CTAs read from `site.ts` — change a URL once, it updates everywhere
+- Otherwise static + server components, deployable to Vercel.
+- The waitlist and registration counters (`src/lib/getSpotsRemaining.ts`,
+  `src/lib/getDonationTotal.ts`) read live from Stripe and are cached for 60s by the
+  `revalidate` export on the pages that use them.
+- All external CTAs read from `site.ts` — change a URL once, it updates everywhere.

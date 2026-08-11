@@ -7,6 +7,7 @@ import {
   ORG_NAME, SITE_URL, REGISTRATION_OPEN,
 } from '@/config/site';
 import { getDonationTotal } from '@/lib/getDonationTotal';
+import { RegistrationTeaser } from '@/components/ui/RegistrationTeaser';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -87,6 +88,7 @@ export default async function HomePage() {
             <Link href="/register" className="btn-primary px-10 py-5 text-base">
               {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
             </Link>
+            <RegistrationTeaser className="mt-4 max-w-md" />
           </div>
         </div>
       </section>
@@ -196,6 +198,7 @@ export default async function HomePage() {
             <Link href="/register" className="btn-primary px-10 py-5 text-base">
               {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
             </Link>
+            <RegistrationTeaser className="mt-4" />
           </div>
         </div>
       </section>

@@ -9,6 +9,7 @@ import {
 import { MapPin, Clock, Package, Download, Flag } from 'lucide-react';
 import Link from 'next/link';
 import { CourseMapSection, ElevationChartSection } from '@/components/course/CourseClientSections';
+import { RegistrationTeaser } from '@/components/ui/RegistrationTeaser';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -281,6 +282,7 @@ export default function RaceDetailsPage() {
 
         <div className="pt-4">
           <Link href="/register" className="btn-primary">{REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}</Link>
+          <RegistrationTeaser className="mt-4" />
         </div>
       </div>
     </div>

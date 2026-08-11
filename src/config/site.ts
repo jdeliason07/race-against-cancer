@@ -40,6 +40,8 @@ export const COURSE_GPX_URL          = "";
 // set it (e.g. 'September 15, 2026') to announce a date.
 export const REGISTRATION_OPEN       = false;
 export const REGISTRATION_OPENS_DATE = '';
+// Reads "opens soon" until a date is set, "opens September 15, 2026" after.
+export const REGISTRATION_OPENS_LABEL = REGISTRATION_OPENS_DATE || 'soon';
 
 // --- REGISTRATION -------------------------------------------
 export const TOTAL_SPOTS           = 2000;

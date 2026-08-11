@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import {
   CHARITY_NAME, MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN,
-  REGISTRATION_OPEN, REGISTRATION_OPENS_DATE,
+  REGISTRATION_OPEN, REGISTRATION_OPENS_LABEL,
 } from '@/config/site';
 import { getSpotsRemaining } from '@/lib/getSpotsRemaining';
 import { RegisterFlow } from './RegisterFlow';
@@ -9,11 +9,7 @@ import { PreSignupForm } from './PreSignupForm';
 
 export const revalidate = 60;
 
-// Reads "Registration opens September 15, 2026" once a date is set in
-// site.ts, and "Registration opens soon" while it's still undecided.
-const opensCopy = REGISTRATION_OPENS_DATE
-  ? `Registration opens ${REGISTRATION_OPENS_DATE}`
-  : 'Registration opens soon';
+const opensCopy = `Registration opens ${REGISTRATION_OPENS_LABEL}`;
 
 export const metadata: Metadata = REGISTRATION_OPEN
   ? {

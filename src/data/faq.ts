@@ -1,9 +1,17 @@
+import { REGISTRATION_OPEN, REGISTRATION_OPENS_LABEL } from '@/config/site';
+
 export interface FAQItem {
   question: string;
   answer: string;
 }
 
 export const faqs: FAQItem[] = [
+  {
+    question: "When does registration open?",
+    answer: REGISTRATION_OPEN
+      ? "Registration is open now — head to the registration page to claim your spot."
+      : `Registration opens ${REGISTRATION_OPENS_LABEL}. Join the waitlist with your name, email, and phone number and we'll email and text you the moment it goes live, so you can claim a spot before they run out.`,
+  },
   {
     question: "What is the registration fee?",
     answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Intermountain Cancer Center Utah Valley for the 10K, or a minimum $49 donation for the Fun Run. We warmly encourage you to give as much more as you're willing.",

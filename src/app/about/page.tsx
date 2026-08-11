@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { CHARITY_NAME, CHARITY_URL, REGISTRATION_OPEN } from '@/config/site';
+import { RegistrationTeaser } from '@/components/ui/RegistrationTeaser';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -100,6 +101,7 @@ export default function AboutPage() {
           <Link href="/register" className="btn-primary">
             {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
           </Link>
+          <RegistrationTeaser className="mt-4" />
         </div>
       </div>
     </div>

@@ -1,35 +1,17 @@
-import Stripe from 'stripe';
-import { EVENT_NAME } from '@/config/site';
+import { eachEventIntent, getStripe } from '@/lib/stripeRegistration';
 
 export async function getDonationTotal(): Promise<number> {
-  if (!process.env.STRIPE_SECRET_KEY) return 0;
+  const stripe = getStripe();
+  if (!stripe) return 0;
 
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     let total = 0;
-    let hasMore = true;
-    let startingAfter: string | undefined;
 
-    while (hasMore) {
-      const intents = await stripe.paymentIntents.list({
-        limit: 100,
-        ...(startingAfter ? { starting_after: startingAfter } : {}),
-      });
-
-      for (const intent of intents.data) {
-        if (
-          intent.status === 'succeeded' &&
-          intent.metadata?.event === EVENT_NAME
-        ) {
-          total += intent.amount;
-        }
-      }
-
-      hasMore = intents.has_more;
-      if (intents.data.length > 0) {
-        startingAfter = intents.data[intents.data.length - 1].id;
-      }
-    }
+    // Only money actually received — Venmo payments hold a spot but don't
+    // count here until an organizer confirms them in the Dashboard.
+    await eachEventIntent(stripe, (intent) => {
+      if (intent.status === 'succeeded') total += intent.amount_received || intent.amount;
+    });
 
     return Math.floor(total / 100); // convert cents to dollars
   } catch {

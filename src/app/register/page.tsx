@@ -9,6 +9,12 @@ import { PreSignupForm } from './PreSignupForm';
 
 export const revalidate = 60;
 
+// Reads "Registration opens September 15, 2026" once a date is set in
+// site.ts, and "Registration opens soon" while it's still undecided.
+const opensCopy = REGISTRATION_OPENS_DATE
+  ? `Registration opens ${REGISTRATION_OPENS_DATE}`
+  : 'Registration opens soon';
+
 export const metadata: Metadata = REGISTRATION_OPEN
   ? {
       title: 'Register',
@@ -16,7 +22,7 @@ export const metadata: Metadata = REGISTRATION_OPEN
     }
   : {
       title: 'Join the Waitlist',
-      description: `Registration opens ${REGISTRATION_OPENS_DATE}. Join the waitlist to be notified the moment registration goes live for Race Against Cancers 2026.`,
+      description: `${opensCopy}. Join the waitlist to be notified the moment registration goes live for Race Against Cancers 2026.`,
     };
 
 export default async function RegisterPage() {
@@ -26,7 +32,7 @@ export default async function RegisterPage() {
       <div className="bg-paper min-h-screen">
         <section className="border-b border-line bg-mist py-16">
           <div className="mx-auto max-w-3xl px-6 text-center">
-            <p className="section-label mb-4">Registration opens {REGISTRATION_OPENS_DATE}</p>
+            <p className="section-label mb-4">{opensCopy}</p>
             <h1 className="font-display text-5xl uppercase text-ink md:text-7xl">
               Join the Waitlist
             </h1>

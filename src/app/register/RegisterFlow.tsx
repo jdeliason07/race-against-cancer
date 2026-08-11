@@ -11,7 +11,7 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 import { createPaymentIntent, markVenmoPending } from './actions';
-import { cn } from '@/lib/utils';
+import { ADULT_AGE, cn, isMinorOnRaceDay, isPlausibleDob } from '@/lib/utils';
 import {
   MIN_DONATION_AMOUNT,
   MIN_DONATION_FUN_RUN,
@@ -76,6 +76,7 @@ interface FormData {
   dob: string;
   emergencyName: string;
   emergencyPhone: string;
+  guardianName: string;
 }
 
 // Step progress indicator
@@ -204,11 +205,16 @@ function StepAthleteInfo({
 
   const isEmailValid = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  // The waiver requires a parent or legal guardian to accept on behalf of
+  // anyone under 18 on race day, so ask for their name once we know the age.
+  const isMinor = isMinorOnRaceDay(formData.dob);
+
   const fieldError = (field: keyof FormData): string | null => {
     if (!touched[field]) return null;
     const val = formData[field].trim();
     if (!val) return 'This field is required.';
     if (field === 'email' && !isEmailValid(formData.email)) return 'Enter a valid email address.';
+    if (field === 'dob' && !isPlausibleDob(formData.dob)) return 'Enter a valid date of birth.';
     return null;
   };
 
@@ -218,9 +224,10 @@ function StepAthleteInfo({
     formData.email.trim() &&
     isEmailValid(formData.email) &&
     formData.phone.trim() &&
-    formData.dob.trim() &&
+    isPlausibleDob(formData.dob) &&
     formData.emergencyName.trim() &&
     formData.emergencyPhone.trim() &&
+    (!isMinor || formData.guardianName.trim()) &&
     donationAmount >= minDonation &&
     bandanaColor !== '' &&
     waiverAgreed;
@@ -348,6 +355,30 @@ function StepAthleteInfo({
           {fieldError('emergencyPhone') && <p id="emergencyPhone-error" className={errorClass}>{fieldError('emergencyPhone')}</p>}
         </div>
       </div>
+
+      {isMinor && (
+        <div className="mb-6 rounded-card border border-petal bg-blush p-5">
+          <label htmlFor="guardianName" className={labelClass}>Parent or Legal Guardian</label>
+          <p className="mb-2 font-body text-sm text-ash">
+            This athlete will be under {ADULT_AGE} on race day, so a parent or legal guardian must
+            accept the waiver below on their behalf.
+          </p>
+          <input
+            id="guardianName"
+            type="text"
+            value={formData.guardianName}
+            onChange={update('guardianName')}
+            onBlur={touch('guardianName')}
+            className={inputClass}
+            required
+            aria-required="true"
+            autoComplete="name"
+            placeholder="Full name of parent or legal guardian"
+            aria-describedby={fieldError('guardianName') ? 'guardianName-error' : undefined}
+          />
+          {fieldError('guardianName') && <p id="guardianName-error" className={errorClass}>{fieldError('guardianName')}</p>}
+        </div>
+      )}
 
       {/* Bandana color */}
       <div className="mb-6">
@@ -493,7 +524,9 @@ function StepAthleteInfo({
             className="mt-0.5 h-4 w-4 shrink-0 accent-pink"
           />
           <span className="font-body text-sm text-ink">
-            I have read and agree to the Release and Waiver of Liability Agreement
+            {isMinor
+              ? 'I am the parent or legal guardian of this athlete, and I have read and agree to the Release and Waiver of Liability Agreement on their behalf'
+              : 'I have read and agree to the Release and Waiver of Liability Agreement'}
           </span>
         </label>
       </div>
@@ -875,6 +908,7 @@ export function RegisterFlow() {
     dob: '',
     emergencyName: '',
     emergencyPhone: '',
+    guardianName: '',
   });
   const [waiverAgreed, setWaiverAgreed] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -899,6 +933,8 @@ export function RegisterFlow() {
         dob: formData.dob,
         emergencyName: formData.emergencyName,
         emergencyPhone: formData.emergencyPhone,
+        guardianName: formData.guardianName,
+        waiverAgreed,
       });
       if ('error' in result) {
         setIntentError(result.error);
@@ -912,7 +948,7 @@ export function RegisterFlow() {
     } finally {
       setLoadingIntent(false);
     }
-  }, [raceType, bandanaColor, donationAmount, formData]);
+  }, [raceType, bandanaColor, donationAmount, formData, waiverAgreed]);
 
   return (
     <div>

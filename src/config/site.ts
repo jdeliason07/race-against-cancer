@@ -32,15 +32,14 @@ export const FUN_RUN_LOCATION_ADDRESS = "LaVell Edwards Stadium, Provo, UT 84602
 // the race-details page automatically shows "GPX Coming Soon" when empty.
 export const COURSE_GPX_URL          = "";
 
-// --- PLATFORM LINKS -----------------------------------------
-// Paste RunSignup or GiveButter URLs here — every button on the site points here
-export const REGISTRATION_URL = "[[REPLACE: registration platform URL (RunSignup/GiveButter)]]";
-
 // --- REGISTRATION GATE --------------------------------------
-// Flip REGISTRATION_OPEN to true when registration goes live.
-// Update REGISTRATION_OPENS_DATE to change the copy on the pre-signup page.
+// Flip REGISTRATION_OPEN to true when registration goes live — every nav link,
+// button, and page on the site switches over automatically.
+// REGISTRATION_OPENS_DATE controls the copy on the waitlist page. Leave it ""
+// while the date is undecided and the page reads "Registration opens soon";
+// set it (e.g. 'September 15, 2026') to announce a date.
 export const REGISTRATION_OPEN       = false;
-export const REGISTRATION_OPENS_DATE = 'August 1, 2026';
+export const REGISTRATION_OPENS_DATE = '';
 
 // --- REGISTRATION -------------------------------------------
 export const TOTAL_SPOTS           = 2000;

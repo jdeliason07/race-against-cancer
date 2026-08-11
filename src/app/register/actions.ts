@@ -177,34 +177,3 @@ export async function createPaymentIntent(
     return { error: message };
   }
 }
-
-// Venmo can't be charged through Stripe, so the athlete pays out-of-band via
-// the Venmo app. We flag the existing PaymentIntent as a pending Venmo payment
-// so it shows up in the Stripe Dashboard (with all registration details) for
-// the organizer to manually confirm once the Venmo transfer arrives.
-export async function markVenmoPending(paymentIntentId: string): Promise<
-  { ok: true } | { error: string }
-> {
-  const stripe = getStripe();
-  if (!stripe) {
-    return { error: 'Payment is not configured yet. Please contact the race organizer.' };
-  }
-  if (!paymentIntentId) {
-    return { error: 'Missing registration reference. Please go back and try again.' };
-  }
-
-  try {
-    await stripe.paymentIntents.update(paymentIntentId, {
-      description: `${EVENT_NAME} — Venmo (pending manual confirmation)`,
-      metadata: {
-        paymentMethod: 'venmo',
-        venmoStatus: 'pending_manual_confirmation',
-        venmoSubmittedAt: new Date().toISOString(),
-      },
-    });
-    return { ok: true };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unexpected error recording Venmo payment.';
-    return { error: message };
-  }
-}

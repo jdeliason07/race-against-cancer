@@ -17,7 +17,21 @@ Registration and the waitlist run on Stripe, so these must be set in Vercel — 
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key, used by the payment form in the browser. |
 | `STRIPE_WEBHOOK_SECRET` | Signing secret for `/api/stripe/webhook`. Without it, successful payments are never recorded server-side. |
 
-Use test keys (`sk_test_` / `pk_test_`) until you're ready to take real money, then swap in live keys **and** create a live-mode webhook endpoint — test and live each have their own signing secret.
+#### Test mode vs live mode — read before switching
+Stripe keeps two completely separate sets of data. A `sk_test_` key writes to test mode; a
+`sk_live_` key writes to live mode. **Records do not cross between them.**
+
+That matters most for the waitlist. If signups were collected on test keys and you later swap in
+live keys, those people vanish from the live Dashboard — they still exist in test mode, but the
+site is now pointed elsewhere. Before switching, export the waitlist to CSV from the mode it was
+collected in, or you'll lose the list you spent months building.
+
+To check which mode you're in: look at whether `STRIPE_SECRET_KEY` in Vercel starts with
+`sk_test_` or `sk_live_`, or flip the **Test mode** toggle in the Stripe Dashboard and see which
+view your customers appear in.
+
+Each mode also has its own webhook endpoint and its own signing secret, so adding a live-mode
+endpoint (and updating `STRIPE_WEBHOOK_SECRET`) is a required part of going live.
 
 ---
 
@@ -27,19 +41,16 @@ Use test keys (`sk_test_` / `pk_test_`) until you're ready to take real money, t
 2. Add the webhook endpoint in the Stripe Dashboard → Developers → Webhooks:
    URL `https://<your-domain>/api/stripe/webhook`, event `payment_intent.succeeded`.
    Copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
-3. Set `VENMO_USERNAME` in `src/config/site.ts` if you want the Venmo option — leaving the
-   placeholder hides that tab and registration is card/wallet only.
-4. Flip `REGISTRATION_OPEN` to `true` in `src/config/site.ts`. Every nav link, button, and page
+3. Flip `REGISTRATION_OPEN` to `true` in `src/config/site.ts`. Every nav link, button, and page
    switches from "Join the Waitlist" to "Register" automatically.
-5. Email the waitlist. They're Stripe Customers with `metadata.source = pre-signup-form`; export
+4. Email the waitlist. They're Stripe Customers with `metadata.source = pre-signup-form`; export
    them from the Customers page (name, email, and phone are all on the record).
 
 ### How a registration is recorded
 Checkout creates a Stripe **Customer** (reusing the waitlist one if that email already joined) and a
 **PaymentIntent** carrying the athlete's details and waiver acceptance. When payment succeeds, Stripe
 calls the webhook, which copies those details onto the customer and flags it `registered = true`.
-That flag — not the browser — is what makes a registration official, and it's what keeps the spots
-counter from counting one person as both a waitlist signup and a registrant.
+That flag — not the browser — is what makes a registration official.
 
 ### Referral rewards
 Registrants type their referrer's full name into a "Who referred you?" box. The name is written
@@ -62,10 +73,6 @@ curl -H "Authorization: Bearer $CRON_SECRET" https://<your-domain>/api/referral-
 Set `REFERRAL_REWARD` to `""` in `src/config/site.ts` to switch the program off everywhere — the
 form field, the FAQ entry, the waitlist copy, and the weekly email all stop.
 
-Venmo payments are a manual step: the athlete pays in the app, the PaymentIntent is marked
-`venmoStatus = pending_manual_confirmation`, and it isn't counted in the donation total until an
-organizer confirms it in the Stripe Dashboard.
-
 The race has **no attendance cap** — there is no spots-remaining counter and nothing turns
 registration off once a number is hit.
 
@@ -84,7 +91,6 @@ Placeholders are written as `[[...]]`. Run `grep -rn '\[\[' src/` to list them; 
 | Constant | What to fill in | If left as-is |
 |---|---|---|
 | `CHARITY_EIN` | EIN / 501(c)(3) number | Not currently shown anywhere on the site |
-| `VENMO_USERNAME` | Venmo handle, without the `@` | The Venmo checkout option is hidden entirely |
 | `SOCIAL_INSTAGRAM` | Full profile URL | That icon is hidden in the footer |
 | `SOCIAL_FACEBOOK` | Full page URL | That icon is hidden in the footer |
 | `SOCIAL_TWITTER` | Full profile URL | That icon is hidden in the footer |

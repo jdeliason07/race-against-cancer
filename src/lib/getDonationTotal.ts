@@ -7,8 +7,8 @@ export async function getDonationTotal(): Promise<number> {
   try {
     let total = 0;
 
-    // Only money actually received — Venmo payments don't count here until an
-    // organizer confirms them in the Dashboard.
+    // Only money actually received — abandoned and failed checkouts leave
+    // PaymentIntents behind that shouldn't count.
     await eachEventIntent(stripe, (intent) => {
       if (intent.status === 'succeeded') total += intent.amount_received || intent.amount;
     });

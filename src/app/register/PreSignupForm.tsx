@@ -7,11 +7,12 @@ type FormState = {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
 };
 
 export function PreSignupForm({ spotsRemaining }: { spotsRemaining: number }) {
   const [form, setForm] = useState<FormState>({
-    firstName: '', lastName: '', email: '',
+    firstName: '', lastName: '', email: '', phone: '',
   });
   const [pending, setPending] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -97,6 +98,23 @@ export function PreSignupForm({ spotsRemaining }: { spotsRemaining: number }) {
           placeholder="jane@example.com"
           value={form.email}
           onChange={update('email')}
+          className="rounded-pill border border-line bg-paper px-6 py-4 font-body text-base text-ink placeholder:text-ash/60 focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/15"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="phone" className="font-body text-xs font-semibold uppercase tracking-widest text-ash">
+          Phone Number
+        </label>
+        <input
+          id="phone"
+          type="tel"
+          required
+          inputMode="tel"
+          autoComplete="tel"
+          placeholder="(555) 123-4567"
+          value={form.phone}
+          onChange={update('phone')}
           className="rounded-pill border border-line bg-paper px-6 py-4 font-body text-base text-ink placeholder:text-ash/60 focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/15"
         />
       </div>

@@ -52,6 +52,22 @@ Checkout creates a Stripe **Customer** (reusing the waitlist one if that email a
 calls the webhook, which copies those details onto the customer and flags it `registered = true`.
 That flag — not the browser — is what makes a registration official.
 
+### Group registrations
+One person can register and pay for several athletes: the form asks how many, and the donation
+minimum becomes the per-athlete minimum × that count (enforced server-side, not just in the UI).
+`MAX_PARTICIPANTS_PER_REGISTRATION` in `src/config/site.ts` caps it; above that the form points
+people at `CONTACT_EMAIL`.
+
+When the count is more than 1, the person is treated as an **organizer** rather than an athlete:
+date of birth, emergency contact, and the under-18 guardian field are not collected, because they
+describe an individual athlete and we don't have those people yet. The waiver checkbox changes to
+an undertaking that every athlete (or their guardian) will accept it before race day.
+
+**This means a group registration arrives with a headcount and no roster.** The count lands on the
+Stripe customer record as `participantCount` — that's how many bibs are owed — but you still need
+each athlete's name and signed waiver at check-in. Worth deciding how you'll run that table before
+a 40-person group shows up on race morning.
+
 ### Referral rewards
 Registrants type their referrer's full name into a "Who referred you?" box. The name is written
 to the referred person's Stripe customer record (`referredByName`) **by the webhook**, so a

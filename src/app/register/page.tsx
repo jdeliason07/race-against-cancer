@@ -55,6 +55,9 @@ export default function RegisterPage() {
           <p className="mt-4 font-body text-base text-ash">
             10K from ${MIN_DONATION_AMOUNT} · Family Fun Run from ${MIN_DONATION_FUN_RUN} — benefiting {CHARITY_NAME}
           </p>
+          <p className="mt-2 font-body text-sm text-ash">
+            Registering a family, team, or company? Enter how many athletes and the minimum adjusts.
+          </p>
         </div>
       </section>
       <div className="mx-auto max-w-2xl px-6 py-16">

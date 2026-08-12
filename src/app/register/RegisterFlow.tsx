@@ -13,6 +13,7 @@ import {
 import { createPaymentIntent } from './actions';
 import { ADULT_AGE, isMinorOnRaceDay, isPlausibleDob } from '@/lib/utils';
 import {
+  MAX_PARTICIPANTS_PER_REGISTRATION,
   MIN_DONATION_AMOUNT,
   MIN_DONATION_FUN_RUN,
   TEN_K_LABEL,
@@ -169,6 +170,8 @@ function StepAthleteInfo({
   setBandanaColor,
   donationAmount,
   setDonationAmount,
+  participantCount,
+  setParticipantCount,
   waiverAgreed,
   setWaiverAgreed,
   onNext,
@@ -182,6 +185,8 @@ function StepAthleteInfo({
   setBandanaColor: (c: string) => void;
   donationAmount: number;
   setDonationAmount: (a: number) => void;
+  participantCount: number;
+  setParticipantCount: (n: number) => void;
   waiverAgreed: boolean;
   setWaiverAgreed: (v: boolean) => void;
   onNext: () => void;
@@ -189,7 +194,13 @@ function StepAthleteInfo({
   loading: boolean;
 }) {
   const [touched, setTouched] = useState<Partial<Record<keyof FormData, boolean>>>({});
-  const minDonation = raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT;
+  const perAthleteMin = raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT;
+  const minDonation = perAthleteMin * participantCount;
+
+  // One person paying for several athletes is registering a group, not
+  // themselves — so the personal fields below become their contact details and
+  // each athlete's own details are collected at check-in.
+  const isGroup = participantCount > 1;
 
   const update = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: e.target.value });
@@ -203,7 +214,7 @@ function StepAthleteInfo({
 
   // The waiver requires a parent or legal guardian to accept on behalf of
   // anyone under 18 on race day, so ask for their name once we know the age.
-  const isMinor = isMinorOnRaceDay(formData.dob);
+  const isMinor = !isGroup && isMinorOnRaceDay(formData.dob);
 
   const fieldError = (field: keyof FormData): string | null => {
     if (!touched[field]) return null;
@@ -220,9 +231,12 @@ function StepAthleteInfo({
     formData.email.trim() &&
     isEmailValid(formData.email) &&
     formData.phone.trim() &&
-    isPlausibleDob(formData.dob) &&
-    formData.emergencyName.trim() &&
-    formData.emergencyPhone.trim() &&
+    // Date of birth and emergency contact belong to an athlete, so they're
+    // only asked for when the registration is for one.
+    (isGroup ||
+      (isPlausibleDob(formData.dob) &&
+        formData.emergencyName.trim() &&
+        formData.emergencyPhone.trim())) &&
     (!isMinor || formData.guardianName.trim()) &&
     donationAmount >= minDonation &&
     bandanaColor !== '' &&
@@ -236,7 +250,40 @@ function StepAthleteInfo({
 
   return (
     <div>
-      <h2 className="font-display text-3xl uppercase text-ink mb-6">Athlete Info</h2>
+      <h2 className="font-display text-3xl uppercase text-ink mb-6">
+        {isGroup ? 'Organizer Info' : 'Athlete Info'}
+      </h2>
+
+      {/* Headcount — drives the donation minimum below */}
+      <div className="mb-6 rounded-card border border-line bg-mist p-5">
+        <label htmlFor="participantCount" className={labelClass}>
+          How many athletes are you registering?
+        </label>
+        <input
+          id="participantCount"
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={MAX_PARTICIPANTS_PER_REGISTRATION}
+          value={participantCount}
+          onChange={(e) => {
+            const parsed = parseInt(e.target.value, 10);
+            const next = Number.isNaN(parsed)
+              ? 1
+              : Math.min(Math.max(parsed, 1), MAX_PARTICIPANTS_PER_REGISTRATION);
+            setParticipantCount(next);
+            // Keep the donation at or above the new minimum.
+            if (donationAmount < perAthleteMin * next) setDonationAmount(perAthleteMin * next);
+          }}
+          className={inputClass + ' bg-white'}
+          aria-describedby="participantCount-hint"
+        />
+        <p id="participantCount-hint" className="mt-2 font-body text-sm text-ash">
+          {isGroup
+            ? `Covering ${participantCount} athletes at $${perAthleteMin} each — a $${minDonation} minimum donation. We'll collect each athlete's name and waiver at check-in.`
+            : `Registering more than one? Enter the number here and the donation minimum adjusts — $${perAthleteMin} per athlete.`}
+        </p>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 mb-4">
         <div>
@@ -303,6 +350,8 @@ function StepAthleteInfo({
         {fieldError('phone') && <p id="phone-error" className={errorClass}>{fieldError('phone')}</p>}
       </div>
 
+      {!isGroup && (
+      <>
       <div className="mb-4">
         <label htmlFor="dob" className={labelClass}>Date of Birth</label>
         <input
@@ -351,6 +400,8 @@ function StepAthleteInfo({
           {fieldError('emergencyPhone') && <p id="emergencyPhone-error" className={errorClass}>{fieldError('emergencyPhone')}</p>}
         </div>
       </div>
+      </>
+      )}
 
       {isMinor && (
         <div className="mb-6 rounded-card border border-petal bg-blush p-5">
@@ -400,7 +451,9 @@ function StepAthleteInfo({
       {/* Bandana color */}
       <div className="mb-6">
         <p id="bandana-label" className="font-body text-xs font-bold uppercase tracking-widest text-ash mb-3">
-          Which color bandana will you race with?
+          {isGroup
+            ? `Which color bandana for your ${participantCount} athletes?`
+            : 'Which color bandana will you race with?'}
         </p>
         <div role="group" aria-labelledby="bandana-label" className="grid grid-cols-2 gap-2">
           {bandanaOptions.map((opt) => {
@@ -438,7 +491,9 @@ function StepAthleteInfo({
           Donation Amount
         </label>
         <p className="mb-3 font-body text-sm text-ash">
-          Minimum ${minDonation}. Give more if you&rsquo;re able.
+          {isGroup
+            ? `Minimum $${minDonation} — $${perAthleteMin} × ${participantCount} athletes. Give more if you're able.`
+            : `Minimum $${minDonation}. Give more if you're able.`}
         </p>
         <input
           id="donationAmount"
@@ -541,9 +596,11 @@ function StepAthleteInfo({
             className="mt-0.5 h-4 w-4 shrink-0 accent-pink"
           />
           <span className="font-body text-sm text-ink">
-            {isMinor
-              ? 'I am the parent or legal guardian of this athlete, and I have read and agree to the Release and Waiver of Liability Agreement on their behalf'
-              : 'I have read and agree to the Release and Waiver of Liability Agreement'}
+            {isGroup
+              ? 'I have read and agree to the Release and Waiver of Liability Agreement, and I will make sure every athlete I am registering — or their parent or legal guardian — accepts it before race day'
+              : isMinor
+                ? 'I am the parent or legal guardian of this athlete, and I have read and agree to the Release and Waiver of Liability Agreement on their behalf'
+                : 'I have read and agree to the Release and Waiver of Liability Agreement'}
           </span>
         </label>
       </div>
@@ -575,6 +632,7 @@ function PaymentForm({
   raceType,
   formData,
   donationAmount,
+  participantCount,
   bandanaColor,
   onSuccess,
   onBack,
@@ -582,6 +640,7 @@ function PaymentForm({
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
+  participantCount: number;
   bandanaColor: string;
   onSuccess: () => void;
   onBack: () => void;
@@ -627,6 +686,11 @@ function PaymentForm({
           <span>
             <span className="font-bold">Name:</span> {formData.firstName} {formData.lastName}
           </span>
+          {participantCount > 1 && (
+            <span>
+              <span className="font-bold">Athletes:</span> {participantCount}
+            </span>
+          )}
           <span>
             <span className="font-bold">Donation:</span> ${donationAmount}
           </span>
@@ -696,6 +760,7 @@ function StepPayment({
   raceType,
   formData,
   donationAmount,
+  participantCount,
   bandanaColor,
   onSuccess,
   onBack,
@@ -704,6 +769,7 @@ function StepPayment({
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
+  participantCount: number;
   bandanaColor: string;
   onSuccess: () => void;
   onBack: () => void;
@@ -717,6 +783,7 @@ function StepPayment({
         raceType={raceType}
         formData={formData}
         donationAmount={donationAmount}
+        participantCount={participantCount}
         bandanaColor={bandanaColor}
         onSuccess={onSuccess}
         onBack={onBack}
@@ -730,13 +797,16 @@ function StepConfirmation({
   raceType,
   formData,
   donationAmount,
+  participantCount,
   bandanaColor,
 }: {
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
+  participantCount: number;
   bandanaColor: string;
 }) {
+  const isGroup = participantCount > 1;
   const raceLabel = raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL;
 
   return (
@@ -781,6 +851,12 @@ function StepConfirmation({
             <dt className="font-bold uppercase tracking-widest text-ash text-xs">Race</dt>
             <dd className="text-ink">{raceLabel}</dd>
           </div>
+          {isGroup && (
+            <div className="flex justify-between">
+              <dt className="font-bold uppercase tracking-widest text-ash text-xs">Athletes</dt>
+              <dd className="text-ink">{participantCount}</dd>
+            </div>
+          )}
           <div className="flex justify-between">
             <dt className="font-bold uppercase tracking-widest text-ash text-xs">Bandana</dt>
             <dd className="text-ink">{bandanaColor}</dd>
@@ -811,6 +887,7 @@ export function RegisterFlow() {
   const [raceType, setRaceType] = useState<RaceType>(null);
   const [bandanaColor, setBandanaColor] = useState('');
   const [donationAmount, setDonationAmount] = useState(MIN_DONATION_AMOUNT);
+  const [participantCount, setParticipantCount] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -838,6 +915,7 @@ export function RegisterFlow() {
         raceType,
         bandanaColor,
         amount: donationAmount * 100,
+        participantCount,
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -871,7 +949,9 @@ export function RegisterFlow() {
           raceType={raceType}
           setRaceType={setRaceType}
           onNext={() => {
-            setDonationAmount(raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT);
+            const perAthlete =
+              raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT;
+            setDonationAmount(perAthlete * participantCount);
             setStep(2);
           }}
         />
@@ -887,6 +967,8 @@ export function RegisterFlow() {
             setBandanaColor={setBandanaColor}
             donationAmount={donationAmount}
             setDonationAmount={setDonationAmount}
+            participantCount={participantCount}
+            setParticipantCount={setParticipantCount}
             waiverAgreed={waiverAgreed}
             setWaiverAgreed={setWaiverAgreed}
             onNext={handleStep2ToStep3}
@@ -907,6 +989,7 @@ export function RegisterFlow() {
           raceType={raceType}
           formData={formData}
           donationAmount={donationAmount}
+          participantCount={participantCount}
           bandanaColor={bandanaColor}
           onSuccess={() => setStep(4)}
           onBack={() => setStep(2)}
@@ -918,6 +1001,7 @@ export function RegisterFlow() {
           raceType={raceType}
           formData={formData}
           donationAmount={donationAmount}
+          participantCount={participantCount}
           bandanaColor={bandanaColor}
         />
       )}

@@ -1,4 +1,8 @@
 import {
+  CONTACT_EMAIL,
+  MAX_PARTICIPANTS_PER_REGISTRATION,
+  MIN_DONATION_AMOUNT,
+  MIN_DONATION_FUN_RUN,
   REFERRAL_ENABLED,
   REFERRAL_REWARD,
   REGISTRATION_OPEN,
@@ -25,7 +29,11 @@ export const faqs: FAQItem[] = [
     : []),
   {
     question: "What is the registration fee?",
-    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Intermountain Cancer Center Utah Valley for the 10K, or a minimum $49 donation for the family-friendly Fun Run. Each participant registers separately, so a family doing the Fun Run pays the $49 minimum per person. We warmly encourage you to give as much more as you're willing.",
+    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Intermountain Cancer Center Utah Valley for the 10K, or a minimum $49 donation for the family-friendly Fun Run. The minimum is per athlete, so a family of four doing the Fun Run gives at least $196 — and you can register all four in one go rather than filling in the form four times. We warmly encourage you to give as much more as you're willing.",
+  },
+  {
+    question: "Can I register a group, or pay for other people?",
+    answer: `Yes. On the registration form, enter how many athletes you're registering and the donation minimum adjusts automatically — $${MIN_DONATION_AMOUNT} per athlete for the 10K, $${MIN_DONATION_FUN_RUN} per athlete for the Fun Run. This works for a family, a team, a company, or anyone who wants to cover entries for others. You give us your contact details once; each athlete's name and waiver are collected at check-in on race morning. For groups larger than ${MAX_PARTICIPANTS_PER_REGISTRATION}, email ${CONTACT_EMAIL} and we'll sort it out with you.`,
   },
   {
     question: "Can I register without fundraising?",

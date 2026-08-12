@@ -43,6 +43,8 @@ async function recordSuccessfulRegistration(
       raceType: intent.metadata.raceType ?? '',
       bandanaColor: intent.metadata.bandanaColor ?? '',
       donationAmount: String(intent.amount_received || intent.amount),
+      // How many bibs this registration is owed at check-in.
+      participantCount: intent.metadata.participantCount ?? '1',
       dob: intent.metadata.dob ?? '',
       isMinor: intent.metadata.isMinor ?? '',
       guardianName: intent.metadata.guardianName ?? '',

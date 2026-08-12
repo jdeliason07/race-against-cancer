@@ -46,8 +46,11 @@ export const REGISTRATION_OPENS_LABEL = REGISTRATION_OPENS_DATE || 'soon';
 // --- REGISTRATION -------------------------------------------
 // The race has no attendance cap — registration stays open regardless of
 // how many people sign up.
-export const MIN_DONATION_AMOUNT   = 99; // 10K minimum — canonical number
-export const MIN_DONATION_FUN_RUN  = 49;  // Fun Run minimum
+export const MIN_DONATION_AMOUNT   = 99; // 10K minimum — canonical number, per athlete
+export const MIN_DONATION_FUN_RUN  = 49;  // Fun Run minimum, per athlete
+// One person can register and pay for a group (a company, a team, a family).
+// The donation minimum is the per-athlete minimum times this count.
+export const MAX_PARTICIPANTS_PER_REGISTRATION = 100;
 export const TEN_K_LABEL           = "10K (6.2 mi)";
 export const FUN_RUN_LABEL         = "Fun Run (~2 mi)";
 

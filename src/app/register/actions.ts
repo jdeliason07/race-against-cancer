@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import {
   CONTACT_EMAIL,
   EVENT_NAME,
+  MAX_PARTICIPANTS_PER_REGISTRATION,
   MIN_DONATION_AMOUNT,
   MIN_DONATION_FUN_RUN,
   REFERRAL_ENABLED,
@@ -24,6 +25,7 @@ interface RegistrationInput {
   raceType: string;
   bandanaColor: string;
   amount: number; // in cents, e.g. 9900 for $99
+  participantCount: number; // 1 for a solo athlete; more when paying for a group
   firstName: string;
   lastName: string;
   email: string;
@@ -87,39 +89,65 @@ export async function createPaymentIntent(
     return { error: 'You must accept the Release and Waiver of Liability to register.' };
   }
 
+  const participantCount = registrationData.participantCount;
+  if (
+    !Number.isInteger(participantCount) ||
+    participantCount < 1 ||
+    participantCount > MAX_PARTICIPANTS_PER_REGISTRATION
+  ) {
+    return {
+      error: `Enter a number of athletes between 1 and ${MAX_PARTICIPANTS_PER_REGISTRATION}. Email ${CONTACT_EMAIL} for a larger group.`,
+    };
+  }
+  const isGroup = participantCount > 1;
+
   const phone = normalizePhone(registrationData.phone);
   if (!phone) {
     return { error: 'Enter a valid phone number, e.g. (555) 123-4567.' };
   }
-  const emergencyPhone = normalizePhone(registrationData.emergencyPhone);
-  if (!emergencyPhone) {
-    return { error: 'Enter a valid emergency contact phone number.' };
-  }
 
-  if (!isPlausibleDob(registrationData.dob)) {
-    return { error: 'Enter a valid date of birth.' };
-  }
-  const age = ageOnRaceDay(registrationData.dob)!;
-  const isMinor = age < ADULT_AGE;
-  if (isMinor && !registrationData.guardianName.trim()) {
-    return {
-      error:
-        'Athletes under 18 on race day need a parent or legal guardian to accept the waiver on their behalf.',
-    };
+  // Date of birth and emergency contact describe an athlete, so they're only
+  // required when the registration is for exactly one. For a group, those are
+  // collected per athlete at check-in.
+  let emergencyPhone = '';
+  let age: number | null = null;
+  let isMinor = false;
+
+  if (!isGroup) {
+    emergencyPhone = normalizePhone(registrationData.emergencyPhone) ?? '';
+    if (!emergencyPhone) {
+      return { error: 'Enter a valid emergency contact phone number.' };
+    }
+    if (!isPlausibleDob(registrationData.dob)) {
+      return { error: 'Enter a valid date of birth.' };
+    }
+    age = ageOnRaceDay(registrationData.dob)!;
+    isMinor = age < ADULT_AGE;
+    if (isMinor && !registrationData.guardianName.trim()) {
+      return {
+        error:
+          'Athletes under 18 on race day need a parent or legal guardian to accept the waiver on their behalf.',
+      };
+    }
   }
 
   // Enforce minimum on the server — UI minimum can be bypassed
-  const minCents =
+  const perAthleteCents =
     (registrationData.raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT) * 100;
+  const minCents = perAthleteCents * participantCount;
   if (registrationData.amount < minCents) {
     return {
-      error: `Minimum donation for this event is $${minCents / 100}. Please increase your donation amount.`,
+      error: isGroup
+        ? `Minimum donation for ${participantCount} athletes is $${minCents / 100} ($${perAthleteCents / 100} each). Please increase your donation amount.`
+        : `Minimum donation for this event is $${minCents / 100}. Please increase your donation amount.`,
     };
   }
 
   try {
     const existingCustomer = await findCustomerByEmail(stripe, registrationData.email);
-    if (existingCustomer && isRegistered(existingCustomer)) {
+    // Group organizers often come back to register themselves, so only a
+    // repeated solo registration is treated as a duplicate.
+    if (!isGroup && existingCustomer && isRegistered(existingCustomer)) {
       return {
         error: `This email address is already registered. Email ${CONTACT_EMAIL} if you need to change your registration.`,
       };
@@ -146,7 +174,9 @@ export async function createPaymentIntent(
       // turned on in the Stripe Dashboard, so the Express Checkout button works.
       automatic_payment_methods: { enabled: true },
       receipt_email: canonicalEmail(registrationData.email),
-      description: `${EVENT_NAME} — ${registrationData.raceType}`,
+      description: isGroup
+        ? `${EVENT_NAME} — ${registrationData.raceType} × ${participantCount}`
+        : `${EVENT_NAME} — ${registrationData.raceType}`,
       metadata: {
         event: EVENT_NAME,
         raceType: registrationData.raceType,
@@ -155,14 +185,19 @@ export async function createPaymentIntent(
         lastName: registrationData.lastName.trim(),
         email: canonicalEmail(registrationData.email),
         phone,
-        dob: registrationData.dob,
-        ageOnRaceDay: String(age),
+        participantCount: String(participantCount),
+        dob: isGroup ? '' : registrationData.dob,
+        ageOnRaceDay: age === null ? '' : String(age),
         isMinor: String(isMinor),
         guardianName: isMinor ? registrationData.guardianName.trim() : '',
-        emergencyName: registrationData.emergencyName.trim(),
+        emergencyName: isGroup ? '' : registrationData.emergencyName.trim(),
         emergencyPhone,
         waiverAgreed: 'true',
-        waiverAgreedBy: isMinor ? registrationData.guardianName.trim() : 'athlete',
+        waiverAgreedBy: isGroup
+          ? 'group organizer'
+          : isMinor
+            ? registrationData.guardianName.trim()
+            : 'athlete',
         waiverAgreedAt: new Date().toISOString(),
         waiverVersion: WAIVER_VERSION,
         // Copied onto the customer by the webhook, so a referral only counts

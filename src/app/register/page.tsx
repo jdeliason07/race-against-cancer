@@ -31,6 +31,12 @@ export default function RegisterPage() {
             <p className="mt-4 font-body text-base text-ash">
               Be the first to know the moment registration opens.
             </p>
+            <p className="mt-3 font-body text-base text-ink">
+              10K from ${MIN_DONATION_AMOUNT} · Family Fun Run from ${MIN_DONATION_FUN_RUN}
+            </p>
+            <p className="mt-1 font-body text-sm text-ash">
+              The ~2-mile Fun Run is short enough for kids to finish and easy to walk the whole way.
+            </p>
           </div>
         </section>
         <div className="mx-auto max-w-2xl px-6 py-16">
@@ -47,7 +53,7 @@ export default function RegisterPage() {
           <p className="section-label mb-4">November 7, 2026</p>
           <h1 className="font-display text-5xl uppercase text-ink md:text-7xl">Register</h1>
           <p className="mt-4 font-body text-base text-ash">
-            10K from ${MIN_DONATION_AMOUNT} · Fun Run from ${MIN_DONATION_FUN_RUN} — benefiting {CHARITY_NAME}
+            10K from ${MIN_DONATION_AMOUNT} · Family Fun Run from ${MIN_DONATION_FUN_RUN} — benefiting {CHARITY_NAME}
           </p>
         </div>
       </section>

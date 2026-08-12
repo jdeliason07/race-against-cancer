@@ -25,7 +25,7 @@ export const faqs: FAQItem[] = [
     : []),
   {
     question: "What is the registration fee?",
-    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Intermountain Cancer Center Utah Valley for the 10K, or a minimum $49 donation for the Fun Run. We warmly encourage you to give as much more as you're willing.",
+    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Intermountain Cancer Center Utah Valley for the 10K, or a minimum $49 donation for the family-friendly Fun Run. Each participant registers separately, so a family doing the Fun Run pays the $49 minimum per person. We warmly encourage you to give as much more as you're willing.",
   },
   {
     question: "Can I register without fundraising?",
@@ -33,7 +33,7 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "What's the difference between the 10K and the Fun Run?",
-    answer: "The 10K is 6.2 miles and follows a point-to-point, predominantly downhill route: it starts in front of Canyon Crest Elementary School on N Canyon Road, runs to the mouth of Provo Canyon, then makes its single turn onto University Avenue and heads straight to the finish at Center Street in downtown Provo. The Fun Run is approximately 2 miles, starting at LaVell Edwards Stadium on the BYU campus and following University Avenue south to the same finish line. Both events take place on November 7, 2026.",
+    answer: "The 10K is 6.2 miles and follows a point-to-point, predominantly downhill route: it starts in front of Canyon Crest Elementary School on N Canyon Road, runs to the mouth of Provo Canyon, then makes its single turn onto University Avenue and heads straight to the finish at Center Street in downtown Provo. The minimum donation is $99. The Fun Run is approximately 2 miles, starting at LaVell Edwards Stadium on the BYU campus and following University Avenue south to the same finish line, with a $49 minimum donation. It's the one most families choose — short enough for kids to finish, easy to walk the whole way, and strollers are welcome. Both events take place on November 7, 2026.",
   },
   {
     question: "How do I get to the 10K start line?",

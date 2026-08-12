@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {
   EVENT_NAME, EVENT_DATE_DISPLAY, EVENT_DATE_ISO,
-  CHARITY_NAME, MIN_DONATION_AMOUNT,
+  CHARITY_NAME, MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN,
   TEN_K_LABEL, FUN_RUN_LABEL,
   EVENT_LOCATION_NAME, FUN_RUN_LOCATION_NAME,
   ORG_NAME, SITE_URL, REGISTRATION_OPEN,
@@ -44,14 +44,27 @@ const eventJsonLd = {
     name: ORG_NAME,
     url: SITE_URL,
   },
-  offers: {
-    '@type': 'Offer',
-    price: String(MIN_DONATION_AMOUNT),
-    priceCurrency: 'USD',
-    url: `${SITE_URL}/register`,
-    availability: 'https://schema.org/InStock',
-    validFrom: '2026-01-01',
-  },
+  // Both entries, so search results don't quote only the 10K price.
+  offers: [
+    {
+      '@type': 'Offer',
+      name: TEN_K_LABEL,
+      price: String(MIN_DONATION_AMOUNT),
+      priceCurrency: 'USD',
+      url: `${SITE_URL}/register`,
+      availability: 'https://schema.org/InStock',
+      validFrom: '2026-01-01',
+    },
+    {
+      '@type': 'Offer',
+      name: FUN_RUN_LABEL,
+      price: String(MIN_DONATION_FUN_RUN),
+      priceCurrency: 'USD',
+      url: `${SITE_URL}/register`,
+      availability: 'https://schema.org/InStock',
+      validFrom: '2026-01-01',
+    },
+  ],
 };
 
 export default async function HomePage() {
@@ -81,7 +94,8 @@ export default async function HomePage() {
 
           <p className="mt-8 max-w-xl font-body text-lg text-ash">
             A 10K & Fun Run benefiting {CHARITY_NAME}. Your registration
-            is a donation to the cause.
+            is a donation to the cause — 10K from ${MIN_DONATION_AMOUNT}, family Fun Run
+            from ${MIN_DONATION_FUN_RUN}.
           </p>
 
           <div className="mt-10">
@@ -106,7 +120,7 @@ export default async function HomePage() {
               {
                 step: '01',
                 heading: 'Choose your distance',
-                body: `Run the ${TEN_K_LABEL} through Provo, or join the ${FUN_RUN_LABEL} from LaVell Edwards Stadium to downtown — all paces and abilities welcome.`,
+                body: `Run the ${TEN_K_LABEL} through Provo from $${MIN_DONATION_AMOUNT}, or bring the family for the ${FUN_RUN_LABEL} from LaVell Edwards Stadium to downtown — from $${MIN_DONATION_FUN_RUN}, and short enough for kids to finish.`,
               },
               {
                 step: '02',
@@ -145,7 +159,7 @@ export default async function HomePage() {
               { dt: 'Events',   dd: `${TEN_K_LABEL} + ${FUN_RUN_LABEL}` },
               { dt: 'Date',     dd: EVENT_DATE_DISPLAY },
               { dt: 'Start',    dd: `10K: ${EVENT_LOCATION_NAME} · Fun Run: ${FUN_RUN_LOCATION_NAME}` },
-              { dt: 'Entry',    dd: `$${MIN_DONATION_AMOUNT}+ — all to ${CHARITY_NAME}` },
+              { dt: 'Entry',    dd: `10K $${MIN_DONATION_AMOUNT}+ · Fun Run $${MIN_DONATION_FUN_RUN}+` },
             ].map((fact) => (
               <div key={fact.dt} className="rounded-card border border-line p-6">
                 <dt className="section-label mb-2">{fact.dt}</dt>

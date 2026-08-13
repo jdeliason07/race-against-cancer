@@ -68,6 +68,42 @@ Stripe customer record as `participantCount` — that's how many bibs are owed �
 each athlete's name and signed waiver at check-in. Worth deciding how you'll run that table before
 a 40-person group shows up on race morning.
 
+### Sponsor-covered registrations (invite links)
+When someone donates to cover entries for other people, send those people a private link instead
+of collecting a headcount:
+
+```
+https://<your-domain>/register/invite/<COMP_REGISTRATION_CODE>
+```
+
+Each person walks the normal form — race, name, contact, date of birth, emergency contact,
+guardian if under 18, bandana, waiver — and finishes without a payment step. **This is the better
+way to handle a covered block**, because it arrives as real athletes with signed waivers rather
+than a number you have to chase at check-in.
+
+Two environment variables control it (see `src/env.example`):
+
+| Variable | What it does |
+|---|---|
+| `COMP_REGISTRATION_CODE` | The secret in the link. Blank disables covered registration entirely. |
+| `COMP_REGISTRATION_LIMIT` | How many free entries the link may create. Must be > 0 or the link is dead. |
+
+The code is an environment variable rather than a `site.ts` constant on purpose: `site.ts` is
+imported by Client Components, so anything in it ships to every visitor's browser.
+
+Usage is counted by scanning customers stamped with `compCode`, so the limit is enforced without a
+database and re-running never miscounts. Two caveats worth knowing:
+
+- **Anyone with the link can claim an entry** — there's no per-person invite. Treat it like a
+  password, and set the limit to exactly what was paid for.
+- Stripe's search index lags writes by up to a minute, so two people claiming the last entry in the
+  same minute could both succeed. Over-issuing by one or two is possible; the limit is a ceiling,
+  not a lock. If Stripe can't be reached at all the link refuses rather than handing out entries.
+
+Covered registrations record `donationAmount: 0` and never earn referral rewards, so a free entry
+can't be used to farm gift cards. The link also works while `REGISTRATION_OPEN` is `false`, so a
+sponsor's group can register before public registration opens.
+
 ### Referral rewards
 Registrants type their referrer's full name into a "Who referred you?" box. The name is written
 to the referred person's Stripe customer record (`referredByName`) **by the webhook**, so a

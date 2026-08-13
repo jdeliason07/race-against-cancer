@@ -11,6 +11,7 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 import { createPaymentIntent } from './actions';
+import { submitCompRegistration } from './comp-actions';
 import { ADULT_AGE, isMinorOnRaceDay, isPlausibleDob } from '@/lib/utils';
 import {
   MAX_PARTICIPANTS_PER_REGISTRATION,
@@ -77,18 +78,18 @@ interface FormData {
 }
 
 // Step progress indicator
-function StepIndicator({ step }: { step: Step }) {
-  const labels = ['Race Selection', 'Athlete Info', 'Payment', 'Confirmation'];
+function StepIndicator({ step, labels }: { step: Step; labels: string[] }) {
+  const total = labels.length;
   return (
     <div className="mb-8">
       <div className="mb-3 flex items-center justify-between">
         <p className="font-body text-xs font-bold uppercase tracking-widest text-ash">
-          Step {step} of 4 — {labels[step - 1]}
+          Step {step} of {total} — {labels[step - 1]}
         </p>
-        <p className="font-body text-xs text-ash">{step * 25}%</p>
+        <p className="font-body text-xs text-ash">{Math.round((step / total) * 100)}%</p>
       </div>
       <div className="flex gap-2">
-        {([1, 2, 3, 4] as Step[]).map((s) => (
+        {labels.map((_, i) => i + 1).map((s) => (
           <div
             key={s}
             className="h-1.5 flex-1 rounded-pill"
@@ -174,6 +175,7 @@ function StepAthleteInfo({
   setParticipantCount,
   waiverAgreed,
   setWaiverAgreed,
+  isComp,
   onNext,
   onBack,
   loading,
@@ -189,6 +191,7 @@ function StepAthleteInfo({
   setParticipantCount: (n: number) => void;
   waiverAgreed: boolean;
   setWaiverAgreed: (v: boolean) => void;
+  isComp: boolean;
   onNext: () => void;
   onBack: () => void;
   loading: boolean;
@@ -200,7 +203,7 @@ function StepAthleteInfo({
   // One person paying for several athletes is registering a group, not
   // themselves — so the personal fields below become their contact details and
   // each athlete's own details are collected at check-in.
-  const isGroup = participantCount > 1;
+  const isGroup = !isComp && participantCount > 1;
 
   const update = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: e.target.value });
@@ -238,7 +241,7 @@ function StepAthleteInfo({
         formData.emergencyName.trim() &&
         formData.emergencyPhone.trim())) &&
     (!isMinor || formData.guardianName.trim()) &&
-    donationAmount >= minDonation &&
+    (isComp || donationAmount >= minDonation) &&
     bandanaColor !== '' &&
     waiverAgreed;
 
@@ -255,6 +258,7 @@ function StepAthleteInfo({
       </h2>
 
       {/* Headcount — drives the donation minimum below */}
+      {!isComp && (
       <div className="mb-6 rounded-card border border-line bg-mist p-5">
         <label htmlFor="participantCount" className={labelClass}>
           How many athletes are you registering?
@@ -284,6 +288,7 @@ function StepAthleteInfo({
             : `Registering more than one? Enter the number here and the donation minimum adjusts — $${perAthleteMin} per athlete.`}
         </p>
       </div>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 mb-4">
         <div>
@@ -427,7 +432,7 @@ function StepAthleteInfo({
         </div>
       )}
 
-      {REFERRAL_ENABLED && (
+      {REFERRAL_ENABLED && !isComp && (
         <div className="mb-6">
           <label htmlFor="referredByName" className={labelClass}>
             Who referred you? <span className="font-normal normal-case tracking-normal">(optional)</span>
@@ -486,6 +491,7 @@ function StepAthleteInfo({
       </div>
 
       {/* Donation amount */}
+      {!isComp && (
       <div className="mb-6 rounded-card border border-petal bg-blush p-5">
         <label htmlFor="donationAmount" className="mb-2 font-body text-xs font-bold uppercase tracking-widest text-ash block">
           Donation Amount
@@ -514,6 +520,16 @@ function StepAthleteInfo({
           <p className="mt-1 font-body text-xs text-red-700" role="alert">Minimum donation is ${minDonation}</p>
         )}
       </div>
+      )}
+
+      {isComp && (
+        <div className="mb-6 rounded-card border-2 border-pink bg-blush p-5">
+          <p className="font-display text-xl uppercase text-ink">Your entry is covered</p>
+          <p className="mt-1 font-body text-sm text-ash">
+            A sponsor has already donated on your behalf — there&rsquo;s nothing to pay.
+          </p>
+        </div>
+      )}
 
       {/* Waiver */}
       <div className="mb-6">
@@ -620,7 +636,7 @@ function StepAthleteInfo({
           disabled={!canAdvance || loading}
           className="btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {loading ? 'Processing…' : 'Next: Payment'}
+          {loading ? 'Processing…' : isComp ? 'Complete Registration' : 'Next: Payment'}
         </button>
       </div>
     </div>
@@ -799,12 +815,14 @@ function StepConfirmation({
   donationAmount,
   participantCount,
   bandanaColor,
+  isComp,
 }: {
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
   participantCount: number;
   bandanaColor: string;
+  isComp: boolean;
 }) {
   const isGroup = participantCount > 1;
   const raceLabel = raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL;
@@ -864,14 +882,16 @@ function StepConfirmation({
           <div className="flex justify-between">
             <dt className="font-bold uppercase tracking-widest text-ash text-xs">Donation</dt>
             <dd className="font-bold" style={{ color: '#F0307A' }}>
-              ${donationAmount}
+              {isComp ? 'Covered by a sponsor' : `$${donationAmount}`}
             </dd>
           </div>
         </dl>
       </div>
 
       <p className="mb-8 font-body text-sm text-ash">
-        Check your email for a receipt from Stripe.
+        {isComp
+          ? 'We have your registration. Bring photo ID to check-in on race morning.'
+          : 'Check your email for a receipt from Stripe.'}
       </p>
 
       <Link href="/" className="btn-primary">
@@ -882,7 +902,14 @@ function StepConfirmation({
 }
 
 // Main orchestrator
-export function RegisterFlow() {
+export function RegisterFlow({ comp }: { comp?: { code: string } }) {
+  // A covered entry skips payment, so the flow is one step shorter.
+  const isComp = !!comp;
+  const stepLabels = isComp
+    ? ['Race Selection', 'Athlete Info', 'Confirmation']
+    : ['Race Selection', 'Athlete Info', 'Payment', 'Confirmation'];
+  const confirmationStep = (isComp ? 3 : 4) as Step;
+
   const [step, setStep] = useState<Step>(1);
   const [raceType, setRaceType] = useState<RaceType>(null);
   const [bandanaColor, setBandanaColor] = useState('');
@@ -911,6 +938,26 @@ export function RegisterFlow() {
     setLoadingIntent(true);
     setIntentError(null);
     try {
+      if (comp) {
+        const result = await submitCompRegistration({
+          code: comp.code,
+          raceType,
+          bandanaColor,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          dob: formData.dob,
+          emergencyName: formData.emergencyName,
+          emergencyPhone: formData.emergencyPhone,
+          guardianName: formData.guardianName,
+          waiverAgreed,
+        });
+        if ('error' in result) setIntentError(result.error);
+        else setStep(confirmationStep);
+        return;
+      }
+
       const result = await createPaymentIntent({
         raceType,
         bandanaColor,
@@ -942,7 +989,7 @@ export function RegisterFlow() {
 
   return (
     <div>
-      {step !== 4 && <StepIndicator step={step} />}
+      {step !== confirmationStep && <StepIndicator step={step} labels={stepLabels} />}
 
       {step === 1 && (
         <StepRaceSelection
@@ -971,6 +1018,7 @@ export function RegisterFlow() {
             setParticipantCount={setParticipantCount}
             waiverAgreed={waiverAgreed}
             setWaiverAgreed={setWaiverAgreed}
+            isComp={isComp}
             onNext={handleStep2ToStep3}
             onBack={() => setStep(1)}
             loading={loadingIntent}
@@ -983,7 +1031,7 @@ export function RegisterFlow() {
         </>
       )}
 
-      {step === 3 && clientSecret && (
+      {!isComp && step === 3 && clientSecret && (
         <StepPayment
           clientSecret={clientSecret}
           raceType={raceType}
@@ -996,13 +1044,14 @@ export function RegisterFlow() {
         />
       )}
 
-      {step === 4 && (
+      {step === confirmationStep && (
         <StepConfirmation
           raceType={raceType}
           formData={formData}
           donationAmount={donationAmount}
           participantCount={participantCount}
           bandanaColor={bandanaColor}
+          isComp={isComp}
         />
       )}
     </div>

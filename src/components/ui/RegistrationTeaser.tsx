@@ -14,7 +14,7 @@ export function RegistrationTeaser({ className }: { className?: string }) {
       <span className="font-bold text-pink">
         Registration opens {REGISTRATION_OPENS_LABEL}.
       </span>{' '}
-      Join the waitlist and we&rsquo;ll email and text you the moment it does.
+      Join the waitlist and we&rsquo;ll email you the moment it does.
     </p>
   );
 }

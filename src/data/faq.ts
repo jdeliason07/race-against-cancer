@@ -19,7 +19,7 @@ export const faqs: FAQItem[] = [
     question: "When does registration open?",
     answer: REGISTRATION_OPEN
       ? "Registration is open now — head to the registration page to claim your spot."
-      : `Registration opens ${REGISTRATION_OPENS_LABEL}. Join the waitlist with your name, email, and phone number and we'll email and text you the moment it goes live.`,
+      : `Registration opens ${REGISTRATION_OPENS_LABEL}. Join the waitlist with your name, email, and phone number and we'll email you the moment it goes live.`,
   },
   ...(REFERRAL_ENABLED
     ? [{

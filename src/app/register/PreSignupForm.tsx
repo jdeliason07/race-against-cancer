@@ -41,7 +41,7 @@ export function PreSignupForm() {
       <div className="rounded-card border-2 border-pink bg-blush p-10 text-center">
         <p className="font-display text-3xl uppercase text-ink mb-4">You&rsquo;re on the list!</p>
         <p className="font-body text-base text-ash">
-          We&rsquo;ll email and text you as soon as registration opens
+          We&rsquo;ll email you as soon as registration opens
           {REGISTRATION_OPENS_DATE ? ` around ${REGISTRATION_OPENS_DATE}` : ''}.
         </p>
         {REFERRAL_ENABLED && (
@@ -126,7 +126,7 @@ export function PreSignupForm() {
           className="rounded-pill border border-line bg-paper px-6 py-4 font-body text-base text-ink placeholder:text-ash/60 focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/15"
         />
         <p id="phone-hint" className="font-body text-xs text-ash/70">
-          So we can text you when registration opens. We won&rsquo;t use it for anything else.
+          So we can reach you about your registration or race-day details if we need to.
         </p>
       </div>
 

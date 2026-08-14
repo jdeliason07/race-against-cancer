@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { adminConfigStatus, isSignedIn, MIN_PASSWORD_LENGTH } from '@/lib/adminAuth';
 import { LoginForm } from './LoginForm';
+import { PaneHeader } from './PaneHeader';
 
 export const metadata: Metadata = {
   title: 'Organizer',
@@ -11,15 +11,12 @@ export const metadata: Metadata = {
 // Reads a cookie, so every admin page renders per request.
 export const dynamic = 'force-dynamic';
 
-function Shell({ children }: { children: React.ReactNode }) {
+/** Used only for the states before sign-in; the signed-in view supplies its own
+ *  header per pane so each one scrolls with its page. */
+function Gate({ children }: { children: React.ReactNode }) {
   return (
     <div className="bg-paper min-h-screen">
-      <section className="border-b border-line bg-mist py-10">
-        <div className="mx-auto max-w-5xl px-6 text-center">
-          <p className="section-label mb-3">Organizer only</p>
-          <h1 className="font-display text-4xl uppercase text-ink md:text-5xl">Dashboard</h1>
-        </div>
-      </section>
+      <PaneHeader title="Organizer" />
       <div className="mx-auto max-w-5xl px-6 py-10">{children}</div>
     </div>
   );
@@ -30,7 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   if (status === 'too-short') {
     return (
-      <Shell>
+      <Gate>
         <div className="rounded-card border border-line bg-mist px-5 py-4 font-body text-sm text-ash">
           <p className="font-bold text-ink">This deploy can see ADMIN_PASSWORD, but it&rsquo;s too short.</p>
           <p className="mt-2">
@@ -38,13 +35,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             cookie, so a short one weakens both. Set a longer one in Vercel and redeploy.
           </p>
         </div>
-      </Shell>
+      </Gate>
     );
   }
 
   if (status === 'missing') {
     return (
-      <Shell>
+      <Gate>
         <div className="rounded-card border border-line bg-mist px-5 py-4 font-body text-sm text-ash">
           <p className="font-bold text-ink">This deploy can&rsquo;t see ADMIN_PASSWORD.</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
@@ -53,29 +50,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <li>Is the key spelled exactly <code className="font-mono text-ink">ADMIN_PASSWORD</code>?</li>
           </ul>
         </div>
-      </Shell>
+      </Gate>
     );
   }
 
   if (!(await isSignedIn())) {
     return (
-      <Shell>
+      <Gate>
         <LoginForm />
-      </Shell>
+      </Gate>
     );
   }
 
-  return (
-    <Shell>
-      <nav className="mb-8 flex gap-3" aria-label="Admin sections">
-        <Link href="/admin" className="btn-ghost px-6 py-2 text-xs">
-          Overview
-        </Link>
-        <Link href="/admin/email" className="btn-ghost px-6 py-2 text-xs">
-          Email
-        </Link>
-      </nav>
-      {children}
-    </Shell>
-  );
+  return <div className="bg-paper min-h-screen">{children}</div>;
 }

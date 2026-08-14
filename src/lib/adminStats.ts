@@ -6,6 +6,9 @@ import { WAITLIST_SOURCE, eachEventIntent } from '@/lib/stripeRegistration';
 import { COMP_SOURCE } from '@/lib/compRegistration';
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+/** Sparkline window. 14 reads as "the last fortnight" at a glance. */
+export const SERIES_DAYS = 14;
 
 export interface PersonRow {
   name: string;
@@ -13,8 +16,11 @@ export interface PersonRow {
   at: string | null;
 }
 
+/** One value per day, oldest first, length SERIES_DAYS. */
+export type DailySeries = number[];
+
 export interface AdminStats {
-  waitlist: { total: number; newThisWeek: number; recent: PersonRow[] };
+  waitlist: { total: number; newThisWeek: number; recent: PersonRow[]; series: DailySeries };
   registrations: {
     total: number;
     athletes: number;
@@ -23,8 +29,21 @@ export interface AdminStats {
     funRun: number;
     covered: number;
     recent: PersonRow[];
+    series: DailySeries;
   };
-  money: { totalCents: number; thisWeekCents: number; payingRegistrations: number };
+  money: {
+    totalCents: number;
+    thisWeekCents: number;
+    payingRegistrations: number;
+    series: DailySeries;
+  };
+}
+
+/** Index into the sparkline for a timestamp, or -1 if outside the window. */
+function dayIndex(ms: number | null, startOfWindow: number): number {
+  if (ms === null || ms < startOfWindow) return -1;
+  const index = Math.floor((ms - startOfWindow) / DAY_MS);
+  return index >= 0 && index < SERIES_DAYS ? index : -1;
 }
 
 function parseDate(value: string | undefined): number | null {
@@ -46,7 +65,15 @@ function byNewest(a: PersonRow, b: PersonRow): number {
 }
 
 export async function buildAdminStats(stripe: Stripe): Promise<AdminStats> {
-  const cutoff = Date.now() - WEEK_MS;
+  const now = Date.now();
+  const cutoff = now - WEEK_MS;
+  // Start at midnight so each bucket is a calendar day, not a rolling 24h slice.
+  const todayStart = new Date(new Date(now).toDateString()).getTime();
+  const windowStart = todayStart - (SERIES_DAYS - 1) * DAY_MS;
+
+  const waitlistSeries: number[] = Array(SERIES_DAYS).fill(0);
+  const registrationSeries: number[] = Array(SERIES_DAYS).fill(0);
+  const moneySeries: number[] = Array(SERIES_DAYS).fill(0);
 
   const waitlist: PersonRow[] = [];
   const registrations: PersonRow[] = [];
@@ -65,7 +92,10 @@ export async function buildAdminStats(stripe: Stripe): Promise<AdminStats> {
       if (meta.registered === 'true') {
         const row = toRow(customer, meta.registeredAt);
         registrations.push(row);
-        if ((parseDate(meta.registeredAt) ?? 0) >= cutoff) registrationsNew++;
+        const registeredMs = parseDate(meta.registeredAt);
+        if ((registeredMs ?? 0) >= cutoff) registrationsNew++;
+        const rIndex = dayIndex(registeredMs, windowStart);
+        if (rIndex >= 0) registrationSeries[rIndex]++;
 
         const count = Number.parseInt(meta.participantCount ?? '1', 10);
         athletes += Number.isInteger(count) && count > 0 ? count : 1;
@@ -78,7 +108,10 @@ export async function buildAdminStats(stripe: Stripe): Promise<AdminStats> {
 
       if (meta.source === WAITLIST_SOURCE) {
         waitlist.push(toRow(customer, meta.submittedAt));
-        if ((parseDate(meta.submittedAt) ?? 0) >= cutoff) waitlistNew++;
+        const joinedMs = parseDate(meta.submittedAt);
+        if ((joinedMs ?? 0) >= cutoff) waitlistNew++;
+        const wIndex = dayIndex(joinedMs, windowStart);
+        if (wIndex >= 0) waitlistSeries[wIndex]++;
       }
     });
 
@@ -91,7 +124,10 @@ export async function buildAdminStats(stripe: Stripe): Promise<AdminStats> {
     const amount = intent.amount_received || intent.amount;
     totalCents += amount;
     payingRegistrations++;
-    if (intent.created * 1000 >= cutoff) thisWeekCents += amount;
+    const paidMs = intent.created * 1000;
+    if (paidMs >= cutoff) thisWeekCents += amount;
+    const mIndex = dayIndex(paidMs, windowStart);
+    if (mIndex >= 0) moneySeries[mIndex] += amount;
   });
 
   await Promise.all([customerPass, intentPass]);
@@ -103,7 +139,8 @@ export async function buildAdminStats(stripe: Stripe): Promise<AdminStats> {
     waitlist: {
       total: waitlist.length,
       newThisWeek: waitlistNew,
-      recent: waitlist.slice(0, 8),
+      recent: waitlist.slice(0, 4),
+      series: waitlistSeries,
     },
     registrations: {
       total: registrations.length,
@@ -112,8 +149,9 @@ export async function buildAdminStats(stripe: Stripe): Promise<AdminStats> {
       tenK,
       funRun,
       covered,
-      recent: registrations.slice(0, 8),
+      recent: registrations.slice(0, 4),
+      series: registrationSeries,
     },
-    money: { totalCents, thisWeekCents, payingRegistrations },
+    money: { totalCents, thisWeekCents, payingRegistrations, series: moneySeries },
   };
 }

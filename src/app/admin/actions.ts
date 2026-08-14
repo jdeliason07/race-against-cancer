@@ -37,13 +37,19 @@ export async function fetchGroups(): Promise<{ groups: SenderGroup[] } | { error
   }
 }
 
+export type Audience = 'waitlist' | 'registered';
+
 /**
- * Copies waitlist signups from Stripe into a Sender group.
+ * Copies people from Stripe into a Sender group — either waitlist signups or
+ * completed registrations.
  *
  * Sender is the list of record for sending: it owns unsubscribes, and bulk
  * email has to honour those. Stripe stays the list of record for who signed up.
  */
-export async function syncWaitlistToGroup(groupId: string): Promise<ActionResult> {
+export async function syncAudienceToGroup(
+  audience: Audience,
+  groupId: string,
+): Promise<ActionResult> {
   await requireAdmin();
   if (!isSenderConfigured()) return { error: 'SENDER_API_TOKEN is not set.' };
   if (!groupId) return { error: 'Choose a group to sync into.' };
@@ -54,13 +60,18 @@ export async function syncWaitlistToGroup(groupId: string): Promise<ActionResult
   try {
     const people: Array<{ email: string; firstname: string; lastname: string; phone: string }> = [];
 
+    // Registrations are flagged on the customer by the webhook; waitlist
+    // signups carry the pre-signup source and haven't converted.
+    const query =
+      audience === 'registered'
+        ? `metadata['registered']:'true' AND metadata['event']:'${EVENT_NAME}'`
+        : `metadata['source']:'${WAITLIST_SOURCE}' AND metadata['event']:'${EVENT_NAME}'`;
+
     await stripe.customers
-      .search({
-        query: `metadata['source']:'${WAITLIST_SOURCE}' AND metadata['event']:'${EVENT_NAME}'`,
-        limit: 100,
-      })
+      .search({ query, limit: 100 })
       .autoPagingEach((customer) => {
         if (!customer.email) return;
+        if (audience === 'waitlist' && customer.metadata?.registered === 'true') return;
         const [firstname = '', ...rest] = (customer.name ?? '').trim().split(/\s+/);
         people.push({
           email: customer.email,
@@ -71,7 +82,12 @@ export async function syncWaitlistToGroup(groupId: string): Promise<ActionResult
       });
 
     if (people.length === 0) {
-      return { error: 'No waitlist signups found in Stripe.' };
+      return {
+        error:
+          audience === 'registered'
+            ? 'No completed registrations found in Stripe yet.'
+            : 'No waitlist signups found in Stripe.',
+      };
     }
 
     // Two paths, because Sender separates them: creating a subscriber it has
@@ -128,13 +144,13 @@ export async function syncWaitlistToGroup(groupId: string): Promise<ActionResult
     if (total === 0) {
       return {
         error:
-          `None of the ${people.length} signups synced. ` +
+          `None of the ${people.length} people synced. ` +
           `Creating them failed with: ${firstCreateError || 'unknown error'}. ` +
           `Adding the existing ones to the group failed with: ${groupAddError || 'not attempted'}.`,
       };
     }
 
-    const parts = [`${total} of ${people.length} waitlist signups are now in this group`];
+    const parts = [`${total} of ${people.length} ${audience === 'registered' ? 'registrations' : 'waitlist signups'} are now in this group`];
     if (created) parts.push(`${created} newly created`);
     if (addedToGroup) parts.push(`${addedToGroup} already existed and were added`);
     if (phonesDropped) parts.push(`${phonesDropped} without a phone number Sender would accept`);

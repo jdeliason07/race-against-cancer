@@ -13,10 +13,26 @@ import { cookies } from 'next/headers';
 const COOKIE_NAME = 'rac_admin';
 const SESSION_HOURS = 12;
 
+export const MIN_PASSWORD_LENGTH = 12;
+
 function secret(): string | null {
   const password = process.env.ADMIN_PASSWORD?.trim();
   // A short password would make both the login and the cookie signature weak.
-  return password && password.length >= 12 ? password : null;
+  return password && password.length >= MIN_PASSWORD_LENGTH ? password : null;
+}
+
+export type AdminConfigStatus = 'ok' | 'missing' | 'too-short';
+
+/**
+ * Distinguishes "no variable" from "variable present but rejected" — otherwise
+ * a too-short password looks identical to having set nothing at all, and the
+ * obvious conclusion is that the deploy didn't pick the variable up.
+ */
+export function adminConfigStatus(): AdminConfigStatus {
+  const raw = process.env.ADMIN_PASSWORD?.trim();
+  if (!raw) return 'missing';
+  if (raw.length < MIN_PASSWORD_LENGTH) return 'too-short';
+  return 'ok';
 }
 
 export function isAdminConfigured(): boolean {

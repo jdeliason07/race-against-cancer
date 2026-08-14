@@ -6,8 +6,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      // Private sponsor-funded registration links, and the internal endpoints.
-      disallow: ['/register/invite/', '/api/'],
+      // Private sponsor-funded registration links, the organizer page, and internals.
+      disallow: ['/register/invite/', '/admin', '/api/'],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

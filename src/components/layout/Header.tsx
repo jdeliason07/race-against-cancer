@@ -53,7 +53,12 @@ export function Header() {
 
           <Link
             href="/"
-            className="font-display text-base uppercase tracking-wide text-ink transition-colors hover:text-pink sm:text-lg"
+            // 25% larger on admin: 16→20px, and 18→22.5px from the sm breakpoint.
+            className={
+              isAdmin
+                ? 'font-display text-[20px] uppercase tracking-wide text-ink transition-colors hover:text-pink sm:text-[22.5px]'
+                : 'font-display text-base uppercase tracking-wide text-ink transition-colors hover:text-pink sm:text-lg'
+            }
             aria-label="Race Against Cancers — Home"
           >
             RACE<span className="text-pink">AGAINST</span>CANCERS

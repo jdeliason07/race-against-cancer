@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { CONTACT_EMAIL, REGISTRATION_OPEN, REGISTRATION_OPENS_LABEL } from '@/config/site';
+import { CONTACT_EMAIL, REGISTRATION_OPEN } from '@/config/site';
 import { getStripe } from '@/lib/stripeRegistration';
 import { buildAdminStats, SERIES_DAYS, type PersonRow } from '@/lib/adminStats';
 import { buildReferralReport } from '@/lib/referralReport';
@@ -255,12 +255,6 @@ function DashboardPane() {
     <>
       <PaneHeader title="Dashboard" />
       <div className="mx-auto max-w-5xl px-6 py-10">
-        <p className="mb-6 font-body text-sm text-ash">
-          {REGISTRATION_OPEN
-            ? 'Registration is open.'
-            : `Registration is closed — the site says it opens ${REGISTRATION_OPENS_LABEL}.`}
-        </p>
-
         <Suspense fallback={<Skeleton />}>
           <StripePanels />
         </Suspense>

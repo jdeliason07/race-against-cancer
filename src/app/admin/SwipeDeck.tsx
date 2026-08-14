@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 /**
  * Two full-width panes on one horizontal scroller.
@@ -8,20 +8,46 @@ import { useCallback, useEffect, useRef, useState } from 'react';
  * momentum and rubber-banding, which is what makes a swipe feel right on iOS.
  * A JS-driven transform never quite matches it.
  *
- * The scroller's height tracks the pane you're actually on. Left to itself a
- * flex row is as tall as its tallest child, which hangs a screen of empty space
- * under the shorter pane.
+ * Height is the fiddly part. Left alone, a flex row is as tall as its tallest
+ * child, which hangs a screen of empty space under the shorter pane. Setting an
+ * explicit height fixes that but has a trap: when `overflow-x` is `auto` the
+ * browser computes `overflow-y` to `auto` as well, and the deck quietly becomes
+ * a nested vertical scroller that swallows the page scroll. So `overflow-y` is
+ * pinned to `hidden`, and the height is interpolated between the two panes as
+ * you drag — it tracks the finger instead of snapping after the fact.
  */
 export function SwipeDeck({ panes }: { panes: Array<{ key: string; node: React.ReactNode }> }) {
   const scroller = useRef<HTMLDivElement>(null);
   const paneRefs = useRef<Array<HTMLElement | null>>([]);
-  const [active, setActive] = useState(0);
+  const heights = useRef<number[]>([]);
   const [height, setHeight] = useState<number | undefined>(undefined);
+  const [active, setActive] = useState(0);
 
-  const measure = useCallback((index: number) => {
-    const pane = paneRefs.current[index];
-    if (pane) setHeight(pane.offsetHeight);
-  }, []);
+  /** Height for the current scroll position, blended across the gap. */
+  const applyHeight = useCallback(() => {
+    const el = scroller.current;
+    if (!el || el.clientWidth === 0) return;
+
+    const progress = el.scrollLeft / el.clientWidth;
+    const from = Math.max(0, Math.min(panes.length - 1, Math.floor(progress)));
+    const to = Math.min(panes.length - 1, from + 1);
+    const frac = progress - from;
+
+    const a = heights.current[from];
+    const b = heights.current[to];
+    if (!a && !b) return;
+
+    setHeight(Math.round((a ?? b) + ((b ?? a) - (a ?? b)) * frac));
+    setActive(Math.max(0, Math.min(panes.length - 1, Math.round(progress))));
+  }, [panes.length]);
+
+  const measure = useCallback(() => {
+    heights.current = paneRefs.current.map((pane) => pane?.offsetHeight ?? 0);
+    applyHeight();
+  }, [applyHeight]);
+
+  // Measure before paint so the deck never flashes at the tallest pane's height.
+  useLayoutEffect(measure, [measure]);
 
   useEffect(() => {
     const el = scroller.current;
@@ -30,12 +56,7 @@ export function SwipeDeck({ panes }: { panes: Array<{ key: string; node: React.R
     let frame = 0;
     const onScroll = () => {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const index = Math.round(el.scrollLeft / el.clientWidth);
-        const clamped = Math.max(0, Math.min(panes.length - 1, index));
-        setActive(clamped);
-        measure(clamped);
-      });
+      frame = requestAnimationFrame(applyHeight);
     };
 
     el.addEventListener('scroll', onScroll, { passive: true });
@@ -43,15 +64,18 @@ export function SwipeDeck({ panes }: { panes: Array<{ key: string; node: React.R
       cancelAnimationFrame(frame);
       el.removeEventListener('scroll', onScroll);
     };
-  }, [panes.length, measure]);
+  }, [applyHeight]);
 
-  // Panels stream in behind Suspense and the composer grows as it is used, so
-  // remeasure whenever a pane's own height changes rather than only on scroll.
+  // Panels stream in behind Suspense and the composer grows as it is used.
   useEffect(() => {
-    const observer = new ResizeObserver(() => measure(active));
+    const observer = new ResizeObserver(measure);
     paneRefs.current.forEach((pane) => pane && observer.observe(pane));
-    return () => observer.disconnect();
-  }, [active, measure]);
+    window.addEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [measure]);
 
   function goTo(index: number) {
     const el = scroller.current;
@@ -68,9 +92,10 @@ export function SwipeDeck({ panes }: { panes: Array<{ key: string; node: React.R
         // browser back gesture halfway through.
         className="flex snap-x snap-mandatory items-start overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{
-          scrollBehavior: 'smooth',
           height,
-          transition: 'height 250ms ease',
+          // Explicit, or `overflow-x: auto` silently promotes this to `auto`
+          // and the page scroll gets trapped in here.
+          overflowY: 'hidden',
         }}
       >
         {panes.map(({ key, node }, i) => (

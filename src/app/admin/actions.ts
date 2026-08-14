@@ -74,20 +74,57 @@ export async function syncWaitlistToGroup(groupId: string): Promise<ActionResult
     }
 
     let synced = 0;
-    const failures: string[] = [];
+    let failed = 0;
+    let firstError = '';
+
+    let phonesDropped = 0;
+
     for (const person of people) {
       try {
         await upsertSubscriber({ ...person, groups: [groupId] });
         synced++;
-      } catch {
-        failures.push(person.email);
+      } catch (firstAttempt) {
+        // Phone is the field most likely to be rejected and the least
+        // important here — email is what we're syncing for. Retry without it
+        // before giving up on the person.
+        if (person.phone) {
+          try {
+            await upsertSubscriber({ ...person, phone: '', groups: [groupId] });
+            synced++;
+            phonesDropped++;
+            continue;
+          } catch {
+            // Fall through and report the original failure.
+          }
+        }
+        const err = firstAttempt;
+        failed++;
+        // Keep whatever Sender said — without it a failed sync is unfixable.
+        if (!firstError) firstError = err instanceof Error ? err.message : String(err);
+        // A wrong token or a rejected payload fails identically for everyone,
+        // so stop rather than making 24 doomed requests.
+        if (synced === 0 && failed >= 3) {
+          return {
+            error: `Sender rejected the first ${failed} subscribers, so the rest were skipped. It said: ${firstError}`,
+          };
+        }
       }
     }
 
-    const note = failures.length
-      ? ` ${failures.length} failed (${failures.slice(0, 3).join(', ')}${failures.length > 3 ? '…' : ''}).`
+    if (synced === 0) {
+      return { error: `None of the ${people.length} signups synced. Sender said: ${firstError}` };
+    }
+
+    const phoneNote = phonesDropped
+      ? ` ${phonesDropped} went in without a phone number, which Sender rejected.`
       : '';
-    return { ok: true, message: `Synced ${synced} of ${people.length} waitlist signups.${note}` };
+    if (failed > 0) {
+      return {
+        ok: true,
+        message: `Synced ${synced} of ${people.length}.${phoneNote} ${failed} failed — Sender said: ${firstError}`,
+      };
+    }
+    return { ok: true, message: `Synced all ${synced} waitlist signups.${phoneNote}` };
   } catch (err) {
     return { error: err instanceof Error ? err.message : 'Sync failed.' };
   }

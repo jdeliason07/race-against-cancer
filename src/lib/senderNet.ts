@@ -54,6 +54,49 @@ export async function listGroups(): Promise<SenderGroup[]> {
   }));
 }
 
+export interface SenderCampaign {
+  id: string;
+  title: string;
+  subject: string;
+  status: string;
+  sentAt: string | null;
+  recipients: number;
+  sent: number;
+  opens: number;
+  clicks: number;
+  bounces: number;
+}
+
+export async function listCampaigns(limit = 10): Promise<SenderCampaign[]> {
+  const result = await call<{
+    data?: Array<{
+      id: string;
+      title?: string;
+      subject?: string;
+      status?: string;
+      sent_time?: string | null;
+      recipient_count?: number;
+      sent_count?: number;
+      opens?: number;
+      clicks?: number;
+      bounces_count?: number;
+    }>;
+  }>(`/campaigns?limit=${limit}`);
+
+  return (result.data ?? []).map((c) => ({
+    id: c.id,
+    title: c.title ?? '',
+    subject: c.subject ?? '',
+    status: c.status ?? '',
+    sentAt: c.sent_time ?? null,
+    recipients: c.recipient_count ?? 0,
+    sent: c.sent_count ?? 0,
+    opens: c.opens ?? 0,
+    clicks: c.clicks ?? 0,
+    bounces: c.bounces_count ?? 0,
+  }));
+}
+
 /**
  * Creates a subscriber and assigns them to groups, carrying name and phone.
  *

@@ -103,9 +103,28 @@ Covered registrations record `donationAmount: 0` and never earn referral rewards
 can't be used to farm gift cards. The link also works while `REGISTRATION_OPEN` is `false`, so a
 sponsor's group can register before public registration opens.
 
-### Emailing the waitlist (`/admin`)
-A password-protected page for writing and sending an email to the waitlist without leaving the
-site. Email goes through **Sender** (sender.net).
+### Organizer dashboard (`/admin`)
+Password-protected, two tabs.
+
+**Overview** pulls everything into one page:
+
+| From Stripe | From Sender |
+|---|---|
+| Waitlist total and new this week | Campaigns sent, with delivered counts |
+| Registrations, athletes, 10K vs Fun Run split | Opens and clicks, with rates |
+| Covered entries claimed via invite link | Bounces |
+| Total raised, raised this week, average gift | |
+| Newest signups and registrations | |
+| Referral leaderboard | |
+
+Each panel loads independently and fails independently — a Stripe outage costs the Stripe panel,
+not the page. Numbers are computed per request; nothing is cached or stored.
+
+**Email** is the composer, described below.
+
+### Emailing the waitlist (`/admin/email`)
+Write and send to the waitlist without leaving the site. Email goes through **Sender**
+(sender.net).
 
 1. **Pick the audience** — choose a Sender group. The page lists them from your account.
 2. **Sync** — copies waitlist signups out of Stripe and into that group. Safe to re-run; Sender

@@ -37,10 +37,10 @@ export const COURSE_GPX_URL          = "";
 // button, and page on the site switches over automatically.
 // REGISTRATION_OPENS_DATE controls the copy on the waitlist page. Leave it ""
 // while the date is undecided and the page reads "Registration opens soon";
-// set it (e.g. 'September 15, 2026') to announce a date.
+// set it (e.g. 'October 1, 2026') to announce a date.
 export const REGISTRATION_OPEN       = false;
-export const REGISTRATION_OPENS_DATE = 'September 15, 2026';
-// Reads "opens soon" until a date is set, "opens September 15, 2026" after.
+export const REGISTRATION_OPENS_DATE = '';
+// Reads "opens soon" until a date is set, then the date itself.
 export const REGISTRATION_OPENS_LABEL = REGISTRATION_OPENS_DATE || 'soon';
 
 // --- REGISTRATION -------------------------------------------

@@ -5,13 +5,14 @@
 // It emails the report and returns it as JSON either way.
 //
 // Setup:
-//   CRON_SECRET      any long random string; Vercel sends it as a Bearer token
-//   RESEND_API_KEY   from resend.com — the only email provider wired up here
-//   REPORT_EMAIL_TO  where the report goes (e.g. you)
-//   REPORT_EMAIL_FROM  a verified sender on your Resend domain
-import { EVENT_NAME, REFERRAL_ENABLED, REFERRAL_REWARD } from '@/config/site';
+//   CRON_SECRET        any long random string; Vercel sends it as a Bearer token
+//   SENDER_API_TOKEN   Sender (sender.net) → Settings → API access tokens
+//   REPORT_EMAIL_TO    where the report goes (e.g. you)
+//   SENDER_FROM_EMAIL  a verified sending address on your Sender account
+import { CONTACT_EMAIL, EVENT_NAME, ORG_NAME, REFERRAL_ENABLED, REFERRAL_REWARD } from '@/config/site';
 import { getStripe } from '@/lib/stripeRegistration';
 import { buildReferralReport, type ReferralReport } from '@/lib/referralReport';
+import { isSenderConfigured, sendTransactional } from '@/lib/senderNet';
 
 function escapeHtml(value: string): string {
   return value
@@ -64,31 +65,19 @@ function renderText(report: ReferralReport): string {
 }
 
 async function sendEmail(report: ReferralReport): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.REPORT_EMAIL_TO;
-  const from = process.env.REPORT_EMAIL_FROM;
-  if (!apiKey || !to || !from) {
-    throw new Error('RESEND_API_KEY, REPORT_EMAIL_TO, and REPORT_EMAIL_FROM must all be set.');
+  const to = process.env.REPORT_EMAIL_TO?.trim();
+  if (!isSenderConfigured() || !to) {
+    throw new Error('SENDER_API_TOKEN and REPORT_EMAIL_TO must both be set.');
   }
 
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from,
-      to: [to],
-      subject: `${EVENT_NAME} — ${report.newTotal} new referral(s) this week`,
-      html: renderHtml(report),
-      text: renderText(report),
-    }),
+  await sendTransactional({
+    toEmail: to,
+    fromEmail: process.env.SENDER_FROM_EMAIL?.trim() || CONTACT_EMAIL,
+    fromName: ORG_NAME,
+    subject: `${EVENT_NAME} — ${report.newTotal} new referral(s) this week`,
+    html: renderHtml(report),
+    text: renderText(report),
   });
-
-  if (!response.ok) {
-    throw new Error(`Resend returned ${response.status}: ${await response.text()}`);
-  }
 }
 
 export async function GET(request: Request): Promise<Response> {

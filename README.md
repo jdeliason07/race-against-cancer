@@ -43,8 +43,7 @@ endpoint (and updating `STRIPE_WEBHOOK_SECRET`) is a required part of going live
    Copy the signing secret into `STRIPE_WEBHOOK_SECRET`.
 3. Flip `REGISTRATION_OPEN` to `true` in `src/config/site.ts`. Every nav link, button, and page
    switches from "Join the Waitlist" to "Register" automatically.
-4. Email the waitlist. They're Stripe Customers with `metadata.source = pre-signup-form`; export
-   them from the Customers page (name, email, and phone are all on the record).
+4. Email the waitlist from `/admin` — see "Emailing the waitlist" below.
 
 ### How a registration is recorded
 Checkout creates a Stripe **Customer** (reusing the waitlist one if that email already joined) and a
@@ -104,6 +103,34 @@ Covered registrations record `donationAmount: 0` and never earn referral rewards
 can't be used to farm gift cards. The link also works while `REGISTRATION_OPEN` is `false`, so a
 sponsor's group can register before public registration opens.
 
+### Emailing the waitlist (`/admin`)
+A password-protected page for writing and sending an email to the waitlist without leaving the
+site. Email goes through **Sender** (sender.net).
+
+1. **Pick the audience** — choose a Sender group. The page lists them from your account.
+2. **Sync** — copies waitlist signups out of Stripe and into that group. Safe to re-run; Sender
+   updates existing subscribers rather than duplicating them. Do this before the first send.
+3. **Write** — subject, optional preview text, and a plain-text body. Blank lines become
+   paragraphs; no HTML to hand-write.
+4. **Test** — sends a copy to one address, subject prefixed `[TEST]`.
+5. **Send** — requires typing `SEND` to confirm, and shows the recipient count first. No undo.
+
+Sender is the list of record for *sending*, because it owns unsubscribes and bulk email has to
+honour them. Stripe stays the list of record for who signed up.
+
+| Variable | What it does |
+|---|---|
+| `ADMIN_PASSWORD` | Password for the page. Minimum 12 characters, or the page stays disabled. |
+| `SENDER_API_TOKEN` | Sender → Settings → API access tokens. Blank disables the page and the weekly report. |
+| `SENDER_FROM_EMAIL` | Verified sending address on your Sender account. Falls back to `CONTACT_EMAIL`. |
+
+Signing in sets an HMAC-signed, httpOnly cookie for 12 hours. Every server action re-checks it —
+the page-level check alone wouldn't protect them, since actions are reachable by direct POST. The
+route is `noindex` and disallowed in `robots.txt`.
+
+This is one shared password for one organizer. If more than a couple of people need access,
+replace it with real accounts rather than passing the password around.
+
 ### Referral rewards
 Registrants type their referrer's full name into a "Who referred you?" box. The name is written
 to the referred person's Stripe customer record (`referredByName`) **by the webhook**, so a
@@ -115,9 +142,9 @@ derived from the records each run rather than kept as a running tally, so a repe
 delivery can't inflate anyone's total. Names typed by registrants aren't verified — the report
 lists who each person referred so you can skim before sending gift cards.
 
-Needs `CRON_SECRET`, `RESEND_API_KEY`, `REPORT_EMAIL_TO`, and `REPORT_EMAIL_FROM` (see
-`src/env.example`). Resend is called over plain `fetch`, so swapping in another email provider
-means changing one function in the route. To run it on demand:
+Needs `CRON_SECRET`, `SENDER_API_TOKEN`, `REPORT_EMAIL_TO`, and `SENDER_FROM_EMAIL` (see
+`src/env.example`). It sends through the same Sender account as the admin page, using Sender's
+transactional endpoint rather than a campaign. To run it on demand:
 ```bash
 curl -H "Authorization: Bearer $CRON_SECRET" https://<your-domain>/api/referral-report
 ```

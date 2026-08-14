@@ -8,7 +8,8 @@ import {
   listGroups,
   sendCampaign,
   sendTransactional,
-  upsertSubscriber,
+  addSubscribersToGroup,
+  createSubscriber,
   type SenderGroup,
 } from '@/lib/senderNet';
 
@@ -73,58 +74,74 @@ export async function syncWaitlistToGroup(groupId: string): Promise<ActionResult
       return { error: 'No waitlist signups found in Stripe.' };
     }
 
-    let synced = 0;
-    let failed = 0;
-    let firstError = '';
-
+    // Two paths, because Sender separates them: creating a subscriber it has
+    // never seen, and adding one it already knows to another group. Anyone
+    // synced into a previous group falls into the second case, so trying only
+    // the first fails for every one of them.
+    let created = 0;
+    const alreadyExist: string[] = [];
     let phonesDropped = 0;
+    let firstCreateError = '';
 
     for (const person of people) {
       try {
-        await upsertSubscriber({ ...person, groups: [groupId] });
-        synced++;
-      } catch (firstAttempt) {
-        // Phone is the field most likely to be rejected and the least
-        // important here — email is what we're syncing for. Retry without it
-        // before giving up on the person.
-        if (person.phone) {
-          try {
-            await upsertSubscriber({ ...person, phone: '', groups: [groupId] });
-            synced++;
-            phonesDropped++;
-            continue;
-          } catch {
-            // Fall through and report the original failure.
-          }
+        await createSubscriber({ ...person, groups: [groupId] });
+        created++;
+        continue;
+      } catch (err) {
+        if (!firstCreateError) firstCreateError = err instanceof Error ? err.message : String(err);
+      }
+
+      // Phone is the field most likely to be refused and the least important
+      // here, so retry without it before treating them as pre-existing.
+      if (person.phone) {
+        try {
+          await createSubscriber({ ...person, phone: '', groups: [groupId] });
+          created++;
+          phonesDropped++;
+          continue;
+        } catch {
+          // fall through
         }
-        const err = firstAttempt;
-        failed++;
-        // Keep whatever Sender said — without it a failed sync is unfixable.
-        if (!firstError) firstError = err instanceof Error ? err.message : String(err);
-        // A wrong token or a rejected payload fails identically for everyone,
-        // so stop rather than making 24 doomed requests.
-        if (synced === 0 && failed >= 3) {
-          return {
-            error: `Sender rejected the first ${failed} subscribers, so the rest were skipped. It said: ${firstError}`,
-          };
+      }
+
+      alreadyExist.push(person.email);
+    }
+
+    let addedToGroup = 0;
+    let groupAddError = '';
+    if (alreadyExist.length > 0) {
+      // Batched — Sender takes a list of emails per call.
+      const BATCH = 100;
+      for (let i = 0; i < alreadyExist.length; i += BATCH) {
+        const batch = alreadyExist.slice(i, i + BATCH);
+        try {
+          await addSubscribersToGroup(groupId, batch);
+          addedToGroup += batch.length;
+        } catch (err) {
+          if (!groupAddError) groupAddError = err instanceof Error ? err.message : String(err);
         }
       }
     }
 
-    if (synced === 0) {
-      return { error: `None of the ${people.length} signups synced. Sender said: ${firstError}` };
-    }
-
-    const phoneNote = phonesDropped
-      ? ` ${phonesDropped} went in without a phone number, which Sender rejected.`
-      : '';
-    if (failed > 0) {
+    const total = created + addedToGroup;
+    if (total === 0) {
       return {
-        ok: true,
-        message: `Synced ${synced} of ${people.length}.${phoneNote} ${failed} failed — Sender said: ${firstError}`,
+        error:
+          `None of the ${people.length} signups synced. ` +
+          `Creating them failed with: ${firstCreateError || 'unknown error'}. ` +
+          `Adding the existing ones to the group failed with: ${groupAddError || 'not attempted'}.`,
       };
     }
-    return { ok: true, message: `Synced all ${synced} waitlist signups.${phoneNote}` };
+
+    const parts = [`${total} of ${people.length} waitlist signups are now in this group`];
+    if (created) parts.push(`${created} newly created`);
+    if (addedToGroup) parts.push(`${addedToGroup} already existed and were added`);
+    if (phonesDropped) parts.push(`${phonesDropped} without a phone number Sender would accept`);
+    const remaining = people.length - total;
+    if (remaining > 0) parts.push(`${remaining} failed: ${groupAddError || firstCreateError}`);
+
+    return { ok: true, message: `${parts.join(' — ')}.` };
   } catch (err) {
     return { error: err instanceof Error ? err.message : 'Sync failed.' };
   }

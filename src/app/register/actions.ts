@@ -16,10 +16,10 @@ import {
   getStripe,
   isRegistered,
 } from '@/lib/stripeRegistration';
+import { WAIVER_VERSION } from '@/data/waiver';
 
-// A 'use server' module may only export async functions, so anything shared
-// beyond the actions themselves has to live outside this file.
-const WAIVER_VERSION = '2026-v2';
+// A 'use server' module may only export async functions, so the version lives
+// beside the waiver text it describes, in @/data/waiver.
 
 interface RegistrationInput {
   raceType: string;

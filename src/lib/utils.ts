@@ -10,6 +10,15 @@ export function cn(...inputs: ClassValue[]) {
 export const ADULT_AGE = 18;
 
 /**
+ * Deliberately loose: catches typos and empty-ish input without rejecting the
+ * valid-but-unusual addresses a stricter pattern would. The server and the
+ * email provider are the real authorities on deliverability.
+ */
+export function isEmailValid(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+/**
  * How old the athlete will be on race day, from a `YYYY-MM-DD` date of birth.
  * Compares calendar numbers rather than Date objects so the answer can't shift
  * by a day depending on the viewer's time zone. Returns null if unparseable.

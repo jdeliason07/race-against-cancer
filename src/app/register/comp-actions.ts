@@ -9,9 +9,8 @@ import {
   isRegistered,
 } from '@/lib/stripeRegistration';
 import { checkCompCode, compMetadata } from '@/lib/compRegistration';
+import { WAIVER_VERSION } from '@/data/waiver';
 
-// Kept in step with the paid flow's waiver text.
-const WAIVER_VERSION = '2026-v2';
 
 /**
  * Registers one athlete against a sponsor-funded block. No payment is taken,

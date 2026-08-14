@@ -12,6 +12,9 @@ export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 
 // --- EVENT --------------------------------------------------
 export const ORG_NAME            = "Race Against Cancers Inc.";
+// The organization without its legal suffix, for prose where "Inc." reads
+// wrong — the waiver, the terms page, the code of conduct.
+export const ORG_SHORT_NAME      = "Race Against Cancers";
 export const EVENT_NAME          = "Race Against Cancers 2026";
 export const EVENT_DATE_ISO      = "2026-11-07T08:00:00-07:00"; // 10K & Fun Run start 8:00 AM MST
 export const EVENT_DATE_DISPLAY  = "Saturday, November 7, 2026";
@@ -53,6 +56,9 @@ export const MIN_DONATION_FUN_RUN  = 49;  // Fun Run minimum, per athlete
 export const MAX_PARTICIPANTS_PER_REGISTRATION = 100;
 export const TEN_K_LABEL           = "10K (6.2 mi)";
 export const FUN_RUN_LABEL         = "Fun Run (~2 mi)";
+// Last day a registration may be handed to another participant. Quoted in the
+// waiver and on /terms, so change it in one place only.
+export const REGISTRATION_TRANSFER_DEADLINE = "October 1, 2026";
 
 // --- REFERRAL INCENTIVE -------------------------------------
 // Registrants name whoever referred them in a box on the form. Each named
@@ -70,6 +76,10 @@ export const CHECK_IN_LOCATION = "Canyon Crest Elementary School parking lot, 46
 // --- CONTACT ------------------------------------------------
 export const CONTACT_EMAIL = "events@raceagainstcancers.org";
 export const CONTACT_PHONE = "858-774-2699";
+// Postal address for the organization itself — NOT a venue. Donors look for
+// this before giving, and it belongs on a charity's receipts. Left as a
+// placeholder until filled; the footer hides it while it contains [[.
+export const ORG_MAILING_ADDRESS = "[[Street, City, State ZIP]]";
 export const VOLUNTEER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScX-3U-iBEHY7YoIp1Htsdfz-NnOafxxGssKFWVrKnv7hDumQ/viewform";
 
 // --- SOCIAL LINKS -------------------------------------------

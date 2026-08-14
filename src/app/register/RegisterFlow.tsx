@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
@@ -12,7 +13,9 @@ import {
 } from '@stripe/react-stripe-js';
 import { createPaymentIntent } from './actions';
 import { submitCompRegistration } from './comp-actions';
-import { ADULT_AGE, isMinorOnRaceDay, isPlausibleDob } from '@/lib/utils';
+import { ADULT_AGE, isEmailValid, isMinorOnRaceDay, isPlausibleDob } from '@/lib/utils';
+import { WAIVER_PARAGRAPHS, WAIVER_TITLE } from '@/data/waiver';
+import { RegistrationConfirmation } from '@/components/ui/RegistrationConfirmation';
 import {
   MAX_PARTICIPANTS_PER_REGISTRATION,
   MIN_DONATION_AMOUNT,
@@ -213,7 +216,6 @@ function StepAthleteInfo({
     setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
-  const isEmailValid = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   // The waiver requires a parent or legal guardian to accept on behalf of
   // anyone under 18 on race day, so ask for their name once we know the age.
@@ -531,9 +533,18 @@ function StepAthleteInfo({
         </div>
       )}
 
-      {/* Waiver */}
+      {/* Waiver — text comes from @/data/waiver so this and /terms can never drift apart. */}
       <div className="mb-6">
-        <p className="font-body text-xs font-bold uppercase tracking-widest text-ash mb-1">Release &amp; Waiver of Liability</p>
+        <div className="mb-1 flex flex-wrap items-baseline justify-between gap-x-4">
+          <p className="font-body text-xs font-bold uppercase tracking-widest text-ash">{WAIVER_TITLE}</p>
+          <Link
+            href="/terms"
+            target="_blank"
+            className="font-body text-xs text-pink underline underline-offset-2 hover:text-raspberry"
+          >
+            Open in a new tab
+          </Link>
+        </div>
         <div
           role="region"
           aria-label="Waiver text — scroll to read"
@@ -541,67 +552,14 @@ function StepAthleteInfo({
           style={{ maxHeight: '200px', overflowY: 'scroll' }}
           tabIndex={0}
         >
-          <p className="mb-3 font-bold uppercase">
-            ALL PARTICIPANTS IN THE RACE AGAINST CANCERS 10K &amp; FUN RUN AND RELATED EVENTS ARE
-            REQUIRED TO ASSUME ALL RISKS OF PARTICIPATION BY AGREEING TO THIS RELEASE AND WAIVER
-            OF LIABILITY AGREEMENT AT THE TIME OF ONLINE REGISTRATION.
-          </p>
-          <p className="mb-3">
-            In consideration of being permitted to participate in the Race Against Cancers 10K &amp;
-            Fun Run (the &ldquo;Event&rdquo;), the undersigned athlete (&ldquo;Athlete&rdquo;), on behalf of
-            himself/herself and the Athlete&rsquo;s personal representatives, heirs, executors, and
-            assigns, hereby fully and forever releases, waives, discharges, and covenants not to sue
-            Race Against Cancers Inc., its officers, directors, employees, agents, and volunteers;
-            Intermountain Cancer Center Utah Valley; all sponsors and co-sponsors of the Event; Provo City, Utah
-            County, the State of Utah, and any other municipality or government agency whose property
-            and/or personnel are used in connection with the Event; and all timing, logistics, and
-            other vendors providing services to the Event (collectively, the &ldquo;Releasees&rdquo;)
-            from any and all liability, claims, demands, losses, or damages on account of injury to
-            the Athlete or the Athlete&rsquo;s property, or resulting in the death of the Athlete,
-            whether caused by the active or passive negligence of any of the Releasees or otherwise,
-            arising out of or in connection with the Athlete&rsquo;s participation in the Event.
-          </p>
-          <p className="mb-3">
-            The Athlete represents and warrants that he/she is in good physical condition and is able
-            to safely participate in the Event. The Athlete is fully aware of the risks and hazards
-            inherent in running a road race, including, without limitation: falls; contact with other
-            participants, spectators, or vehicles; the condition of the road and course;
-            transportation to and from the event; and weather conditions such as heat, cold,
-            wind, rain, snow, or ice. The Athlete voluntarily elects to participate knowing these
-            risks and hereby assumes all risk of loss, damage, or injury that may be sustained while
-            participating in the Event. The Athlete authorizes Event personnel to obtain or provide
-            emergency medical treatment on his/her behalf if needed, and agrees to be responsible for
-            the cost of any such treatment.
-          </p>
-          <p className="mb-3">
-            The Athlete grants Race Against Cancers Inc. permission to use his/her name, image,
-            voice, and likeness in photographs, video, broadcasts, and other media for purposes of
-            promoting the Event, without compensation.
-          </p>
-          <p className="mb-3">
-            The Athlete acknowledges that the registration payment is a charitable donation
-            benefiting Intermountain Cancer Center Utah Valley and is non-refundable. A registration may be
-            transferred to another participant until October 1, 2026 by contacting the Event
-            organizers; no transfers will be processed after that date. If the Event is delayed,
-            modified, or canceled by reason of fire, strike, work stoppage, pandemic, insurrection,
-            war, public disaster, flood, unavoidable casualty, extreme weather, acts of God, or any
-            other cause beyond the control of Race Against Cancers Inc., there shall be no refund of
-            the donation or any other costs incurred by the Athlete in connection with the Event.
-          </p>
-          <p className="mb-3">
-            If the Athlete is under 18 years of age, this agreement must be accepted by the
-            Athlete&rsquo;s parent or legal guardian, who agrees to its terms on the minor&rsquo;s
-            behalf. This agreement is governed by the laws of the State of Utah. If any portion of
-            this agreement is held invalid, the remainder shall continue in full force and effect.
-            The Athlete warrants that all statements made during registration are true and correct
-            and understands that the Releasees have relied on them in permitting the Athlete to
-            participate in the Event.
-          </p>
-          <p className="font-bold uppercase">
-            BY COMPLETING THE REGISTRATION PROCESS, THE ATHLETE (OR THE ATHLETE&rsquo;S PARENT OR
-            LEGAL GUARDIAN) HAS READ THE FOREGOING AND INTENTIONALLY AND VOLUNTARILY AGREES TO THIS
-            RELEASE AND WAIVER OF LIABILITY AGREEMENT.
-          </p>
+          {WAIVER_PARAGRAPHS.map((para, i) => (
+            <p
+              key={i}
+              className={`${i < WAIVER_PARAGRAPHS.length - 1 ? 'mb-3 ' : ''}${para.emphasis ? 'font-bold uppercase' : ''}`}
+            >
+              {para.text}
+            </p>
+          ))}
         </div>
         <label htmlFor="waiverCheckbox" className="mt-3 flex items-start gap-3 cursor-pointer">
           <input
@@ -658,7 +616,7 @@ function PaymentForm({
   donationAmount: number;
   participantCount: number;
   bandanaColor: string;
-  onSuccess: () => void;
+  onSuccess: (paymentIntentId: string, clientSecret: string) => void;
   onBack: () => void;
 }) {
   const stripe = useStripe();
@@ -676,12 +634,15 @@ function PaymentForm({
 
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
-      confirmParams: { return_url: window.location.origin + '/register' },
+      // Redirect-based methods (bank redirects, some 3DS) send the visitor away
+      // and back, losing all form state. They must land on a page that can
+      // rebuild the confirmation from Stripe — never back on this form.
+      confirmParams: { return_url: window.location.origin + '/thank-you' },
       redirect: 'if_required',
     });
 
     if (paymentIntent?.status === 'succeeded') {
-      onSuccess();
+      onSuccess(paymentIntent.id, paymentIntent.client_secret ?? '');
     } else if (error) {
       setPaymentError(error.message ?? 'Payment failed. Please try again.');
       setSubmitting(false);
@@ -787,7 +748,7 @@ function StepPayment({
   donationAmount: number;
   participantCount: number;
   bandanaColor: string;
-  onSuccess: () => void;
+  onSuccess: (paymentIntentId: string, clientSecret: string) => void;
   onBack: () => void;
 }) {
   return (
@@ -808,7 +769,9 @@ function StepPayment({
   );
 }
 
-// Step 4 — Confirmation
+// Step 4 — Confirmation. Only the sponsor-covered flow renders this in place;
+// a paid registration navigates to /thank-you so the conversion has a URL and
+// survives a redirect-based payment.
 function StepConfirmation({
   raceType,
   formData,
@@ -824,80 +787,21 @@ function StepConfirmation({
   bandanaColor: string;
   isComp: boolean;
 }) {
-  const isGroup = participantCount > 1;
-  const raceLabel = raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL;
-
   return (
-    <div className="text-center">
-      {/* Success checkmark */}
-      <div
-        className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full"
-        style={{ backgroundColor: '#FDE7F0' }}
-        aria-hidden="true"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#F0307A"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="h-10 w-10"
-          aria-hidden="true"
-        >
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-      </div>
-
-      <h2 className="font-display text-4xl uppercase text-ink mb-2">
-        You’re Registered!
-      </h2>
-      <p className="font-body text-base text-ash mb-8">
-        Thank you for signing up for Race Against Cancers 2026.
-      </p>
-
-      {/* Summary */}
-      <div className="mb-8 rounded-card border border-line bg-mist p-6 text-left">
-        <dl className="space-y-3 font-body text-sm">
-          <div className="flex justify-between">
-            <dt className="font-bold uppercase tracking-widest text-ash text-xs">Name</dt>
-            <dd className="text-ink">
-              {formData.firstName} {formData.lastName}
-            </dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="font-bold uppercase tracking-widest text-ash text-xs">Race</dt>
-            <dd className="text-ink">{raceLabel}</dd>
-          </div>
-          {isGroup && (
-            <div className="flex justify-between">
-              <dt className="font-bold uppercase tracking-widest text-ash text-xs">Athletes</dt>
-              <dd className="text-ink">{participantCount}</dd>
-            </div>
-          )}
-          <div className="flex justify-between">
-            <dt className="font-bold uppercase tracking-widest text-ash text-xs">Bandana</dt>
-            <dd className="text-ink">{bandanaColor}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="font-bold uppercase tracking-widest text-ash text-xs">Donation</dt>
-            <dd className="font-bold" style={{ color: '#F0307A' }}>
-              {isComp ? 'Covered by a sponsor' : `$${donationAmount}`}
-            </dd>
-          </div>
-        </dl>
-      </div>
-
-      <p className="mb-8 font-body text-sm text-ash">
-        {isComp
+    <RegistrationConfirmation
+      summary={{
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+        raceLabel: raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL,
+        participantCount,
+        bandanaColor,
+        donationLabel: isComp ? 'Covered by a sponsor' : `$${donationAmount}`,
+      }}
+      note={
+        isComp
           ? 'We have your registration. Bring photo ID to check-in on race morning.'
-          : 'Check your email for a receipt from Stripe.'}
-      </p>
-
-      <Link href="/" className="btn-primary">
-        Back to Home
-      </Link>
-    </div>
+          : 'Check your email for a receipt from Stripe.'
+      }
+    />
   );
 }
 
@@ -909,6 +813,7 @@ export function RegisterFlow({ comp }: { comp?: { code: string } }) {
     ? ['Race Selection', 'Athlete Info', 'Confirmation']
     : ['Race Selection', 'Athlete Info', 'Payment', 'Confirmation'];
   const confirmationStep = (isComp ? 3 : 4) as Step;
+  const router = useRouter();
 
   const [step, setStep] = useState<Step>(1);
   const [raceType, setRaceType] = useState<RaceType>(null);
@@ -1039,7 +944,15 @@ export function RegisterFlow({ comp }: { comp?: { code: string } }) {
           donationAmount={donationAmount}
           participantCount={participantCount}
           bandanaColor={bandanaColor}
-          onSuccess={() => setStep(4)}
+          onSuccess={(paymentIntentId, secret) => {
+            // Same destination the redirect-based methods land on, so there is
+            // one confirmation URL regardless of how the payment completed.
+            const query = new URLSearchParams({
+              payment_intent: paymentIntentId,
+              payment_intent_client_secret: secret,
+            });
+            router.replace(`/thank-you?${query}`);
+          }}
           onBack={() => setStep(2)}
         />
       )}

@@ -1,10 +1,13 @@
 import Link from 'next/link';
 import {
   SOCIAL_INSTAGRAM, SOCIAL_FACEBOOK,
-  SOCIAL_TWITTER, SOCIAL_YOUTUBE, CHARITY_NAME, EVENT_YEAR, CONTACT_PHONE, ORG_NAME,
-  REGISTRATION_OPEN,
+  SOCIAL_TWITTER, SOCIAL_YOUTUBE, CHARITY_NAME, EVENT_YEAR, CONTACT_PHONE, CONTACT_EMAIL, ORG_NAME,
+  REGISTRATION_OPEN, CHARITY_EIN, ORG_MAILING_ADDRESS,
 } from '@/config/site';
-import { Phone } from 'lucide-react';
+import { Mail, Phone } from 'lucide-react';
+
+/** Placeholders in site.ts are written as [[...]] — never render one. */
+const isFilled = (value: string) => Boolean(value) && !value.includes('[[');
 
 function IconInstagram({ size = 18 }: { size?: number }) {
   return (
@@ -66,33 +69,46 @@ export function Footer() {
             <Link href="/faq" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">FAQ</Link>
             <Link href="/about" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">About</Link>
             <Link href="/privacy" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Privacy</Link>
+            <Link href="/terms" className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest">Terms</Link>
             <a href={`tel:${CONTACT_PHONE.replace(/-/g, '')}`} className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest flex items-center gap-1">
               <Phone size={13} /> {CONTACT_PHONE}
             </a>
+            <a href={`mailto:${CONTACT_EMAIL}`} className="font-body text-xs text-white/55 hover:text-pink transition-colors uppercase tracking-widest flex items-center gap-1">
+              <Mail size={13} /> {CONTACT_EMAIL}
+            </a>
           </nav>
           <div className="flex items-center gap-4">
-            {SOCIAL_INSTAGRAM && !SOCIAL_INSTAGRAM.includes('[[') && (
+            {isFilled(SOCIAL_INSTAGRAM) && (
               <a href={SOCIAL_INSTAGRAM} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-white/40 hover:text-pink transition-colors">
                 <IconInstagram size={18} />
               </a>
             )}
-            {SOCIAL_FACEBOOK && !SOCIAL_FACEBOOK.includes('[[') && (
+            {isFilled(SOCIAL_FACEBOOK) && (
               <a href={SOCIAL_FACEBOOK} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-white/40 hover:text-pink transition-colors">
                 <IconFacebook size={18} />
               </a>
             )}
-            {SOCIAL_TWITTER && !SOCIAL_TWITTER.includes('[[') && (
+            {isFilled(SOCIAL_TWITTER) && (
               <a href={SOCIAL_TWITTER} target="_blank" rel="noopener noreferrer" aria-label="Twitter / X" className="text-white/40 hover:text-pink transition-colors">
                 <IconTwitterX size={18} />
               </a>
             )}
-            {SOCIAL_YOUTUBE && !SOCIAL_YOUTUBE.includes('[[') && (
+            {isFilled(SOCIAL_YOUTUBE) && (
               <a href={SOCIAL_YOUTUBE} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="text-white/40 hover:text-pink transition-colors">
                 <IconYoutube size={18} />
               </a>
             )}
           </div>
         </div>
+
+        {/* Donor-trust block: a charity's postal address and EIN are what
+            people look for before giving, and what they need for tax receipts. */}
+        {(isFilled(ORG_MAILING_ADDRESS) || isFilled(CHARITY_EIN)) && (
+          <address className="mt-10 text-center font-body text-xs not-italic leading-relaxed text-white/35">
+            {isFilled(ORG_MAILING_ADDRESS) && <>{ORG_MAILING_ADDRESS}<br /></>}
+            {isFilled(CHARITY_EIN) && <>EIN {CHARITY_EIN}</>}
+          </address>
+        )}
 
         <p className="mt-8 text-center font-body text-xs text-white/25">
           © {EVENT_YEAR} {ORG_NAME} All rights reserved.

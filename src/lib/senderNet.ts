@@ -55,10 +55,13 @@ export async function listGroups(): Promise<SenderGroup[]> {
 }
 
 /**
- * Adds a subscriber to a group. Sender treats a repeat email as an update
- * rather than a duplicate, so this is safe to re-run over the whole waitlist.
+ * Creates a subscriber and assigns them to groups, carrying name and phone.
+ *
+ * This only works for an email Sender hasn't seen before — it rejects one that
+ * already exists rather than updating it. Use `addSubscribersToGroup` to put
+ * existing subscribers into another group.
  */
-export async function upsertSubscriber(subscriber: {
+export async function createSubscriber(subscriber: {
   email: string;
   firstname?: string;
   lastname?: string;
@@ -76,6 +79,18 @@ export async function upsertSubscriber(subscriber: {
       groups: subscriber.groups,
       trigger_automation: false,
     },
+  });
+}
+
+/**
+ * Adds subscribers who already exist to a group, by email, in one call.
+ * This is the path for anyone Sender already knows — including everyone added
+ * by a previous sync into a different group.
+ */
+export async function addSubscribersToGroup(groupId: string, emails: string[]): Promise<void> {
+  await call(`/subscribers/groups/${encodeURIComponent(groupId)}`, {
+    method: 'POST',
+    body: { subscribers: emails, trigger_automation: false },
   });
 }
 

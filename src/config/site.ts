@@ -8,7 +8,6 @@
 // --- CHARITY ------------------------------------------------
 export const CHARITY_NAME = "Intermountain Cancer Center Utah Valley";
 export const CHARITY_URL  = "https://intermountainhealthcare.org/locations/utah-valley-clinic/cancer-center-utah-valley";
-export const CHARITY_EIN  = "[[EIN / 501(c)(3) number]]";
 
 // --- EVENT --------------------------------------------------
 export const ORG_NAME            = "Race Against Cancers Inc.";
@@ -63,21 +62,25 @@ export const REFERRAL_REWARD: string = "$10 In-N-Out gift card";
 export const REFERRAL_ENABLED = REFERRAL_REWARD !== "";
 
 // --- CHECK-IN -----------------------------------------------
-export const CHECK_IN_DATE     = "Saturday, November 7, 2026";
-export const CHECK_IN_TIME     = "7:00 AM (1 hour before race start)";
-export const CHECK_IN_LOCATION = "Canyon Crest Elementary School parking lot, 4664 N Canyon Rd, Provo";
+// Each race checks in at its own start line on race morning. Both sets are
+// here so there's nothing to edit anywhere else — the race-details page reads
+// all of it from below.
+export const CHECK_IN_DATE = "Saturday, November 7, 2026";
+
+export const TEN_K_CHECK_IN_TIME     = "7:00 AM (1 hour before race start)";
+export const TEN_K_CHECK_IN_LOCATION = "Canyon Crest Elementary School parking lot, 4664 N Canyon Rd, Provo";
+
+export const FUN_RUN_CHECK_IN_TIME     = "7:00 AM (1 hour before race start)";
+export const FUN_RUN_CHECK_IN_LOCATION = "LaVell Edwards Stadium, Provo, UT 84602";
 
 // --- CONTACT ------------------------------------------------
 export const CONTACT_EMAIL = "events@raceagainstcancers.org";
 export const CONTACT_PHONE = "858-774-2699";
 export const VOLUNTEER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScX-3U-iBEHY7YoIp1Htsdfz-NnOafxxGssKFWVrKnv7hDumQ/viewform";
 
-// --- SOCIAL LINKS -------------------------------------------
-// Set to "" to hide that icon in the footer
-export const SOCIAL_INSTAGRAM = "[[https://instagram.com/YOURHANDLE]]";
-export const SOCIAL_FACEBOOK  = "[[https://facebook.com/YOURPAGE]]";
-export const SOCIAL_TWITTER   = "[[https://twitter.com/YOURHANDLE]]";
-export const SOCIAL_YOUTUBE   = "[[https://youtube.com/@YOURCHANNEL]]";
+// Social links are deliberately absent. The funnel runs the other way —
+// people find the race on social and come here — so the footer doesn't send
+// anyone back out.
 
 // --- SEO ----------------------------------------------------
 // Used by sitemap, robots.txt, metadataBase, and JSON-LD schema.

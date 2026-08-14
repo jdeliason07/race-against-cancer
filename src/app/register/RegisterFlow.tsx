@@ -14,6 +14,7 @@ import { createPaymentIntent } from './actions';
 import { submitCompRegistration } from './comp-actions';
 import { ADULT_AGE, isMinorOnRaceDay, isPlausibleDob } from '@/lib/utils';
 import {
+  CONTACT_EMAIL,
   MAX_PARTICIPANTS_PER_REGISTRATION,
   MIN_DONATION_AMOUNT,
   MIN_DONATION_FUN_RUN,
@@ -665,6 +666,7 @@ function PaymentForm({
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [clearing, setClearing] = useState(false);
   const [expressAvailable, setExpressAvailable] = useState(false);
 
   // Shared by the card form and the Express Checkout
@@ -673,6 +675,7 @@ function PaymentForm({
     if (!stripe || !elements) return;
     setSubmitting(true);
     setPaymentError(null);
+    setClearing(false);
 
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
@@ -680,13 +683,33 @@ function PaymentForm({
       redirect: 'if_required',
     });
 
-    if (paymentIntent?.status === 'succeeded') {
-      onSuccess();
-    } else if (error) {
+    if (error) {
       setPaymentError(error.message ?? 'Payment failed. Please try again.');
       setSubmitting(false);
-    } else {
-      setSubmitting(false);
+      return;
+    }
+
+    switch (paymentIntent?.status) {
+      case 'succeeded':
+        onSuccess();
+        return;
+
+      // Some payment methods don't settle immediately. The charge is on its
+      // way and the webhook will record it, so say so and keep the buttons
+      // disabled — the failure mode here is someone assuming nothing happened
+      // and paying a second time.
+      case 'processing':
+        setClearing(true);
+        return;
+
+      // Anything else — cancelled, needs another payment method, needs a step
+      // we didn't get — is not a completed registration. Say that plainly
+      // rather than stopping the spinner and leaving the form looking idle.
+      default:
+        setPaymentError(
+          'We couldn’t confirm your payment. Nothing has been charged — please check your details and try again.',
+        );
+        setSubmitting(false);
     }
   };
 
@@ -753,6 +776,18 @@ function PaymentForm({
             </p>
           )}
 
+          {clearing && (
+            <div className="mb-4 rounded-card border-2 border-pink bg-blush px-4 py-4" role="status">
+              <p className="font-display text-lg uppercase text-ink">Your payment is clearing</p>
+              <p className="mt-1 font-body text-sm text-ash">
+                Your bank hasn&rsquo;t finished confirming this one yet — that can take a few
+                minutes. <span className="font-bold text-ink">Don&rsquo;t pay again.</span> We&rsquo;ll
+                email your receipt as soon as it goes through, and your place is recorded either
+                way. Email {CONTACT_EMAIL} if you haven&rsquo;t heard from us within a day.
+              </p>
+            </div>
+          )}
+
           <div className="flex gap-3">
             <button type="button" onClick={onBack} disabled={submitting} className="btn-ghost flex-1">
               Back
@@ -760,10 +795,10 @@ function PaymentForm({
             <button
               type="button"
               onClick={confirmStripe}
-              disabled={submitting || !stripe || !elements}
+              disabled={submitting || clearing || !stripe || !elements}
               className="btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {submitting ? 'Processing…' : 'Complete Registration'}
+              {clearing ? 'Payment clearing…' : submitting ? 'Processing…' : 'Complete Registration'}
             </button>
           </div>
     </div>

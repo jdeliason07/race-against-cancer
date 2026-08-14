@@ -1,5 +1,7 @@
 import {
+  CHARITY_NAME,
   CONTACT_EMAIL,
+  EVENT_DATE_DISPLAY,
   MAX_PARTICIPANTS_PER_REGISTRATION,
   MIN_DONATION_AMOUNT,
   MIN_DONATION_FUN_RUN,
@@ -29,7 +31,7 @@ export const faqs: FAQItem[] = [
     : []),
   {
     question: "What is the registration fee?",
-    answer: "There is no flat entry fee. Registration requires a minimum $99 donation to Intermountain Cancer Center Utah Valley for the 10K, or a minimum $49 donation for the family-friendly Fun Run. The minimum is per athlete, so a family of four doing the Fun Run gives at least $196 — and you can register all four in one go rather than filling in the form four times. We warmly encourage you to give as much more as you're willing.",
+    answer: `There is no flat entry fee. Registration requires a minimum $${MIN_DONATION_AMOUNT} donation to ${CHARITY_NAME} for the 10K, or a minimum $${MIN_DONATION_FUN_RUN} donation for the family-friendly Fun Run. The minimum is per athlete, so a family of four doing the Fun Run gives at least $${MIN_DONATION_FUN_RUN * 4} — and you can register all four in one go rather than filling in the form four times. We warmly encourage you to give as much more as you're willing.`,
   },
   {
     question: "Can I register a group, or pay for other people?",
@@ -41,7 +43,7 @@ export const faqs: FAQItem[] = [
   },
   {
     question: "What's the difference between the 10K and the Fun Run?",
-    answer: "The 10K is 6.2 miles and follows a point-to-point, predominantly downhill route: it starts in front of Canyon Crest Elementary School on N Canyon Road, runs to the mouth of Provo Canyon, then makes its single turn onto University Avenue and heads straight to the finish at Center Street in downtown Provo. The minimum donation is $99. The Fun Run is approximately 2 miles, starting at LaVell Edwards Stadium on the BYU campus and following University Avenue south to the same finish line, with a $49 minimum donation. It's the one most families choose — short enough for kids to finish, easy to walk the whole way, and strollers are welcome. Both events take place on November 7, 2026.",
+    answer: `The 10K is 6.2 miles and follows a point-to-point, predominantly downhill route: it starts in front of Canyon Crest Elementary School on N Canyon Road, runs to the mouth of Provo Canyon, then makes its single turn onto University Avenue and heads straight to the finish at Center Street in downtown Provo. The minimum donation is $${MIN_DONATION_AMOUNT}. The Fun Run is approximately 2 miles, starting at LaVell Edwards Stadium on the BYU campus and following University Avenue south to the same finish line, with a $${MIN_DONATION_FUN_RUN} minimum donation. It's the one most families choose — short enough for kids to finish, easy to walk the whole way, and strollers are welcome. Both events take place on ${EVENT_DATE_DISPLAY}.`,
   },
   {
     question: "How do I get to the 10K start line?",

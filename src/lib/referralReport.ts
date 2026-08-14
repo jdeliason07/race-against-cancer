@@ -1,5 +1,6 @@
 // Server-only. Builds the referral tally that gets emailed each week.
 import type Stripe from 'stripe';
+import { EVENT_NAME } from '@/config/site';
 
 export interface ReferralRow {
   /** Name as the first referred friend spelled it. */
@@ -39,8 +40,14 @@ export async function buildReferralReport(
   let newTotal = 0;
   let allTimeTotal = 0;
 
+  // Scoped to this event, like every other query — so running the race again
+  // next year starts its referral counts from zero instead of inheriting
+  // everyone who registered for 2026.
   await stripe.customers
-    .search({ query: "metadata['registered']:'true'", limit: 100 })
+    .search({
+      query: `metadata['registered']:'true' AND metadata['event']:'${EVENT_NAME}'`,
+      limit: 100,
+    })
     .autoPagingEach((customer) => {
       const referrer = customer.metadata?.referredByName?.trim();
       if (!referrer) return;

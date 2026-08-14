@@ -7,6 +7,7 @@ import {
   MIN_DONATION_AMOUNT,
   MIN_DONATION_FUN_RUN,
   REFERRAL_ENABLED,
+  REGISTRATION_OPEN,
 } from '@/config/site';
 import { normalizePhone } from '@/lib/phone';
 import { ADULT_AGE, ageOnRaceDay, isPlausibleDob } from '@/lib/utils';
@@ -14,7 +15,6 @@ import {
   canonicalEmail,
   findCustomerByEmail,
   getStripe,
-  isRegistered,
 } from '@/lib/stripeRegistration';
 
 // A 'use server' module may only export async functions, so anything shared
@@ -77,6 +77,15 @@ async function upsertAthleteCustomer(
 export async function createPaymentIntent(
   registrationData: RegistrationInput,
 ): Promise<{ clientSecret: string; paymentIntentId: string } | { error: string }> {
+  // The page hides the form when registration is closed, but this action is
+  // reachable by direct POST — so the gate has to be enforced here too, or
+  // flipping REGISTRATION_OPEN back off wouldn't actually stop anyone.
+  // Sponsor-covered entries deliberately bypass this; they run through
+  // submitCompRegistration, which is gated on the invite code instead.
+  if (!REGISTRATION_OPEN) {
+    return { error: `Registration is not open yet. Email ${CONTACT_EMAIL} if you think this is a mistake.` };
+  }
+
   const stripe = getStripe();
   if (!stripe) {
     return { error: 'Payment is not configured yet. Please contact the race organizer.' };
@@ -144,14 +153,12 @@ export async function createPaymentIntent(
   }
 
   try {
+    // Registering the same email twice is allowed on purpose: a group
+    // organizer comes back to enter themselves, a parent adds a child they
+    // forgot, someone simply chooses to pay twice. Every one of those is a
+    // second donation, so nothing here refuses it. The invite-link flow still
+    // blocks repeats, because those entries are free rather than paid.
     const existingCustomer = await findCustomerByEmail(stripe, registrationData.email);
-    // Group organizers often come back to register themselves, so only a
-    // repeated solo registration is treated as a duplicate.
-    if (!isGroup && existingCustomer && isRegistered(existingCustomer)) {
-      return {
-        error: `This email address is already registered. Email ${CONTACT_EMAIL} if you need to change your registration.`,
-      };
-    }
 
     const customer = await upsertAthleteCustomer(
       stripe,

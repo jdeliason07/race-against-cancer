@@ -3,7 +3,9 @@ import {
   EVENT_LOCATION_NAME, EVENT_LOCATION_ADDRESS, EVENT_DATE_ISO,
   FINISH_LOCATION_NAME, FINISH_LOCATION_ADDRESS,
   FUN_RUN_LOCATION_NAME, FUN_RUN_LOCATION_ADDRESS,
-  CHECK_IN_DATE, CHECK_IN_TIME, CHECK_IN_LOCATION,
+  CHECK_IN_DATE,
+  TEN_K_CHECK_IN_TIME, TEN_K_CHECK_IN_LOCATION,
+  FUN_RUN_CHECK_IN_TIME, FUN_RUN_CHECK_IN_LOCATION,
   COURSE_GPX_URL, SITE_URL, ORG_NAME, REGISTRATION_OPEN,
   MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN,
 } from '@/config/site';
@@ -132,8 +134,8 @@ export default function RaceDetailsPage() {
                 <dt className="section-label">Check-In</dt>
               </div>
               <dd className="font-body text-sm text-ink leading-relaxed whitespace-pre-line">
-                <span className="font-semibold">10K:</span> {CHECK_IN_DATE}{CHECK_IN_TIME ? `\n${CHECK_IN_TIME}` : ''}{CHECK_IN_LOCATION ? `\n${CHECK_IN_LOCATION}` : ''}
-                {'\n\n'}<span className="font-semibold">Fun Run:</span> {CHECK_IN_DATE}{'\n'}7:00 AM · LaVell Edwards Stadium
+                <span className="font-semibold">10K:</span> {CHECK_IN_DATE}{TEN_K_CHECK_IN_TIME ? `\n${TEN_K_CHECK_IN_TIME}` : ''}{TEN_K_CHECK_IN_LOCATION ? `\n${TEN_K_CHECK_IN_LOCATION}` : ''}
+                {'\n\n'}<span className="font-semibold">Fun Run:</span> {CHECK_IN_DATE}{FUN_RUN_CHECK_IN_TIME ? `\n${FUN_RUN_CHECK_IN_TIME}` : ''}{FUN_RUN_CHECK_IN_LOCATION ? `\n${FUN_RUN_CHECK_IN_LOCATION}` : ''}
                 {'\n\n'}Includes: race bib + bandana
               </dd>
             </div>

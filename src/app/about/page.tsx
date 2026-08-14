@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { CHARITY_NAME, CHARITY_URL, REGISTRATION_OPEN } from '@/config/site';
+import { RegistrationTeaser } from '@/components/ui/RegistrationTeaser';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: `Why Race Against Cancers exists, how it works, and where every dollar goes.`,
+  description: `Why Race Against Cancers exists, how it works, and where the money goes.`,
 };
 
 export default function AboutPage() {
@@ -73,13 +74,12 @@ export default function AboutPage() {
           <h2 className="mb-6 font-display text-3xl uppercase text-ink">Where the money goes</h2>
           <div className="rounded-card border-2 border-pink bg-blush p-8">
             <p className="mb-4 font-display text-2xl uppercase text-ink">
-              100% of donations to {CHARITY_NAME}
+              Donations benefit {CHARITY_NAME}
             </p>
             <p className="font-body text-sm leading-relaxed text-ash">
-              Every dollar from every registration goes directly to Intermountain Cancer Center
-              Utah Valley. Event operations are covered separately so that your registration is a
-              pure donation to the cause. We are actively seeking sponsors who share our belief that
-              fighting cancer is worth every dollar.
+              Registration donations support Intermountain Cancer Center Utah Valley. We are
+              actively seeking sponsors to cover the cost of putting on the race, so that as much
+              of what runners give as possible reaches the cause.
             </p>
           </div>
         </section>
@@ -92,8 +92,7 @@ export default function AboutPage() {
             </p>
             <p className="mt-4 font-body text-base text-ash">
               That&apos;s what we&apos;re raising for Intermountain Cancer Center Utah Valley. Every
-              registration is a direct donation — no overhead, no middleman. Every dollar goes
-              straight to the fight.
+              registration is a donation, and every one of them gets us closer.
             </p>
           </div>
         </section>
@@ -102,6 +101,7 @@ export default function AboutPage() {
           <Link href="/register" className="btn-primary">
             {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
           </Link>
+          <RegistrationTeaser className="mt-4" />
         </div>
       </div>
     </div>

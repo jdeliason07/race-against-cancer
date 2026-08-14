@@ -32,22 +32,35 @@ export const FUN_RUN_LOCATION_ADDRESS = "LaVell Edwards Stadium, Provo, UT 84602
 // the race-details page automatically shows "GPX Coming Soon" when empty.
 export const COURSE_GPX_URL          = "";
 
-// --- PLATFORM LINKS -----------------------------------------
-// Paste RunSignup or GiveButter URLs here — every button on the site points here
-export const REGISTRATION_URL = "[[REPLACE: registration platform URL (RunSignup/GiveButter)]]";
-
 // --- REGISTRATION GATE --------------------------------------
-// Flip REGISTRATION_OPEN to true when registration goes live.
-// Update REGISTRATION_OPENS_DATE to change the copy on the pre-signup page.
+// Flip REGISTRATION_OPEN to true when registration goes live — every nav link,
+// button, and page on the site switches over automatically.
+// REGISTRATION_OPENS_DATE controls the copy on the waitlist page. Leave it ""
+// while the date is undecided and the page reads "Registration opens soon";
+// set it (e.g. 'September 15, 2026') to announce a date.
 export const REGISTRATION_OPEN       = false;
-export const REGISTRATION_OPENS_DATE = 'August 1, 2026';
+export const REGISTRATION_OPENS_DATE = '';
+// Reads "opens soon" until a date is set, "opens September 15, 2026" after.
+export const REGISTRATION_OPENS_LABEL = REGISTRATION_OPENS_DATE || 'soon';
 
 // --- REGISTRATION -------------------------------------------
-export const TOTAL_SPOTS           = 2000;
-export const MIN_DONATION_AMOUNT   = 99; // 10K minimum — canonical number
-export const MIN_DONATION_FUN_RUN  = 49;  // Fun Run minimum
+// The race has no attendance cap — registration stays open regardless of
+// how many people sign up.
+export const MIN_DONATION_AMOUNT   = 99; // 10K minimum — canonical number, per athlete
+export const MIN_DONATION_FUN_RUN  = 49;  // Fun Run minimum, per athlete
+// One person can register and pay for a group (a company, a team, a family).
+// The donation minimum is the per-athlete minimum times this count.
+export const MAX_PARTICIPANTS_PER_REGISTRATION = 100;
 export const TEN_K_LABEL           = "10K (6.2 mi)";
 export const FUN_RUN_LABEL         = "Fun Run (~2 mi)";
+
+// --- REFERRAL INCENTIVE -------------------------------------
+// Registrants name whoever referred them in a box on the form. Each named
+// person earns the reward below — unlimited times. A report of who referred
+// how many is emailed weekly by /api/referral-report.
+// Set REFERRAL_REWARD to "" to switch the whole program off site-wide.
+export const REFERRAL_REWARD: string = "$10 In-N-Out gift card";
+export const REFERRAL_ENABLED = REFERRAL_REWARD !== "";
 
 // --- CHECK-IN -----------------------------------------------
 export const CHECK_IN_DATE     = "Saturday, November 7, 2026";
@@ -57,11 +70,6 @@ export const CHECK_IN_LOCATION = "Canyon Crest Elementary School parking lot, 46
 // --- CONTACT ------------------------------------------------
 export const CONTACT_EMAIL = "events@raceagainstcancers.org";
 export const CONTACT_PHONE = "858-774-2699";
-// Venmo @username (WITHOUT the leading @) used for the "Pay with Venmo" checkout
-// option. Venmo payments are recorded as PENDING and must be manually confirmed
-// in the Stripe Dashboard once the transfer arrives. Leave the placeholder to
-// hide the Venmo option entirely.
-export const VENMO_USERNAME = "[[REPLACE: Venmo @username without the @]]";
 export const VOLUNTEER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScX-3U-iBEHY7YoIp1Htsdfz-NnOafxxGssKFWVrKnv7hDumQ/viewform";
 
 // --- SOCIAL LINKS -------------------------------------------
@@ -75,4 +83,4 @@ export const SOCIAL_YOUTUBE   = "[[https://youtube.com/@YOURCHANNEL]]";
 // Used by sitemap, robots.txt, metadataBase, and JSON-LD schema.
 export const SITE_URL         = "https://raceagainstcancers.org";
 export const META_DESCRIPTION =
-  `Run for a reason. ${EVENT_NAME} — a 10K & Fun Run on ${EVENT_DATE_DISPLAY}, benefiting ${CHARITY_NAME}. Register with a $${MIN_DONATION_AMOUNT} minimum donation.`;
+  `Run for a reason. ${EVENT_NAME} — a 10K & Fun Run on ${EVENT_DATE_DISPLAY}, benefiting ${CHARITY_NAME}. 10K from $${MIN_DONATION_AMOUNT}, or the family-friendly Fun Run from $${MIN_DONATION_FUN_RUN}.`;

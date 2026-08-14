@@ -5,10 +5,12 @@ import {
   FUN_RUN_LOCATION_NAME, FUN_RUN_LOCATION_ADDRESS,
   CHECK_IN_DATE, CHECK_IN_TIME, CHECK_IN_LOCATION,
   COURSE_GPX_URL, SITE_URL, ORG_NAME, REGISTRATION_OPEN,
+  MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN,
 } from '@/config/site';
-import { MapPin, Clock, Package, Download, Flag } from 'lucide-react';
+import { MapPin, Clock, Package, Download, Flag, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { CourseMapSection, ElevationChartSection } from '@/components/course/CourseClientSections';
+import { RegistrationTeaser } from '@/components/ui/RegistrationTeaser';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -114,6 +116,18 @@ export default function RaceDetailsPage() {
 
             <div className="rounded-card border border-line p-6">
               <div className="mb-2 flex items-center gap-2">
+                <Heart size={16} className="text-pink shrink-0" aria-hidden="true" />
+                <dt className="section-label">Entry Donation</dt>
+              </div>
+              <dd className="font-body text-sm text-ink leading-relaxed">
+                10K: ${MIN_DONATION_AMOUNT} minimum<br />
+                Fun Run: ${MIN_DONATION_FUN_RUN} minimum<br />
+                <span className="text-ash text-xs">Give more if you&rsquo;re able</span>
+              </dd>
+            </div>
+
+            <div className="rounded-card border border-line p-6">
+              <div className="mb-2 flex items-center gap-2">
                 <Package size={16} className="text-pink shrink-0" aria-hidden="true" />
                 <dt className="section-label">Check-In</dt>
               </div>
@@ -172,8 +186,11 @@ export default function RaceDetailsPage() {
             </p>
             <p>
               The course is predominantly downhill along a straight, wide road — accessible for
-              all paces and fitness levels. Whether you&rsquo;re a casual walker or a first-time
-              runner, this is your chance to cross a finish line for a great cause.
+              all paces and fitness levels. It&rsquo;s the option most families pick: short enough
+              for kids to finish, easy to walk the whole way, and strollers are welcome. Whether
+              you&rsquo;re a casual walker or a first-time runner, this is your chance to cross a
+              finish line for a great cause. The minimum donation is ${MIN_DONATION_FUN_RUN},
+              compared with ${MIN_DONATION_AMOUNT} for the 10K.
             </p>
             <div className="rounded-card border border-petal bg-blush p-5 mt-4">
               <p className="font-body text-sm font-bold uppercase tracking-widest text-pink mb-2">Getting to the start</p>
@@ -281,6 +298,7 @@ export default function RaceDetailsPage() {
 
         <div className="pt-4">
           <Link href="/register" className="btn-primary">{REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}</Link>
+          <RegistrationTeaser className="mt-4" />
         </div>
       </div>
     </div>

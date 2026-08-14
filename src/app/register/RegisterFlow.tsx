@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { loadStripe } from '@stripe/stripe-js';
 import {
@@ -10,21 +10,18 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
-import { createPaymentIntent, markVenmoPending } from './actions';
-import { cn } from '@/lib/utils';
+import { createPaymentIntent } from './actions';
+import { submitCompRegistration } from './comp-actions';
+import { ADULT_AGE, isMinorOnRaceDay, isPlausibleDob } from '@/lib/utils';
 import {
+  MAX_PARTICIPANTS_PER_REGISTRATION,
   MIN_DONATION_AMOUNT,
   MIN_DONATION_FUN_RUN,
   TEN_K_LABEL,
   FUN_RUN_LABEL,
-  VENMO_USERNAME,
-  EVENT_NAME,
+  REFERRAL_ENABLED,
+  REFERRAL_REWARD,
 } from '@/config/site';
-
-const venmoUsername =
-  VENMO_USERNAME && !VENMO_USERNAME.includes('[[') ? VENMO_USERNAME : '';
-
-type CompletedMethod = 'card' | 'venmo';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -76,21 +73,23 @@ interface FormData {
   dob: string;
   emergencyName: string;
   emergencyPhone: string;
+  guardianName: string;
+  referredByName: string;
 }
 
 // Step progress indicator
-function StepIndicator({ step }: { step: Step }) {
-  const labels = ['Race Selection', 'Athlete Info', 'Payment', 'Confirmation'];
+function StepIndicator({ step, labels }: { step: Step; labels: string[] }) {
+  const total = labels.length;
   return (
     <div className="mb-8">
       <div className="mb-3 flex items-center justify-between">
         <p className="font-body text-xs font-bold uppercase tracking-widest text-ash">
-          Step {step} of 4 — {labels[step - 1]}
+          Step {step} of {total} — {labels[step - 1]}
         </p>
-        <p className="font-body text-xs text-ash">{step * 25}%</p>
+        <p className="font-body text-xs text-ash">{Math.round((step / total) * 100)}%</p>
       </div>
       <div className="flex gap-2">
-        {([1, 2, 3, 4] as Step[]).map((s) => (
+        {labels.map((_, i) => i + 1).map((s) => (
           <div
             key={s}
             className="h-1.5 flex-1 rounded-pill"
@@ -121,7 +120,7 @@ function StepRaceSelection({
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         {([
           { key: '10k' as const,      label: '10K',      sub: `6.2 mi · $${MIN_DONATION_AMOUNT}+ donation` },
-          { key: 'fun-run' as const,  label: 'Fun Run',  sub: `~2 mi · $${MIN_DONATION_FUN_RUN}+ donation` },
+          { key: 'fun-run' as const,  label: 'Fun Run',  sub: `~2 mi · $${MIN_DONATION_FUN_RUN}+ donation · great for kids & families` },
         ]).map((race) => (
           <button
             key={race.key}
@@ -172,8 +171,11 @@ function StepAthleteInfo({
   setBandanaColor,
   donationAmount,
   setDonationAmount,
+  participantCount,
+  setParticipantCount,
   waiverAgreed,
   setWaiverAgreed,
+  isComp,
   onNext,
   onBack,
   loading,
@@ -185,14 +187,23 @@ function StepAthleteInfo({
   setBandanaColor: (c: string) => void;
   donationAmount: number;
   setDonationAmount: (a: number) => void;
+  participantCount: number;
+  setParticipantCount: (n: number) => void;
   waiverAgreed: boolean;
   setWaiverAgreed: (v: boolean) => void;
+  isComp: boolean;
   onNext: () => void;
   onBack: () => void;
   loading: boolean;
 }) {
   const [touched, setTouched] = useState<Partial<Record<keyof FormData, boolean>>>({});
-  const minDonation = raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT;
+  const perAthleteMin = raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT;
+  const minDonation = perAthleteMin * participantCount;
+
+  // One person paying for several athletes is registering a group, not
+  // themselves — so the personal fields below become their contact details and
+  // each athlete's own details are collected at check-in.
+  const isGroup = !isComp && participantCount > 1;
 
   const update = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: e.target.value });
@@ -204,11 +215,16 @@ function StepAthleteInfo({
 
   const isEmailValid = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  // The waiver requires a parent or legal guardian to accept on behalf of
+  // anyone under 18 on race day, so ask for their name once we know the age.
+  const isMinor = !isGroup && isMinorOnRaceDay(formData.dob);
+
   const fieldError = (field: keyof FormData): string | null => {
     if (!touched[field]) return null;
     const val = formData[field].trim();
     if (!val) return 'This field is required.';
     if (field === 'email' && !isEmailValid(formData.email)) return 'Enter a valid email address.';
+    if (field === 'dob' && !isPlausibleDob(formData.dob)) return 'Enter a valid date of birth.';
     return null;
   };
 
@@ -218,10 +234,14 @@ function StepAthleteInfo({
     formData.email.trim() &&
     isEmailValid(formData.email) &&
     formData.phone.trim() &&
-    formData.dob.trim() &&
-    formData.emergencyName.trim() &&
-    formData.emergencyPhone.trim() &&
-    donationAmount >= minDonation &&
+    // Date of birth and emergency contact belong to an athlete, so they're
+    // only asked for when the registration is for one.
+    (isGroup ||
+      (isPlausibleDob(formData.dob) &&
+        formData.emergencyName.trim() &&
+        formData.emergencyPhone.trim())) &&
+    (!isMinor || formData.guardianName.trim()) &&
+    (isComp || donationAmount >= minDonation) &&
     bandanaColor !== '' &&
     waiverAgreed;
 
@@ -233,7 +253,42 @@ function StepAthleteInfo({
 
   return (
     <div>
-      <h2 className="font-display text-3xl uppercase text-ink mb-6">Athlete Info</h2>
+      <h2 className="font-display text-3xl uppercase text-ink mb-6">
+        {isGroup ? 'Organizer Info' : 'Athlete Info'}
+      </h2>
+
+      {/* Headcount — drives the donation minimum below */}
+      {!isComp && (
+      <div className="mb-6 rounded-card border border-line bg-mist p-5">
+        <label htmlFor="participantCount" className={labelClass}>
+          How many athletes are you registering?
+        </label>
+        <input
+          id="participantCount"
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={MAX_PARTICIPANTS_PER_REGISTRATION}
+          value={participantCount}
+          onChange={(e) => {
+            const parsed = parseInt(e.target.value, 10);
+            const next = Number.isNaN(parsed)
+              ? 1
+              : Math.min(Math.max(parsed, 1), MAX_PARTICIPANTS_PER_REGISTRATION);
+            setParticipantCount(next);
+            // Keep the donation at or above the new minimum.
+            if (donationAmount < perAthleteMin * next) setDonationAmount(perAthleteMin * next);
+          }}
+          className={inputClass + ' bg-white'}
+          aria-describedby="participantCount-hint"
+        />
+        <p id="participantCount-hint" className="mt-2 font-body text-sm text-ash">
+          {isGroup
+            ? `Covering ${participantCount} athletes at $${perAthleteMin} each — a $${minDonation} minimum donation. We'll collect each athlete's name and waiver at check-in.`
+            : `Registering more than one? Enter the number here and the donation minimum adjusts — $${perAthleteMin} per athlete.`}
+        </p>
+      </div>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 mb-4">
         <div>
@@ -300,6 +355,8 @@ function StepAthleteInfo({
         {fieldError('phone') && <p id="phone-error" className={errorClass}>{fieldError('phone')}</p>}
       </div>
 
+      {!isGroup && (
+      <>
       <div className="mb-4">
         <label htmlFor="dob" className={labelClass}>Date of Birth</label>
         <input
@@ -348,11 +405,60 @@ function StepAthleteInfo({
           {fieldError('emergencyPhone') && <p id="emergencyPhone-error" className={errorClass}>{fieldError('emergencyPhone')}</p>}
         </div>
       </div>
+      </>
+      )}
+
+      {isMinor && (
+        <div className="mb-6 rounded-card border border-petal bg-blush p-5">
+          <label htmlFor="guardianName" className={labelClass}>Parent or Legal Guardian</label>
+          <p className="mb-2 font-body text-sm text-ash">
+            This athlete will be under {ADULT_AGE} on race day, so a parent or legal guardian must
+            accept the waiver below on their behalf.
+          </p>
+          <input
+            id="guardianName"
+            type="text"
+            value={formData.guardianName}
+            onChange={update('guardianName')}
+            onBlur={touch('guardianName')}
+            className={inputClass}
+            required
+            aria-required="true"
+            autoComplete="name"
+            placeholder="Full name of parent or legal guardian"
+            aria-describedby={fieldError('guardianName') ? 'guardianName-error' : undefined}
+          />
+          {fieldError('guardianName') && <p id="guardianName-error" className={errorClass}>{fieldError('guardianName')}</p>}
+        </div>
+      )}
+
+      {REFERRAL_ENABLED && !isComp && (
+        <div className="mb-6">
+          <label htmlFor="referredByName" className={labelClass}>
+            Who referred you? <span className="font-normal normal-case tracking-normal">(optional)</span>
+          </label>
+          <p className="mb-2 font-body text-sm text-ash">
+            If a friend told you about the race, enter their full name and we&rsquo;ll send them a{' '}
+            {REFERRAL_REWARD}.
+          </p>
+          <input
+            id="referredByName"
+            type="text"
+            value={formData.referredByName}
+            onChange={update('referredByName')}
+            className={inputClass}
+            autoComplete="off"
+            placeholder="First and last name"
+          />
+        </div>
+      )}
 
       {/* Bandana color */}
       <div className="mb-6">
         <p id="bandana-label" className="font-body text-xs font-bold uppercase tracking-widest text-ash mb-3">
-          Which color bandana will you race with?
+          {isGroup
+            ? `Which color bandana for your ${participantCount} athletes?`
+            : 'Which color bandana will you race with?'}
         </p>
         <div role="group" aria-labelledby="bandana-label" className="grid grid-cols-2 gap-2">
           {bandanaOptions.map((opt) => {
@@ -385,12 +491,15 @@ function StepAthleteInfo({
       </div>
 
       {/* Donation amount */}
+      {!isComp && (
       <div className="mb-6 rounded-card border border-petal bg-blush p-5">
         <label htmlFor="donationAmount" className="mb-2 font-body text-xs font-bold uppercase tracking-widest text-ash block">
           Donation Amount
         </label>
         <p className="mb-3 font-body text-sm text-ash">
-          Minimum ${minDonation} — every dollar goes directly to the cause. Give more if you&rsquo;re able.
+          {isGroup
+            ? `Minimum $${minDonation} — $${perAthleteMin} × ${participantCount} athletes. Give more if you're able.`
+            : `Minimum $${minDonation}. Give more if you're able.`}
         </p>
         <input
           id="donationAmount"
@@ -411,6 +520,16 @@ function StepAthleteInfo({
           <p className="mt-1 font-body text-xs text-red-700" role="alert">Minimum donation is ${minDonation}</p>
         )}
       </div>
+      )}
+
+      {isComp && (
+        <div className="mb-6 rounded-card border-2 border-pink bg-blush p-5">
+          <p className="font-display text-xl uppercase text-ink">Your entry is covered</p>
+          <p className="mt-1 font-body text-sm text-ash">
+            A sponsor has already donated on your behalf — there&rsquo;s nothing to pay.
+          </p>
+        </div>
+      )}
 
       {/* Waiver */}
       <div className="mb-6">
@@ -493,7 +612,11 @@ function StepAthleteInfo({
             className="mt-0.5 h-4 w-4 shrink-0 accent-pink"
           />
           <span className="font-body text-sm text-ink">
-            I have read and agree to the Release and Waiver of Liability Agreement
+            {isGroup
+              ? 'I have read and agree to the Release and Waiver of Liability Agreement, and I will make sure every athlete I am registering — or their parent or legal guardian — accepts it before race day'
+              : isMinor
+                ? 'I am the parent or legal guardian of this athlete, and I have read and agree to the Release and Waiver of Liability Agreement on their behalf'
+                : 'I have read and agree to the Release and Waiver of Liability Agreement'}
           </span>
         </label>
       </div>
@@ -513,23 +636,11 @@ function StepAthleteInfo({
           disabled={!canAdvance || loading}
           className="btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {loading ? 'Processing…' : 'Next: Payment'}
+          {loading ? 'Processing…' : isComp ? 'Complete Registration' : 'Next: Payment'}
         </button>
       </div>
     </div>
   );
-}
-
-// Build a Venmo deep link that prefills the recipient, amount, and note.
-function venmoPayUrl(amount: number, note: string) {
-  const params = new URLSearchParams({
-    txn: 'pay',
-    audience: 'private',
-    recipients: venmoUsername,
-    amount: String(amount),
-    note,
-  });
-  return `https://venmo.com/?${params.toString()}`;
 }
 
 // Inner payment form (must be inside <Elements>)
@@ -537,28 +648,27 @@ function PaymentForm({
   raceType,
   formData,
   donationAmount,
+  participantCount,
   bandanaColor,
-  paymentIntentId,
   onSuccess,
   onBack,
 }: {
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
+  participantCount: number;
   bandanaColor: string;
-  paymentIntentId: string;
-  onSuccess: (method: CompletedMethod) => void;
+  onSuccess: () => void;
   onBack: () => void;
 }) {
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
-  const [method, setMethod] = useState<CompletedMethod>('card');
   const [expressAvailable, setExpressAvailable] = useState(false);
 
-  // Shared Stripe confirmation used by both the card form and the
-  // Express Checkout (Google Pay / Apple Pay / Link) button.
+  // Shared by the card form and the Express Checkout
+  // (Google Pay / Apple Pay / Link) button.
   const confirmStripe = async () => {
     if (!stripe || !elements) return;
     setSubmitting(true);
@@ -571,7 +681,7 @@ function PaymentForm({
     });
 
     if (paymentIntent?.status === 'succeeded') {
-      onSuccess('card');
+      onSuccess();
     } else if (error) {
       setPaymentError(error.message ?? 'Payment failed. Please try again.');
       setSubmitting(false);
@@ -580,27 +690,7 @@ function PaymentForm({
     }
   };
 
-  const handleVenmoSubmit = async () => {
-    setSubmitting(true);
-    setPaymentError(null);
-    const result = await markVenmoPending(paymentIntentId);
-    if ('ok' in result) {
-      onSuccess('venmo');
-    } else {
-      setPaymentError(result.error);
-      setSubmitting(false);
-    }
-  };
-
   const raceLabel = raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL;
-  const venmoNote = `${EVENT_NAME} — ${formData.firstName} ${formData.lastName}`.trim();
-
-  const tabClass = (active: boolean) =>
-    cn(
-      'flex-1 rounded-card border-2 px-4 py-3 font-body text-sm font-bold uppercase tracking-widest transition-colors',
-      active ? 'border-pink bg-blush text-pink' : 'border-line bg-paper text-ash hover:border-petal',
-    );
-
   return (
     <div>
       {/* Summary bar */}
@@ -612,6 +702,11 @@ function PaymentForm({
           <span>
             <span className="font-bold">Name:</span> {formData.firstName} {formData.lastName}
           </span>
+          {participantCount > 1 && (
+            <span>
+              <span className="font-bold">Athletes:</span> {participantCount}
+            </span>
+          )}
           <span>
             <span className="font-bold">Donation:</span> ${donationAmount}
           </span>
@@ -623,20 +718,6 @@ function PaymentForm({
 
       <h2 className="font-display text-3xl uppercase text-ink mb-6">Payment</h2>
 
-      {/* Method selector — only shown when Venmo is configured */}
-      {venmoUsername && (
-        <div className="mb-6 flex gap-3" role="group" aria-label="Choose a payment method">
-          <button type="button" onClick={() => setMethod('card')} aria-pressed={method === 'card'} className={tabClass(method === 'card')}>
-            Card / Google Pay
-          </button>
-          <button type="button" onClick={() => setMethod('venmo')} aria-pressed={method === 'venmo'} className={tabClass(method === 'venmo')}>
-            Venmo
-          </button>
-        </div>
-      )}
-
-      {method === 'card' ? (
-        <>
           {/* Express Checkout — prominent Google Pay / Apple Pay / Link buttons */}
           <div className={expressAvailable ? 'mb-2' : 'hidden'}>
             <ExpressCheckoutElement
@@ -685,53 +766,6 @@ function PaymentForm({
               {submitting ? 'Processing…' : 'Complete Registration'}
             </button>
           </div>
-        </>
-      ) : (
-        <>
-          {/* Venmo — pay out-of-band, registration held pending confirmation */}
-          <div className="mb-6 rounded-card border border-line bg-mist p-6">
-            <p className="font-body text-sm text-ash leading-relaxed">
-              Send your <span className="font-bold text-ink">${donationAmount}</span> donation to
-              {' '}<span className="font-bold text-ink">@{venmoUsername}</span> in the Venmo app, then
-              tap the button below. Your spot is held while we confirm your payment.
-            </p>
-            <ol className="mt-4 space-y-1 font-body text-sm text-ash list-decimal pl-5">
-              <li>Open Venmo and send <span className="font-bold text-ink">${donationAmount}</span> to <span className="font-bold text-ink">@{venmoUsername}</span></li>
-              <li>Add the note: <span className="font-bold text-ink">{venmoNote}</span></li>
-              <li>Come back and confirm below</li>
-            </ol>
-            <a
-              href={venmoPayUrl(donationAmount, venmoNote)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary mt-5 inline-flex w-full"
-              style={{ backgroundColor: '#008CFF' }}
-            >
-              Open Venmo to Pay ${donationAmount}
-            </a>
-          </div>
-
-          {paymentError && (
-            <p className="mb-4 rounded-card border border-red-200 bg-red-50 px-4 py-3 font-body text-sm text-red-700" role="alert">
-              {paymentError}
-            </p>
-          )}
-
-          <div className="flex gap-3">
-            <button type="button" onClick={onBack} disabled={submitting} className="btn-ghost flex-1">
-              Back
-            </button>
-            <button
-              type="button"
-              onClick={handleVenmoSubmit}
-              disabled={submitting}
-              className="btn-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {submitting ? 'Submitting…' : "I've Sent My Venmo Payment"}
-            </button>
-          </div>
-        </>
-      )}
     </div>
   );
 }
@@ -739,21 +773,21 @@ function PaymentForm({
 // Step 3 — Payment (wrapper that provides Elements context)
 function StepPayment({
   clientSecret,
-  paymentIntentId,
   raceType,
   formData,
   donationAmount,
+  participantCount,
   bandanaColor,
   onSuccess,
   onBack,
 }: {
   clientSecret: string;
-  paymentIntentId: string;
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
+  participantCount: number;
   bandanaColor: string;
-  onSuccess: (method: CompletedMethod) => void;
+  onSuccess: () => void;
   onBack: () => void;
 }) {
   return (
@@ -765,8 +799,8 @@ function StepPayment({
         raceType={raceType}
         formData={formData}
         donationAmount={donationAmount}
+        participantCount={participantCount}
         bandanaColor={bandanaColor}
-        paymentIntentId={paymentIntentId}
         onSuccess={onSuccess}
         onBack={onBack}
       />
@@ -779,17 +813,19 @@ function StepConfirmation({
   raceType,
   formData,
   donationAmount,
+  participantCount,
   bandanaColor,
-  method,
+  isComp,
 }: {
   raceType: RaceType;
   formData: FormData;
   donationAmount: number;
+  participantCount: number;
   bandanaColor: string;
-  method: CompletedMethod;
+  isComp: boolean;
 }) {
+  const isGroup = participantCount > 1;
   const raceLabel = raceType === '10k' ? TEN_K_LABEL : FUN_RUN_LABEL;
-  const pending = method === 'venmo';
 
   return (
     <div className="text-center">
@@ -814,12 +850,10 @@ function StepConfirmation({
       </div>
 
       <h2 className="font-display text-4xl uppercase text-ink mb-2">
-        {pending ? 'Almost There!' : 'You’re Registered!'}
+        You’re Registered!
       </h2>
       <p className="font-body text-base text-ash mb-8">
-        {pending
-          ? 'Thanks! We’ve received your registration and will confirm your spot once your Venmo payment comes through.'
-          : 'Thank you for signing up for Race Against Cancers 2026.'}
+        Thank you for signing up for Race Against Cancers 2026.
       </p>
 
       {/* Summary */}
@@ -835,6 +869,12 @@ function StepConfirmation({
             <dt className="font-bold uppercase tracking-widest text-ash text-xs">Race</dt>
             <dd className="text-ink">{raceLabel}</dd>
           </div>
+          {isGroup && (
+            <div className="flex justify-between">
+              <dt className="font-bold uppercase tracking-widest text-ash text-xs">Athletes</dt>
+              <dd className="text-ink">{participantCount}</dd>
+            </div>
+          )}
           <div className="flex justify-between">
             <dt className="font-bold uppercase tracking-widest text-ash text-xs">Bandana</dt>
             <dd className="text-ink">{bandanaColor}</dd>
@@ -842,15 +882,15 @@ function StepConfirmation({
           <div className="flex justify-between">
             <dt className="font-bold uppercase tracking-widest text-ash text-xs">Donation</dt>
             <dd className="font-bold" style={{ color: '#F0307A' }}>
-              ${donationAmount}
+              {isComp ? 'Covered by a sponsor' : `$${donationAmount}`}
             </dd>
           </div>
         </dl>
       </div>
 
       <p className="mb-8 font-body text-sm text-ash">
-        {pending
-          ? 'We’ll email you once your Venmo payment is confirmed. Questions? Just reply to that email.'
+        {isComp
+          ? 'We have your registration. Bring photo ID to check-in on race morning.'
           : 'Check your email for a receipt from Stripe.'}
       </p>
 
@@ -862,11 +902,19 @@ function StepConfirmation({
 }
 
 // Main orchestrator
-export function RegisterFlow() {
+export function RegisterFlow({ comp }: { comp?: { code: string } }) {
+  // A covered entry skips payment, so the flow is one step shorter.
+  const isComp = !!comp;
+  const stepLabels = isComp
+    ? ['Race Selection', 'Athlete Info', 'Confirmation']
+    : ['Race Selection', 'Athlete Info', 'Payment', 'Confirmation'];
+  const confirmationStep = (isComp ? 3 : 4) as Step;
+
   const [step, setStep] = useState<Step>(1);
   const [raceType, setRaceType] = useState<RaceType>(null);
   const [bandanaColor, setBandanaColor] = useState('');
   const [donationAmount, setDonationAmount] = useState(MIN_DONATION_AMOUNT);
+  const [participantCount, setParticipantCount] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -875,23 +923,46 @@ export function RegisterFlow() {
     dob: '',
     emergencyName: '',
     emergencyPhone: '',
+    guardianName: '',
+    referredByName: '',
   });
   const [waiverAgreed, setWaiverAgreed] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
-  const [completedMethod, setCompletedMethod] = useState<CompletedMethod>('card');
   const [loadingIntent, setLoadingIntent] = useState(false);
   const [intentError, setIntentError] = useState<string | null>(null);
 
-  const handleStep2ToStep3 = useCallback(async () => {
+  // Not memoized by hand — the React Compiler handles that, and a manual
+  // useCallback here blocks it from optimizing the component at all.
+  const handleStep2ToStep3 = async () => {
     if (!raceType) return;
     setLoadingIntent(true);
     setIntentError(null);
     try {
+      if (comp) {
+        const result = await submitCompRegistration({
+          code: comp.code,
+          raceType,
+          bandanaColor,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          dob: formData.dob,
+          emergencyName: formData.emergencyName,
+          emergencyPhone: formData.emergencyPhone,
+          guardianName: formData.guardianName,
+          waiverAgreed,
+        });
+        if ('error' in result) setIntentError(result.error);
+        else setStep(confirmationStep);
+        return;
+      }
+
       const result = await createPaymentIntent({
         raceType,
         bandanaColor,
         amount: donationAmount * 100,
+        participantCount,
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -899,12 +970,14 @@ export function RegisterFlow() {
         dob: formData.dob,
         emergencyName: formData.emergencyName,
         emergencyPhone: formData.emergencyPhone,
+        guardianName: formData.guardianName,
+        waiverAgreed,
+        referredByName: formData.referredByName,
       });
       if ('error' in result) {
         setIntentError(result.error);
       } else {
         setClientSecret(result.clientSecret);
-        setPaymentIntentId(result.paymentIntentId);
         setStep(3);
       }
     } catch (err) {
@@ -912,18 +985,20 @@ export function RegisterFlow() {
     } finally {
       setLoadingIntent(false);
     }
-  }, [raceType, bandanaColor, donationAmount, formData]);
+  };
 
   return (
     <div>
-      {step !== 4 && <StepIndicator step={step} />}
+      {step !== confirmationStep && <StepIndicator step={step} labels={stepLabels} />}
 
       {step === 1 && (
         <StepRaceSelection
           raceType={raceType}
           setRaceType={setRaceType}
           onNext={() => {
-            setDonationAmount(raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT);
+            const perAthlete =
+              raceType === 'fun-run' ? MIN_DONATION_FUN_RUN : MIN_DONATION_AMOUNT;
+            setDonationAmount(perAthlete * participantCount);
             setStep(2);
           }}
         />
@@ -939,8 +1014,11 @@ export function RegisterFlow() {
             setBandanaColor={setBandanaColor}
             donationAmount={donationAmount}
             setDonationAmount={setDonationAmount}
+            participantCount={participantCount}
+            setParticipantCount={setParticipantCount}
             waiverAgreed={waiverAgreed}
             setWaiverAgreed={setWaiverAgreed}
+            isComp={isComp}
             onNext={handleStep2ToStep3}
             onBack={() => setStep(1)}
             loading={loadingIntent}
@@ -953,29 +1031,27 @@ export function RegisterFlow() {
         </>
       )}
 
-      {step === 3 && clientSecret && paymentIntentId && (
+      {!isComp && step === 3 && clientSecret && (
         <StepPayment
           clientSecret={clientSecret}
-          paymentIntentId={paymentIntentId}
           raceType={raceType}
           formData={formData}
           donationAmount={donationAmount}
+          participantCount={participantCount}
           bandanaColor={bandanaColor}
-          onSuccess={(method) => {
-            setCompletedMethod(method);
-            setStep(4);
-          }}
+          onSuccess={() => setStep(4)}
           onBack={() => setStep(2)}
         />
       )}
 
-      {step === 4 && (
+      {step === confirmationStep && (
         <StepConfirmation
           raceType={raceType}
           formData={formData}
           donationAmount={donationAmount}
+          participantCount={participantCount}
           bandanaColor={bandanaColor}
-          method={completedMethod}
+          isComp={isComp}
         />
       )}
     </div>

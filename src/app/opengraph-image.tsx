@@ -1,9 +1,11 @@
 import { ImageResponse } from 'next/og';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { EVENT_DATE_DISPLAY, CHARITY_NAME } from '@/config/site';
+import {
+  EVENT_DATE_DISPLAY, CHARITY_NAME, MIN_DONATION_AMOUNT, MIN_DONATION_FUN_RUN,
+} from '@/config/site';
 
-export const alt = 'Race Against Cancers 2026 — 10K & Fun Run · Benefiting Intermountain Cancer Center Utah Valley';
+export const alt = `Race Against Cancers 2026 — 10K from $${MIN_DONATION_AMOUNT} & Family Fun Run from $${MIN_DONATION_FUN_RUN} · Benefiting Intermountain Cancer Center Utah Valley`;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -39,8 +41,13 @@ export default async function Image() {
           10K &amp; Fun Run · {EVENT_DATE_DISPLAY}
         </div>
 
+        {/* Entry donations — the Fun Run price gets missed, so it goes on the share card */}
+        <div style={{ display: 'flex', marginTop: '18px', fontFamily: 'sans-serif', fontSize: '22px', color: '#1C1719' }}>
+          10K from ${MIN_DONATION_AMOUNT} · Family Fun Run from ${MIN_DONATION_FUN_RUN}
+        </div>
+
         {/* Charity */}
-        <div style={{ display: 'flex', marginTop: '12px', fontFamily: 'sans-serif', fontSize: '18px', color: '#F0307A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+        <div style={{ display: 'flex', marginTop: '18px', fontFamily: 'sans-serif', fontSize: '18px', color: '#F0307A', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
           Benefiting {CHARITY_NAME}
         </div>
       </div>

@@ -3,6 +3,7 @@ import { faqs } from '@/data/faq';
 import { CONTACT_PHONE, CONTACT_EMAIL, REGISTRATION_OPEN } from '@/config/site';
 import Link from 'next/link';
 import { Phone, Mail } from 'lucide-react';
+import { RegistrationTeaser } from '@/components/ui/RegistrationTeaser';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -51,6 +52,7 @@ export default function FAQPage() {
           <Link href="/register" className="btn-primary">
             {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
           </Link>
+          <RegistrationTeaser className="mt-4" />
         </div>
       </div>
     </div>

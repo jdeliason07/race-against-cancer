@@ -31,7 +31,8 @@ export default function PrivacyPage() {
         <section>
           <h2 className="mb-4 font-display text-2xl uppercase text-ink">Information We Collect</h2>
           <div className="space-y-4 font-body text-base leading-relaxed text-ash">
-            <p><strong className="text-ink">Registration information:</strong> When you register for the race, we collect your name, email address, phone number, date of birth, and emergency contact details. This information is necessary to process your registration.</p>
+            <p><strong className="text-ink">Waitlist information:</strong> When you join the waitlist before registration opens, we collect your name, email address, and phone number so we can notify you by email or text message when registration goes live. You can ask us to remove you from the waitlist at any time.</p>
+            <p><strong className="text-ink">Registration information:</strong> When you register for the race, we collect your name, email address, phone number, date of birth, and emergency contact details. If the athlete is under 18 on race day, we also collect the name of the parent or legal guardian who accepts the waiver on their behalf. This information is necessary to process your registration.</p>
             <p><strong className="text-ink">Payment information:</strong> Payment is processed by Stripe, a third-party payment processor. We do not store your credit card number or financial details. Stripe&rsquo;s privacy policy governs how your payment data is handled: <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-pink hover:text-raspberry underline underline-offset-2">stripe.com/privacy</a>.</p>
             <p><strong className="text-ink">Usage data:</strong> We may collect basic analytics about how you use the site (pages visited, time on site). This data is aggregated and not tied to individuals.</p>
           </div>
@@ -42,6 +43,7 @@ export default function PrivacyPage() {
           <ul className="space-y-3 font-body text-base text-ash">
             {[
               'To process your race registration and donation.',
+              'To notify you by email or text message when registration opens, if you joined the waitlist.',
               'To send you race-day logistics, check-in reminders, and important updates about the event.',
               'To contact you if there is an emergency or issue with your registration.',
               'To communicate with your emergency contact if necessary on race day.',
@@ -59,12 +61,12 @@ export default function PrivacyPage() {
           <h2 className="mb-4 font-display text-2xl uppercase text-ink">Information Sharing</h2>
           <p className="font-body text-base leading-relaxed text-ash">
             We do not sell, rent, or share your personal information with third parties for
-            marketing purposes. We share your registration data only with:
+            marketing purposes. We share your information only with:
           </p>
           <ul className="mt-4 space-y-3 font-body text-base text-ash">
             {[
               `${CHARITY_NAME} — as needed to process your donation and issue receipts.`,
-              'Stripe — to process payment securely.',
+              'Stripe — our payment processor, which securely handles payments and stores our waitlist and registration records.',
               'Race logistics providers (timing company, check-in) — limited to name and bib information necessary for event operations.',
               'Law enforcement or legal authorities — only when required by law.',
             ].map((item, i) => (

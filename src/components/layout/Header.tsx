@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
 import { REGISTRATION_OPEN } from '@/config/site';
@@ -16,6 +17,11 @@ const navLinks = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // The organizer pages aren't selling anything, so the public call to action
+  // has no place there — and without it the wordmark centres.
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith('/admin') ?? false;
 
   // Close on outside click
   useEffect(() => {
@@ -34,7 +40,17 @@ export function Header() {
       <div className="bg-pink py-1.5" aria-hidden="true" />
 
       <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+        {/* On admin, a three-column grid with an empty first cell so the
+            wordmark is centred against the viewport, not against the menu. */}
+        <div
+          className={
+            isAdmin
+              ? 'mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4 py-4 sm:px-6'
+              : 'mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6'
+          }
+        >
+          {isAdmin && <span aria-hidden="true" />}
+
           <Link
             href="/"
             className="font-display text-base uppercase tracking-wide text-ink transition-colors hover:text-pink sm:text-lg"
@@ -44,10 +60,12 @@ export function Header() {
           </Link>
 
           {/* Register button + hamburger */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Link href="/register" className="btn-primary py-3 px-4 text-xs sm:px-5">
-              {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
-            </Link>
+          <div className={isAdmin ? 'flex items-center justify-end' : 'flex items-center gap-2 sm:gap-3'}>
+            {!isAdmin && (
+              <Link href="/register" className="btn-primary py-3 px-4 text-xs sm:px-5">
+                {REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist'}
+              </Link>
+            )}
 
             {/* Hamburger */}
             <div ref={menuRef} className="relative">

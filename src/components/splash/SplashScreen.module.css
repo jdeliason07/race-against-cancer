@@ -1,0 +1,389 @@
+/*
+ * Splash screen: a "breathing" white → gray → black diagonal gradient with a
+ * massive tri-color wordmark on top.
+ *
+ * Performance notes:
+ *  - Every animation drives `transform` only, so frames are composited on the
+ *    GPU: no layout, no repaint.
+ *  - The soft, undulating shoreline is not a filter. It is three very wide,
+ *    very soft gradient bands laid across the diagonal, each sliding on its
+ *    own coprime duration (37s/43s/67s). Because the periods never line up,
+ *    the composite edge takes ~30 hours to repeat.
+ */
+
+/* ---------------------------------------------------------------- shell -- */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  opacity: 1;
+  transition: opacity 2.5s ease-in-out;
+}
+
+/* Fading out. Pointer events are released immediately so the 2.5s fade never
+   sits on top of the landing page swallowing clicks. */
+.splash[data-phase='leaving'] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.splash[data-phase='gone'] {
+  display: none;
+}
+
+/* The landing page underneath, cross-fading in over the same 2.5s. */
+.content {
+  opacity: 0;
+  transition: opacity 2.5s ease-in-out;
+}
+
+.content[data-phase='leaving'],
+.content[data-phase='gone'] {
+  opacity: 1;
+}
+
+/* ----------------------------------------------------------- background -- */
+
+.stage {
+  position: absolute;
+  inset: 0;
+  contain: strict;
+
+  /*
+   * Corner-to-corner diagonal. `to bottom right` (rather than a fixed angle)
+   * keeps the top-left corner at exactly 0% and the bottom-right at exactly
+   * 100% at any aspect ratio.
+   *
+   * On a diagonal gradient the area covered by the first `t` of the axis is
+   * 2t². The ramp holds above #f2f2f2 out to ~15% of the axis, which is ~4.8%
+   * of the viewport, and the stops are an exact mirror about #808080 at 50%
+   * (246/9, 228/27, 207/48 … each pair sums to 255), so the black corner takes
+   * the same ~4.8% and neither end dominates. The ~90% in between is all
+   * mid-tone gray.
+   *
+   * Film grain is blended into this static layer rather than laid over the
+   * animation as its own element: a separate blend layer has to be
+   * recomposited every frame, whereas this is rasterised once. `overlay` is
+   * the blend mode that leaves 0 at 0 and 1 at 1, so the two pure corners
+   * survive it while the long gray ramp picks up enough tooth to stop 8-bit
+   * banding. The noise is pre-flattened to roughly 0.44–0.56 in the SVG so it
+   * reads as texture rather than as static — and the filter is pinned to sRGB,
+   * because SVG filters default to linearRGB, where a mid-gray of 0.5 lands at
+   * 0.73 once it is converted for display and the whole ramp washes out.
+   */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.12' intercept='0.44'/%3E%3CfeFuncG type='linear' slope='0.12' intercept='0.44'/%3E%3CfeFuncB type='linear' slope='0.12' intercept='0.44'/%3E%3CfeFuncA type='discrete' tableValues='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(
+      to bottom right,
+      #ffffff 0%,
+      #ffffff 9%,
+      #f6f6f6 14%,
+      #e4e4e4 20%,
+      #cfcfcf 28%,
+      #b6b6b6 36%,
+      #9d9d9d 43%,
+      #808080 50%,
+      #626262 57%,
+      #494949 64%,
+      #303030 72%,
+      #1b1b1b 80%,
+      #090909 86%,
+      #000000 91%,
+      #000000 100%
+    );
+  background-size: 300px 300px, cover;
+  background-blend-mode: overlay;
+}
+
+/*
+ * The bands are confined to the middle of the diagonal. Their influence fades
+ * out well before either corner, which is what keeps the pure-white and
+ * pure-black corners pure no matter where the shoreline has drifted to, and
+ * what keeps the movement inside the central half of the screen.
+ */
+.waves {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: linear-gradient(
+    to bottom right,
+    transparent 18%,
+    #000 34%,
+    #000 66%,
+    transparent 82%
+  );
+  mask-image: linear-gradient(
+    to bottom right,
+    transparent 18%,
+    #000 34%,
+    #000 66%,
+    transparent 82%
+  );
+}
+
+/*
+ * One band of the shoreline. Each is wider than the viewport and lies across
+ * the anti-diagonal, so its soft edges run parallel to the gradient's
+ * light/dark boundary. Sliding it on its local Y walks it up and down the
+ * white → black axis; sliding it on X shuffles which part of its soft edge is
+ * on screen, which is what makes the boundary wander instead of just pulsing.
+ *
+ * There are three of these rather than a band per tone, and each one carries
+ * two gradients instead of one. Stops inside a layer are rasterised once;
+ * layers are blended on every frame. Buying the complexity in stops keeps the
+ * overdraw down to three screens' worth per frame.
+ */
+.wave {
+  --ox: 0vmax;
+  --oy: 0vmax;
+  --w: 170vmax;
+  --h: 58vmax;
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--w);
+  height: var(--h);
+  margin-left: calc(var(--w) / -2 + var(--ox));
+  margin-top: calc(var(--h) / -2 + var(--oy));
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Light bands sit on the white side of centre, dark bands on the black side,
+   so the sweep stays inside the middle of the screen. */
+.w1 {
+  --ox: -13vmax;
+  --oy: -12vmax;
+  background-image:
+    radial-gradient(
+      ellipse 42% 60% at 32% 44%,
+      rgba(255, 255, 255, 0.18),
+      rgba(255, 255, 255, 0.09) 42%,
+      rgba(255, 255, 255, 0) 72%
+    ),
+    radial-gradient(
+      ellipse 34% 52% at 71% 58%,
+      rgba(255, 255, 255, 0.15),
+      rgba(255, 255, 255, 0.07) 46%,
+      rgba(255, 255, 255, 0) 74%
+    );
+  animation: waveA 43s ease-in-out -6s infinite;
+}
+
+/* The middle band is the one that reads as a shoreline: a tight light contour
+   and a tight dark contour running alongside each other, never resolving into
+   a hard line but definite enough to see. It also keeps the centre reading as
+   a deep gray transition rather than a light half meeting a dark half. */
+.w2 {
+  --h: 46vmax;
+  background-image:
+    radial-gradient(
+      ellipse 40% 58% at 68% 38%,
+      rgba(250, 250, 250, 0.18),
+      rgba(250, 250, 250, 0.14) 28%,
+      rgba(250, 250, 250, 0.05) 52%,
+      rgba(250, 250, 250, 0) 68%
+    ),
+    radial-gradient(
+      ellipse 38% 54% at 26% 64%,
+      rgba(16, 16, 16, 0.3),
+      rgba(16, 16, 16, 0.23) 28%,
+      rgba(16, 16, 16, 0.05) 52%,
+      rgba(16, 16, 16, 0) 68%
+    );
+  animation: waveB 37s ease-in-out -19s infinite;
+}
+
+.w3 {
+  --ox: 14vmax;
+  --oy: 13vmax;
+  background-image:
+    radial-gradient(
+      ellipse 40% 58% at 63% 56%,
+      rgba(0, 0, 0, 0.4),
+      rgba(0, 0, 0, 0.21) 42%,
+      rgba(0, 0, 0, 0) 72%
+    ),
+    radial-gradient(
+      ellipse 32% 50% at 28% 42%,
+      rgba(0, 0, 0, 0.32),
+      rgba(0, 0, 0, 0.15) 46%,
+      rgba(0, 0, 0, 0) 74%
+    );
+  animation: waveC 67s ease-in-out -31s infinite;
+}
+
+/* ------------------------------------------------------------- keyframes -- */
+
+/*
+ * Irregular waypoints (no even spacing) so the motion reads as drift rather
+ * than as a metronome. Rotation comes first, so the translate axes are the
+ * band's own: Y walks the white↔black diagonal, X slides along the shoreline.
+ *
+ * Translation and rotation only. A scale in here would change the layer's
+ * raster scale and force the gradients to be redrawn every frame; sliding a
+ * band that is already wider than the screen reads the same way and costs
+ * nothing but a composite.
+ */
+
+@keyframes waveA {
+  0% {
+    transform: rotate(-44deg) translate3d(-7%, -15%, 0);
+  }
+  21% {
+    transform: rotate(-41deg) translate3d(6%, -2%, 0);
+  }
+  43% {
+    transform: rotate(-47deg) translate3d(12%, 14%, 0);
+  }
+  62% {
+    transform: rotate(-43deg) translate3d(-2%, 4%, 0);
+  }
+  81% {
+    transform: rotate(-46deg) translate3d(-10%, -9%, 0);
+  }
+  100% {
+    transform: rotate(-44deg) translate3d(-7%, -15%, 0);
+  }
+}
+
+@keyframes waveB {
+  0% {
+    transform: rotate(-49deg) translate3d(8%, 12%, 0);
+  }
+  18% {
+    transform: rotate(-52deg) translate3d(-4%, -7%, 0);
+  }
+  39% {
+    transform: rotate(-46deg) translate3d(-13%, -17%, 0);
+  }
+  64% {
+    transform: rotate(-50deg) translate3d(2%, -1%, 0);
+  }
+  83% {
+    transform: rotate(-53deg) translate3d(13%, 9%, 0);
+  }
+  100% {
+    transform: rotate(-49deg) translate3d(8%, 12%, 0);
+  }
+}
+
+@keyframes waveC {
+  0% {
+    transform: rotate(-42deg) translate3d(-9%, 13%, 0);
+  }
+  27% {
+    transform: rotate(-38deg) translate3d(7%, -10%, 0);
+  }
+  48% {
+    transform: rotate(-45deg) translate3d(14%, 3%, 0);
+  }
+  71% {
+    transform: rotate(-40deg) translate3d(-1%, 16%, 0);
+  }
+  89% {
+    transform: rotate(-44deg) translate3d(-11%, -5%, 0);
+  }
+  100% {
+    transform: rotate(-42deg) translate3d(-9%, 13%, 0);
+  }
+}
+
+/* ------------------------------------------------------------------ logo -- */
+
+.logo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3vw;
+  pointer-events: none;
+}
+
+.wordmark {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0 0.13em;
+  max-width: 96vw;
+  margin: 0;
+  font-family: var(--font-anton), 'Arial Black', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+  font-size: clamp(3.4rem, 9vw, 12rem);
+  line-height: 0.94;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  animation: rise 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.wordmark > span {
+  white-space: nowrap;
+}
+
+/* Solid brand colours, each played against the part of the ramp it sits on.
+   The halos are the same tone as the surrounding background, so they read as
+   nothing at all — they exist only to hold contrast when the shoreline drifts
+   under a word. */
+.race {
+  color: #000000;
+  text-shadow: 0 0 0.4em rgba(255, 255, 255, 0.3);
+}
+
+.against {
+  color: #f0307a;
+  text-shadow: 0 0 0.34em rgba(0, 0, 0, 0.16);
+}
+
+.cancers {
+  color: #ffffff;
+  text-shadow: 0 0 0.4em rgba(0, 0, 0, 0.34);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.14em, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/*
+ * Narrow viewports: one line of three words would shrink the logo to nothing,
+ * so the words stack and cascade left → centre → right instead. That keeps
+ * each word enormous and still walks them down the white → black diagonal,
+ * so the colour logic holds.
+ */
+@media (max-width: 900px) {
+  .wordmark {
+    flex-direction: column;
+    align-items: stretch;
+    font-size: 24vw;
+    line-height: 0.88;
+    gap: 0;
+  }
+
+  .race {
+    align-self: flex-start;
+  }
+
+  .against {
+    align-self: center;
+  }
+
+  .cancers {
+    align-self: flex-end;
+  }
+}

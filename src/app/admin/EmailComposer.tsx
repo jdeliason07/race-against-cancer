@@ -5,9 +5,11 @@ import {
   sendCampaignToGroup,
   sendTestEmail,
   signOut,
-  syncWaitlistToGroup,
+  syncAudienceToGroup,
   type ActionResult,
+  type Audience,
 } from './actions';
+import { REGISTRATION_OPEN } from '@/config/site';
 import type { SenderGroup } from '@/lib/senderNet';
 
 const CONFIRM_WORD = 'SEND';
@@ -45,7 +47,7 @@ export function EmailComposer({ defaultEmail }: { defaultEmail: string }) {
   const [testEmail, setTestEmail] = useState(defaultEmail);
   const [confirmText, setConfirmText] = useState('');
 
-  const [busy, setBusy] = useState<'' | 'sync' | 'test' | 'send'>('');
+  const [busy, setBusy] = useState<'' | 'sync-waitlist' | 'sync-registered' | 'test' | 'send'>('');
   const [syncResult, setSyncResult] = useState<ActionResult | null>(null);
   const [testResult, setTestResult] = useState<ActionResult | null>(null);
   const [sendResult, setSendResult] = useState<ActionResult | null>(null);
@@ -65,10 +67,13 @@ export function EmailComposer({ defaultEmail }: { defaultEmail: string }) {
   const canSend =
     !!groupId && !!subject.trim() && !!body.trim() && confirmText.trim() === CONFIRM_WORD && !sent;
 
-  async function run(kind: 'sync' | 'test' | 'send') {
+  async function run(kind: 'sync-waitlist' | 'sync-registered' | 'test' | 'send') {
     setBusy(kind);
     try {
-      if (kind === 'sync') setSyncResult(await syncWaitlistToGroup(groupId));
+      if (kind === 'sync-waitlist' || kind === 'sync-registered') {
+        const audience: Audience = kind === 'sync-registered' ? 'registered' : 'waitlist';
+        setSyncResult(await syncAudienceToGroup(audience, groupId));
+      }
       if (kind === 'test') setTestResult(await sendTestEmail({ toEmail: testEmail, subject, body }));
       if (kind === 'send') {
         const result = await sendCampaignToGroup({ groupId, subject, body, preheader });
@@ -115,18 +120,33 @@ export function EmailComposer({ defaultEmail }: { defaultEmail: string }) {
 
             <div className="mt-4 rounded-card border border-line bg-mist p-4">
               <p className="font-body text-sm text-ash">
-                Waitlist signups live in Stripe. Copy them into the selected group before your
-                first send — Sender handles unsubscribes, so it has to be the list you send from.
-                Re-running is safe; existing subscribers are updated, not duplicated.
+                People live in Stripe. Copy them into the selected group before your first send —
+                Sender handles unsubscribes, so it has to be the list you send from. Re-running is
+                safe; nobody is duplicated.
               </p>
-              <button
-                type="button"
-                onClick={() => run('sync')}
-                disabled={!groupId || busy !== ''}
-                className="btn-ghost mt-3 disabled:opacity-40"
-              >
-                {busy === 'sync' ? 'Syncing…' : 'Sync waitlist into this group'}
-              </button>
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => run('sync-waitlist')}
+                  disabled={!groupId || busy !== ''}
+                  className="btn-ghost disabled:opacity-40"
+                >
+                  {busy === 'sync-waitlist' ? 'Syncing…' : 'Sync waitlist'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => run('sync-registered')}
+                  disabled={!groupId || busy !== ''}
+                  className="btn-ghost disabled:opacity-40"
+                >
+                  {busy === 'sync-registered' ? 'Syncing…' : 'Sync registrations'}
+                </button>
+              </div>
+              <p className="mt-2 font-body text-xs text-ash">
+                {REGISTRATION_OPEN
+                  ? 'Pick the group that matches — waitlist people and registrants are different lists.'
+                  : 'Registrations will be empty until registration opens. Sync them into your Registered group then.'}
+              </p>
               <Notice result={syncResult} />
             </div>
           </>

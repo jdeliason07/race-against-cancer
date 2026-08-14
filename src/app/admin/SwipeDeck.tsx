@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * Two full-width panes on one horizontal scroller.
@@ -7,10 +7,21 @@ import { useEffect, useRef, useState } from 'react';
  * Native CSS scroll-snap does the work — it inherits the platform's own
  * momentum and rubber-banding, which is what makes a swipe feel right on iOS.
  * A JS-driven transform never quite matches it.
+ *
+ * The scroller's height tracks the pane you're actually on. Left to itself a
+ * flex row is as tall as its tallest child, which hangs a screen of empty space
+ * under the shorter pane.
  */
 export function SwipeDeck({ panes }: { panes: Array<{ key: string; node: React.ReactNode }> }) {
   const scroller = useRef<HTMLDivElement>(null);
+  const paneRefs = useRef<Array<HTMLElement | null>>([]);
   const [active, setActive] = useState(0);
+  const [height, setHeight] = useState<number | undefined>(undefined);
+
+  const measure = useCallback((index: number) => {
+    const pane = paneRefs.current[index];
+    if (pane) setHeight(pane.offsetHeight);
+  }, []);
 
   useEffect(() => {
     const el = scroller.current;
@@ -21,7 +32,9 @@ export function SwipeDeck({ panes }: { panes: Array<{ key: string; node: React.R
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const index = Math.round(el.scrollLeft / el.clientWidth);
-        setActive(Math.max(0, Math.min(panes.length - 1, index)));
+        const clamped = Math.max(0, Math.min(panes.length - 1, index));
+        setActive(clamped);
+        measure(clamped);
       });
     };
 
@@ -30,7 +43,15 @@ export function SwipeDeck({ panes }: { panes: Array<{ key: string; node: React.R
       cancelAnimationFrame(frame);
       el.removeEventListener('scroll', onScroll);
     };
-  }, [panes.length]);
+  }, [panes.length, measure]);
+
+  // Panels stream in behind Suspense and the composer grows as it is used, so
+  // remeasure whenever a pane's own height changes rather than only on scroll.
+  useEffect(() => {
+    const observer = new ResizeObserver(() => measure(active));
+    paneRefs.current.forEach((pane) => pane && observer.observe(pane));
+    return () => observer.disconnect();
+  }, [active, measure]);
 
   function goTo(index: number) {
     const el = scroller.current;
@@ -42,15 +63,22 @@ export function SwipeDeck({ panes }: { panes: Array<{ key: string; node: React.R
     <div className="relative">
       <div
         ref={scroller}
-        // snap-mandatory keeps a pane from being left half-shown; overscroll
-        // containment stops a horizontal flick turning into a browser back
-        // gesture halfway through.
-        className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ scrollBehavior: 'smooth' }}
+        // items-start stops the short pane being stretched to the tall one;
+        // overscroll containment keeps a horizontal flick from turning into a
+        // browser back gesture halfway through.
+        className="flex snap-x snap-mandatory items-start overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{
+          scrollBehavior: 'smooth',
+          height,
+          transition: 'height 250ms ease',
+        }}
       >
-        {panes.map(({ key, node }) => (
+        {panes.map(({ key, node }, i) => (
           <section
             key={key}
+            ref={(el) => {
+              paneRefs.current[i] = el;
+            }}
             className="w-full shrink-0 snap-start snap-always"
             aria-roledescription="slide"
           >

@@ -9,7 +9,6 @@ import {
   type ActionResult,
   type Audience,
 } from './actions';
-import { REGISTRATION_OPEN } from '@/config/site';
 import type { SenderGroup } from '@/lib/senderNet';
 
 const CONFIRM_WORD = 'SEND';
@@ -118,37 +117,25 @@ export function EmailComposer({ defaultEmail }: { defaultEmail: string }) {
               ))}
             </select>
 
-            <div className="mt-4 rounded-card border border-line bg-mist p-4">
-              <p className="font-body text-sm text-ash">
-                People live in Stripe. Copy them into the selected group before your first send —
-                Sender handles unsubscribes, so it has to be the list you send from. Re-running is
-                safe; nobody is duplicated.
-              </p>
-              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                <button
-                  type="button"
-                  onClick={() => run('sync-waitlist')}
-                  disabled={!groupId || busy !== ''}
-                  className="btn-ghost disabled:opacity-40"
-                >
-                  {busy === 'sync-waitlist' ? 'Syncing…' : 'Sync waitlist'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => run('sync-registered')}
-                  disabled={!groupId || busy !== ''}
-                  className="btn-ghost disabled:opacity-40"
-                >
-                  {busy === 'sync-registered' ? 'Syncing…' : 'Sync registrations'}
-                </button>
-              </div>
-              <p className="mt-2 font-body text-xs text-ash">
-                {REGISTRATION_OPEN
-                  ? 'Pick the group that matches — waitlist people and registrants are different lists.'
-                  : 'Registrations will be empty until registration opens. Sync them into your Registered group then.'}
-              </p>
-              <Notice result={syncResult} />
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => run('sync-waitlist')}
+                disabled={!groupId || busy !== ''}
+                className="btn-ghost disabled:opacity-40"
+              >
+                {busy === 'sync-waitlist' ? 'Syncing…' : 'Sync waitlist'}
+              </button>
+              <button
+                type="button"
+                onClick={() => run('sync-registered')}
+                disabled={!groupId || busy !== ''}
+                className="btn-ghost disabled:opacity-40"
+              >
+                {busy === 'sync-registered' ? 'Syncing…' : 'Sync registrations'}
+              </button>
             </div>
+            <Notice result={syncResult} />
           </>
         )}
       </section>

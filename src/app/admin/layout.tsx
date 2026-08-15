@@ -6,6 +6,10 @@ import { PaneHeader } from './PaneHeader';
 export const metadata: Metadata = {
   title: 'Organizer',
   robots: { index: false, follow: false, nocache: true },
+  // Added to an iPhone home screen this labels the tile "Organizer" rather than
+  // the full page title, and launches it without browser chrome — the console
+  // carries its own header per pane, so it has no use for the address bar.
+  appleWebApp: { title: 'Organizer', statusBarStyle: 'default' },
 };
 
 // Reads a cookie, so every admin page renders per request.

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
-import { REGISTRATION_OPEN } from '@/config/site';
+import { REGISTRATION_OPEN, REGISTRATION_OPENS_DATE } from '@/config/site';
 
 const navLinks = [
   { href: '/register', label: REGISTRATION_OPEN ? 'Register' : 'Join the Waitlist' },
@@ -23,6 +23,10 @@ export function Header() {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin') ?? false;
 
+  // Nothing to announce once registration is live, and the organizer pages
+  // aren't being sold to either.
+  const announceOpening = !isAdmin && !REGISTRATION_OPEN && REGISTRATION_OPENS_DATE !== '';
+
   // Close on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -36,8 +40,21 @@ export function Header() {
 
   return (
     <>
-      {/* Thin decorative pink bar */}
-      <div className="bg-pink py-1.5" aria-hidden="true" />
+      {/* The pink bar doubles as the announcement slot: once a date is set in
+          site.ts it carries the opening date on every public page, and it goes
+          back to being decorative the day registration opens. */}
+      {announceOpening ? (
+        <div className="bg-pink">
+          <p className="mx-auto max-w-7xl px-4 py-2 text-center font-body text-xs font-bold uppercase tracking-widest text-white sm:px-6">
+            Registration opens {REGISTRATION_OPENS_DATE} —{' '}
+            <Link href="/register" className="underline underline-offset-2 hover:text-blush">
+              join the waitlist
+            </Link>
+          </p>
+        </div>
+      ) : (
+        <div className="bg-pink py-1.5" aria-hidden="true" />
+      )}
 
       <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur-sm">
         {/* On admin, a three-column grid with an empty first cell so the

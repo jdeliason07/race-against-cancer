@@ -39,7 +39,10 @@ export const COURSE_GPX_URL          = "";
 // while the date is undecided and the page reads "Registration opens soon";
 // set it (e.g. 'October 1, 2026') to announce a date.
 export const REGISTRATION_OPEN       = false;
-export const REGISTRATION_OPENS_DATE = '';
+// Annotated as `string` so setting or clearing the date stays a one-word edit
+// — without it TypeScript narrows to this exact literal and the checks that
+// ask "is a date set?" become type errors.
+export const REGISTRATION_OPENS_DATE: string = 'September 15, 2026';
 // Reads "opens soon" until a date is set, then the date itself.
 export const REGISTRATION_OPENS_LABEL = REGISTRATION_OPENS_DATE || 'soon';
 

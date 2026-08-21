@@ -24,7 +24,7 @@ export const faqs: FAQItem[] = [
   ...(REFERRAL_ENABLED
     ? [{
         question: "How does the referral reward work?",
-        answer: `Tell your friends to put your full name in the "Who referred you?" box when they register. Every friend who registers and names you earns you a ${REFERRAL_REWARD}. There's no cap — refer ten friends, get ten gift cards. Referrals count once your friend's registration is paid, and we'll be in touch about getting your cards to you.`,
+        answer: `Tell your friends to put your full name in the "Who referred you?" box when they register. Every friend who registers and names you earns you a ${REFERRAL_REWARD}. There's no cap — refer ten friends, get ten gift cards. Referrals count once your friend's registration is paid, and we will reach out to you for delivery of your gift card.`,
       }]
     : []),
   {

@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { CONTACT_EMAIL, REGISTRATION_OPEN } from '@/config/site';
+import { CONTACT_EMAIL, REFERRAL_ENABLED, REFERRAL_REWARD, REGISTRATION_OPEN } from '@/config/site';
 import { getStripe } from '@/lib/stripeRegistration';
 import { buildAdminStats, SERIES_DAYS, type PersonRow } from '@/lib/adminStats';
 import { buildReferralReport } from '@/lib/referralReport';
@@ -77,11 +77,20 @@ async function StripePanels() {
   if (!stripe) return <p className="font-body text-sm text-ash">Stripe is not configured.</p>;
 
   let stats;
-  let referrals;
+  // A referral failure shouldn't take the whole dashboard down, but it must
+  // not look like "no referrals" either — so the failure is carried as a value
+  // alongside the report rather than thrown away.
+  let referral;
   try {
-    [stats, referrals] = await Promise.all([
+    [stats, referral] = await Promise.all([
       buildAdminStats(stripe),
-      buildReferralReport(stripe).catch(() => null),
+      buildReferralReport(stripe).then(
+        (report) => ({ report, error: null as string | null }),
+        (err: unknown) => ({
+          report: null,
+          error: err instanceof Error ? err.message : 'Unknown error',
+        }),
+      ),
     ]);
   } catch (err) {
     return (
@@ -160,21 +169,45 @@ async function StripePanels() {
         </Panel>
       )}
 
-      {referrals && referrals.rows.length > 0 && (
+      {REFERRAL_ENABLED && (
         <Panel title="Referrals">
-          <ul className="divide-y divide-line rounded-card border border-line">
-            {referrals.rows.slice(0, 8).map((row) => (
-              <li key={row.name} className="flex items-baseline justify-between gap-4 px-4 py-3">
-                <span className="font-body text-sm font-bold text-ink">{row.name}</span>
-                <span className="font-body text-xs text-ash">
-                  {row.newCount} this week · {row.totalCount} total
-                </span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-2 font-body text-xs text-ash">
-            Names are typed by registrants and aren&rsquo;t verified.
-          </p>
+          {referral.error ? (
+            <p className="rounded-card border border-red-200 bg-red-50 px-4 py-3 font-body text-sm text-red-700">
+              Could not load referrals: {referral.error}
+            </p>
+          ) : referral.report && referral.report.rows.length > 0 ? (
+            <>
+              <ul className="divide-y divide-line rounded-card border border-line">
+                {referral.report.rows.slice(0, 8).map((row) => (
+                  <li
+                    key={row.name}
+                    className="flex items-baseline justify-between gap-4 px-4 py-3"
+                  >
+                    <span className="font-body text-sm font-bold text-ink">{row.name}</span>
+                    <span className="font-body text-xs text-ash">
+                      {row.newCount} this week · {row.totalCount} total
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 font-body text-xs text-ash">
+                Names are typed by registrants and aren&rsquo;t verified. Each one is worth a{' '}
+                {REFERRAL_REWARD}.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-body text-sm text-ash">
+                No referrals recorded yet.{' '}
+                {!REGISTRATION_OPEN && 'Nobody can refer anyone until registration opens.'}
+              </p>
+              <p className="mt-2 font-body text-xs text-ash">
+                A referral is recorded when a paid registration names someone in the &ldquo;Who
+                referred you?&rdquo; box — so this stays empty until the Stripe webhook is
+                delivering <code>payment_intent.succeeded</code>.
+              </p>
+            </>
+          )}
         </Panel>
       )}
     </>

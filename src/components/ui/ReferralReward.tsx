@@ -5,6 +5,8 @@ import {
   REFERRAL_REWARD,
   REFERRAL_REWARD_LOGO,
   REFERRAL_REWARD_LOGO_ALT,
+  REFERRAL_REWARD_LOGO_HEIGHT,
+  REFERRAL_REWARD_LOGO_WIDTH,
   REGISTRATION_OPEN,
 } from '@/config/site';
 import { cn } from '@/lib/utils';
@@ -19,30 +21,23 @@ import { cn } from '@/lib/utils';
  */
 
 /**
- * The sponsor mark. Rendered `unoptimized` because the asset is an SVG, and
- * boxed in white so a logo with its own light background still sits cleanly on
- * a tinted card. Renders nothing when REFERRAL_REWARD_LOGO is "".
+ * The sponsor mark. Sized by the caller through `className` (a width utility)
+ * — the intrinsic dimensions from config are what Next.js uses to reserve
+ * space and pick a srcset, not the size it's drawn at. Renders nothing when
+ * REFERRAL_REWARD_LOGO is "".
  */
-function RewardLogo({ className, width }: { className?: string; width: number }) {
+function RewardLogo({ className }: { className?: string }) {
   if (!REFERRAL_REWARD_LOGO) return null;
 
   return (
-    <span
-      className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-card bg-white p-3 ring-1 ring-line',
-        className,
-      )}
-    >
-      <Image
-        src={REFERRAL_REWARD_LOGO}
-        alt={REFERRAL_REWARD_LOGO_ALT}
-        width={width}
-        height={Math.round((width * 124) / 320)}
-        className="h-auto w-auto object-contain"
-        style={{ maxWidth: width }}
-        unoptimized
-      />
-    </span>
+    <Image
+      src={REFERRAL_REWARD_LOGO}
+      alt={REFERRAL_REWARD_LOGO_ALT}
+      width={REFERRAL_REWARD_LOGO_WIDTH}
+      height={REFERRAL_REWARD_LOGO_HEIGHT}
+      sizes="(min-width: 768px) 128px, 96px"
+      className={cn('h-auto shrink-0 object-contain', className)}
+    />
   );
 }
 
@@ -62,7 +57,7 @@ export function ReferralRewardCallout({
   return (
     <div className={cn('rounded-card border-2 border-petal bg-mist p-5', className)}>
       <div className="mb-3 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
-        <RewardLogo width={104} />
+        <RewardLogo className="w-24" />
         <div>
           <p className="font-display text-lg uppercase leading-tight text-ink">
             Get your friend a {REFERRAL_REWARD}
@@ -79,7 +74,7 @@ export function ReferralRewardCallout({
 
 /**
  * Home page announcement. The copy adapts to the registration gate so it reads
- * correctly both while the waitlist is up and once registration is live.
+ * correctly both while the waitlist is up and once registration goes live.
  */
 export function ReferralAnnouncement({ className }: { className?: string }) {
   if (!REFERRAL_ENABLED) return null;
@@ -90,7 +85,7 @@ export function ReferralAnnouncement({ className }: { className?: string }) {
       className={cn('rounded-card border-2 border-petal bg-paper p-8 md:p-10', className)}
     >
       <div className="flex flex-col items-center gap-6 text-center md:flex-row md:gap-8 md:text-left">
-        <RewardLogo width={132} className="p-4" />
+        <RewardLogo className="w-24 md:w-32" />
         <div className="flex-1">
           <span className="section-label">Refer a friend</span>
           <h2

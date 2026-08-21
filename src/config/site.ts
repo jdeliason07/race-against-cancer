@@ -65,10 +65,14 @@ export const REFERRAL_ENABLED = REFERRAL_REWARD !== "";
 // announcement. Set to "" to show those without a logo — do that if you ever
 // change REFERRAL_REWARD to a reward from a different brand, so the artwork
 // never advertises a brand that isn't the one funding the reward.
-// NOTE: /images/in-n-out-logo.svg is currently a PLACEHOLDER. Replace that
-// file with the official asset supplied by the brand; keep the path the same.
-export const REFERRAL_REWARD_LOGO: string = "/images/in-n-out-logo.svg";
+// WIDTH/HEIGHT are the pixel size of the file itself, which Next.js needs to
+// reserve the right space. Swapping in a differently shaped logo only needs
+// these two numbers updated — it's drawn with object-contain, so a stale ratio
+// letterboxes rather than stretching the artwork.
+export const REFERRAL_REWARD_LOGO: string = "/images/in-n-out-logo.png";
 export const REFERRAL_REWARD_LOGO_ALT = "In-N-Out Burger";
+export const REFERRAL_REWARD_LOGO_WIDTH = 512;
+export const REFERRAL_REWARD_LOGO_HEIGHT = 512;
 
 // --- CHECK-IN -----------------------------------------------
 export const CHECK_IN_DATE     = "Saturday, November 7, 2026";

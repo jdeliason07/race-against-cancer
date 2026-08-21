@@ -8,6 +8,7 @@ import {
 } from '@/config/site';
 import { getDonationTotal } from '@/lib/getDonationTotal';
 import { RegistrationTeaser } from '@/components/ui/RegistrationTeaser';
+import { ReferralAnnouncement } from '@/components/ui/ReferralReward';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -145,6 +146,13 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* REFERRAL INCENTIVE — continues the blush band under "How it works" */}
+      <div className="bg-blush pb-16">
+        <div className="mx-auto max-w-7xl px-6">
+          <ReferralAnnouncement />
+        </div>
+      </div>
 
       {/* EVENT FACTS */}
       <section className="bg-paper py-20">

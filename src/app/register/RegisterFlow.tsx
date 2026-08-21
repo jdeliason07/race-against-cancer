@@ -20,8 +20,8 @@ import {
   TEN_K_LABEL,
   FUN_RUN_LABEL,
   REFERRAL_ENABLED,
-  REFERRAL_REWARD,
 } from '@/config/site';
+import { ReferralRewardCallout } from '@/components/ui/ReferralReward';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -433,14 +433,10 @@ function StepAthleteInfo({
       )}
 
       {REFERRAL_ENABLED && !isComp && (
-        <div className="mb-6">
+        <ReferralRewardCallout className="mb-6">
           <label htmlFor="referredByName" className={labelClass}>
             Who referred you? <span className="font-normal normal-case tracking-normal">(optional)</span>
           </label>
-          <p className="mb-2 font-body text-sm text-ash">
-            If a friend told you about the race, enter their full name and we&rsquo;ll send them a{' '}
-            {REFERRAL_REWARD}.
-          </p>
           <input
             id="referredByName"
             type="text"
@@ -449,8 +445,13 @@ function StepAthleteInfo({
             className={inputClass}
             autoComplete="off"
             placeholder="First and last name"
+            aria-describedby="referredByName-help"
           />
-        </div>
+          <p id="referredByName-help" className="mt-2 font-body text-xs text-ash">
+            Their full name, spelled the way they&rsquo;d spell it — that&rsquo;s how we match the
+            reward to the right person.
+          </p>
+        </ReferralRewardCallout>
       )}
 
       {/* Bandana color */}

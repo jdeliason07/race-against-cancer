@@ -61,6 +61,14 @@ export const FUN_RUN_LABEL         = "Fun Run (~2 mi)";
 // Set REFERRAL_REWARD to "" to switch the whole program off site-wide.
 export const REFERRAL_REWARD: string = "$10 In-N-Out gift card";
 export const REFERRAL_ENABLED = REFERRAL_REWARD !== "";
+// Logo shown on the referral callout at checkout and in the homepage
+// announcement. Set to "" to show those without a logo — do that if you ever
+// change REFERRAL_REWARD to a reward from a different brand, so the artwork
+// never advertises a brand that isn't the one funding the reward.
+// NOTE: /images/in-n-out-logo.svg is currently a PLACEHOLDER. Replace that
+// file with the official asset supplied by the brand; keep the path the same.
+export const REFERRAL_REWARD_LOGO: string = "/images/in-n-out-logo.svg";
+export const REFERRAL_REWARD_LOGO_ALT = "In-N-Out Burger";
 
 // --- CHECK-IN -----------------------------------------------
 export const CHECK_IN_DATE     = "Saturday, November 7, 2026";

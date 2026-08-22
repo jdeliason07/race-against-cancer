@@ -90,9 +90,20 @@ export async function isSignedIn(): Promise<boolean> {
   return safeEqual(signature, sign(expiresAt, key));
 }
 
-/** Throws unless the caller holds a valid session. Every admin server action
- *  calls this first — the page-level check doesn't protect the actions, which
- *  are reachable by direct POST. */
-export async function requireAdmin(): Promise<void> {
-  if (!(await isSignedIn())) throw new Error('Not authorized.');
+/** What the composer shows when the session has lapsed under it. */
+export const SESSION_EXPIRED = 'Your session has expired. Reload the page and sign in again.';
+
+/**
+ * Refuses the caller unless they hold a valid session. Every admin server
+ * action calls this first — the page-level check doesn't protect the actions,
+ * which are reachable by direct POST.
+ *
+ * It returns the refusal instead of throwing: a thrown server action rejects
+ * the client promise, and in production Next.js replaces the message with an
+ * opaque digest, so the composer had no way to tell "session expired" from
+ * "nothing happened" and its buttons simply went dead. Returning it makes the
+ * refusal a normal result the UI can show.
+ */
+export async function denyUnlessAdmin(): Promise<{ error: string } | null> {
+  return (await isSignedIn()) ? null : { error: SESSION_EXPIRED };
 }

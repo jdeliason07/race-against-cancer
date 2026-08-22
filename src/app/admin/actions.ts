@@ -1,6 +1,6 @@
 'use server';
 import { CONTACT_EMAIL, EVENT_NAME, ORG_NAME } from '@/config/site';
-import { checkPassword, endSession, requireAdmin, startSession } from '@/lib/adminAuth';
+import { checkPassword, denyUnlessAdmin, endSession, startSession } from '@/lib/adminAuth';
 import { getStripe, WAITLIST_SOURCE } from '@/lib/stripeRegistration';
 import {
   createCampaign,
@@ -28,7 +28,8 @@ export async function signOut(): Promise<void> {
 }
 
 export async function fetchGroups(): Promise<{ groups: SenderGroup[] } | { error: string }> {
-  await requireAdmin();
+  const denied = await denyUnlessAdmin();
+  if (denied) return denied;
   if (!isSenderConfigured()) return { error: 'SENDER_API_TOKEN is not set.' };
   try {
     return { groups: await listGroups() };
@@ -50,7 +51,8 @@ export async function syncAudienceToGroup(
   audience: Audience,
   groupId: string,
 ): Promise<ActionResult> {
-  await requireAdmin();
+  const denied = await denyUnlessAdmin();
+  if (denied) return denied;
   if (!isSenderConfigured()) return { error: 'SENDER_API_TOKEN is not set.' };
   if (!groupId) return { error: 'Choose a group to sync into.' };
 
@@ -186,7 +188,8 @@ export async function sendTestEmail(data: {
   subject: string;
   body: string;
 }): Promise<ActionResult> {
-  await requireAdmin();
+  const denied = await denyUnlessAdmin();
+  if (denied) return denied;
   if (!isSenderConfigured()) return { error: 'SENDER_API_TOKEN is not set.' };
   if (!data.toEmail.trim()) return { error: 'Enter an email address to send the test to.' };
   if (!data.subject.trim() || !data.body.trim()) {
@@ -218,7 +221,8 @@ export async function sendCampaignToGroup(data: {
   body: string;
   preheader: string;
 }): Promise<ActionResult> {
-  await requireAdmin();
+  const denied = await denyUnlessAdmin();
+  if (denied) return denied;
   if (!isSenderConfigured()) return { error: 'SENDER_API_TOKEN is not set.' };
   if (!data.groupId) return { error: 'Choose a group to send to.' };
   if (!data.subject.trim()) return { error: 'Enter a subject line.' };

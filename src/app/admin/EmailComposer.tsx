@@ -17,6 +17,18 @@ const inputClass =
   'w-full rounded-card border border-line bg-paper px-4 py-3 font-body text-sm text-ink focus:border-pink focus:outline-none';
 const labelClass = 'mb-1 block font-body text-xs font-bold uppercase tracking-widest text-ash';
 
+/**
+ * A server action can reject rather than return: a redeploy invalidates the
+ * action ids this page was rendered with, the phone drops its connection, the
+ * session lapses. Production strips the real message and leaves a digest, so
+ * this says what to do instead of what broke — anything is better than the
+ * silent nothing that made these buttons look dead.
+ */
+function failureMessage(err: unknown): string {
+  const detail = err instanceof Error ? err.message : String(err);
+  return `That didn't reach the server. Reload the page and sign in again if it asks. (${detail})`;
+}
+
 function Notice({ result }: { result: ActionResult | null }) {
   if (!result) return null;
   const isError = 'error' in result;
@@ -53,20 +65,38 @@ export function EmailComposer({ defaultEmail }: { defaultEmail: string }) {
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
-    fetchGroups().then((result) => {
-      if ('error' in result) setGroupsError(result.error);
-      else {
-        setGroups(result.groups);
-        if (result.groups.length === 1) setGroupId(result.groups[0].id);
-      }
-    });
+    fetchGroups()
+      .then((result) => {
+        if ('error' in result) setGroupsError(result.error);
+        else {
+          setGroups(result.groups);
+          if (result.groups.length === 1) setGroupId(result.groups[0].id);
+        }
+      })
+      .catch((err) => setGroupsError(failureMessage(err)));
   }, []);
 
   const selectedGroup = groups.find((g) => g.id === groupId);
-  const canSend =
-    !!groupId && !!subject.trim() && !!body.trim() && confirmText.trim() === CONFIRM_WORD && !sent;
+  // Case-insensitive: iOS capitalises the first letter of a text field for you,
+  // so a typed confirmation arrives as "Send" and the button silently refuses.
+  const confirmed = confirmText.trim().toUpperCase() === CONFIRM_WORD;
+  const canSend = !!groupId && !!subject.trim() && !!body.trim() && confirmed && !sent;
+
+  // A disabled button with no explanation is indistinguishable from a broken
+  // one — which is exactly how this read when the group list failed to load.
+  const sendBlocker = sent
+    ? ''
+    : !groupId
+      ? 'Pick a group in step 1 first.'
+      : !subject.trim() || !body.trim()
+        ? 'Add a subject and a message in step 2 first.'
+        : !confirmed
+          ? `Type ${CONFIRM_WORD} above to unlock this.`
+          : '';
 
   async function run(kind: 'sync-waitlist' | 'sync-registered' | 'test' | 'send') {
+    const report =
+      kind === 'test' ? setTestResult : kind === 'send' ? setSendResult : setSyncResult;
     setBusy(kind);
     try {
       if (kind === 'sync-waitlist' || kind === 'sync-registered') {
@@ -82,6 +112,8 @@ export function EmailComposer({ defaultEmail }: { defaultEmail: string }) {
           setConfirmText('');
         }
       }
+    } catch (err) {
+      report({ error: failureMessage(err) });
     } finally {
       setBusy('');
     }
@@ -232,6 +264,9 @@ export function EmailComposer({ defaultEmail }: { defaultEmail: string }) {
             onChange={(e) => setConfirmText(e.target.value)}
             className={inputClass + ' bg-white'}
             autoComplete="off"
+            autoCapitalize="characters"
+            autoCorrect="off"
+            spellCheck={false}
             placeholder={CONFIRM_WORD}
           />
 
@@ -247,6 +282,9 @@ export function EmailComposer({ defaultEmail }: { defaultEmail: string }) {
                 ? 'Sent'
                 : `Send to ${selectedGroup?.recipientCount ?? 0} subscribers`}
           </button>
+          {sendBlocker && (
+            <p className="mt-2 text-center font-body text-xs text-ash">{sendBlocker}</p>
+          )}
           <Notice result={sendResult} />
         </div>
       </section>

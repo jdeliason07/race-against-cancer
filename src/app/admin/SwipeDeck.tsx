@@ -113,9 +113,15 @@ export function SwipeDeck({ panes }: { panes: Array<{ key: string; node: React.R
       </div>
 
       {/* Dots: the affordance that says "there's another page", and a tap target
-          for anyone who doesn't think to swipe. */}
-      <div className="sticky bottom-4 z-10 mt-2 flex justify-center gap-2">
-        <div className="flex gap-2 rounded-pill border border-line bg-paper/90 px-3 py-2 shadow-sm backdrop-blur">
+          for anyone who doesn't think to swipe.
+
+          The wrapper is full-width and sticks above the bottom of the viewport,
+          so without `pointer-events-none` it is an invisible bar that eats every
+          tap landing in that band — which is where a thumb naturally reaches,
+          and why the composer's buttons down there read as dead. Only the pill
+          itself takes pointer events back. */}
+      <div className="pointer-events-none sticky bottom-4 z-10 mt-2 flex justify-center gap-2">
+        <div className="pointer-events-auto flex gap-2 rounded-pill border border-line bg-paper/90 px-3 py-2 shadow-sm backdrop-blur">
           {panes.map(({ key }, i) => (
             <button
               key={key}

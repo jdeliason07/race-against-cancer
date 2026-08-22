@@ -165,9 +165,37 @@ export async function syncAudienceToGroup(
   }
 }
 
+const FOOTER_STYLE =
+  'margin:32px 0 0;padding-top:16px;border-top:1px solid #ECE2E6;font-size:13px;line-height:1.5;color:#6E5C64;';
+
+/**
+ * Sender refuses to send a campaign whose HTML has no unsubscribe link. The
+ * campaign is created happily and then POST /campaigns/<id>/send comes back
+ * 403 naming the anchor it wants, so the anchor goes in exactly as they print
+ * it — no style attribute, no reworded label — because the check looks for
+ * that literal snippet.
+ */
+const CAMPAIGN_FOOTER = `<p style="${FOOTER_STYLE}">
+${ORG_NAME} · ${EVENT_NAME}<br />
+<a href="{{unsubscribe_link}}">{{unsubscribe_text}}</a>
+</p>`;
+
+/**
+ * The same footer for a test send, with the placeholders spelled out instead.
+ *
+ * Test sends go through the transactional endpoint, which doesn't substitute
+ * them — a real `{{unsubscribe_link}}` would reach the inbox as raw braces.
+ * This keeps the test a fair preview of the layout without pretending the link
+ * is live.
+ */
+const PREVIEW_FOOTER = `<p style="${FOOTER_STYLE}">
+${ORG_NAME} · ${EVENT_NAME}<br />
+<em>The unsubscribe link goes here in the real send.</em>
+</p>`;
+
 /** Plain text in, simple HTML out — so the composer stays a textarea and
  *  nobody has to hand-write markup. */
-function toHtml(body: string): string {
+function toHtml(body: string, footer: 'campaign' | 'preview'): string {
   const escape = (value: string) =>
     value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -180,6 +208,7 @@ function toHtml(body: string): string {
 
   return `<div style="font-family:system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;color:#1C1719;max-width:600px;">
 ${paragraphs}
+${footer === 'campaign' ? CAMPAIGN_FOOTER : PREVIEW_FOOTER}
 </div>`;
 }
 
@@ -202,7 +231,7 @@ export async function sendTestEmail(data: {
       fromEmail: process.env.SENDER_FROM_EMAIL?.trim() || CONTACT_EMAIL,
       fromName: ORG_NAME,
       subject: `[TEST] ${data.subject.trim()}`,
-      html: toHtml(data.body),
+      html: toHtml(data.body, 'preview'),
       text: data.body,
     });
     return { ok: true, message: `Test sent to ${data.toEmail.trim()}.` };
@@ -228,23 +257,35 @@ export async function sendCampaignToGroup(data: {
   if (!data.subject.trim()) return { error: 'Enter a subject line.' };
   if (!data.body.trim()) return { error: 'Write a message before sending.' };
 
+  let campaignId: string;
   try {
-    const campaignId = await createCampaign({
+    campaignId = await createCampaign({
       title: `${data.subject.trim()} — ${new Date().toISOString().slice(0, 10)}`,
       subject: data.subject.trim(),
       from: ORG_NAME,
       replyTo: process.env.SENDER_FROM_EMAIL?.trim() || CONTACT_EMAIL,
       preheader: data.preheader.trim(),
-      html: toHtml(data.body),
+      html: toHtml(data.body, 'campaign'),
       groups: [data.groupId],
     });
-
-    await sendCampaign(campaignId);
-    return {
-      ok: true,
-      message: `Campaign ${campaignId} is sending. Delivery reports are in Sender.`,
-    };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : 'Send failed.' };
+    return { error: err instanceof Error ? err.message : 'Could not create the campaign.' };
   }
+
+  // The two calls are reported apart on purpose. Creating succeeds and sending
+  // fails often enough — Sender validates the content at send time — and the
+  // campaign it leaves behind is a draft nobody mentioned, so say where it is.
+  try {
+    await sendCampaign(campaignId);
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : 'Send failed.';
+    return {
+      error: `${detail} — nothing went out. Draft ${campaignId} is left in Sender; delete it there before trying again.`,
+    };
+  }
+
+  return {
+    ok: true,
+    message: `Campaign ${campaignId} is sending. Delivery reports are in Sender.`,
+  };
 }

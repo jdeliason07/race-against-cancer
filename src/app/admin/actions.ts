@@ -4,6 +4,8 @@ import { checkPassword, denyUnlessAdmin, endSession, startSession } from '@/lib/
 import { getStripe, WAITLIST_SOURCE } from '@/lib/stripeRegistration';
 import {
   createCampaign,
+  deleteCampaign,
+  getCampaignHtml,
   isSenderConfigured,
   listGroups,
   sendCampaign,
@@ -175,9 +177,13 @@ const FOOTER_STYLE =
  * it — no style attribute, no reworded label — because the check looks for
  * that literal snippet.
  */
+// Not exported: a 'use server' module may only export async functions, and one
+// stray const turns every action in the file into a missing import.
+const UNSUBSCRIBE_ANCHOR = '<a href="{{unsubscribe_link}}">{{unsubscribe_text}}</a>';
+
 const CAMPAIGN_FOOTER = `<p style="${FOOTER_STYLE}">
 ${ORG_NAME} · ${EVENT_NAME}<br />
-<a href="{{unsubscribe_link}}">{{unsubscribe_text}}</a>
+${UNSUBSCRIBE_ANCHOR}
 </p>`;
 
 /**
@@ -193,23 +199,40 @@ ${ORG_NAME} · ${EVENT_NAME}<br />
 <em>The unsubscribe link goes here in the real send.</em>
 </p>`;
 
-/** Plain text in, simple HTML out — so the composer stays a textarea and
- *  nobody has to hand-write markup. */
-function toHtml(body: string, footer: 'campaign' | 'preview'): string {
-  const escape = (value: string) =>
-    value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const escapeHtml = (value: string) =>
+  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+/**
+ * Plain text in, a complete HTML document out — so the composer stays a
+ * textarea and nobody has to hand-write markup.
+ *
+ * A whole document, not a fragment: Sender stores campaign content starting at
+ * `<!DOCTYPE html>` and parses it before deciding whether it carries an
+ * unsubscribe link, and a loose `<div>` is not something every mail client
+ * renders the same way either.
+ */
+function toHtml(body: string, subject: string, footer: 'campaign' | 'preview'): string {
   const paragraphs = body
     .split(/\n{2,}/)
     .map((block) => block.trim())
     .filter(Boolean)
-    .map((block) => `<p style="margin:0 0 16px;">${escape(block).replace(/\n/g, '<br />')}</p>`)
+    .map((block) => `<p style="margin:0 0 16px;">${escapeHtml(block).replace(/\n/g, '<br />')}</p>`)
     .join('\n');
 
-  return `<div style="font-family:system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;color:#1C1719;max-width:600px;">
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>${escapeHtml(subject)}</title>
+</head>
+<body style="margin:0;padding:24px;background-color:#ffffff;">
+<div style="font-family:system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;color:#1C1719;max-width:600px;margin:0 auto;">
 ${paragraphs}
 ${footer === 'campaign' ? CAMPAIGN_FOOTER : PREVIEW_FOOTER}
-</div>`;
+</div>
+</body>
+</html>`;
 }
 
 export async function sendTestEmail(data: {
@@ -231,7 +254,7 @@ export async function sendTestEmail(data: {
       fromEmail: process.env.SENDER_FROM_EMAIL?.trim() || CONTACT_EMAIL,
       fromName: ORG_NAME,
       subject: `[TEST] ${data.subject.trim()}`,
-      html: toHtml(data.body, 'preview'),
+      html: toHtml(data.body, data.subject.trim(), 'preview'),
       text: data.body,
     });
     return { ok: true, message: `Test sent to ${data.toEmail.trim()}.` };
@@ -265,27 +288,63 @@ export async function sendCampaignToGroup(data: {
       from: ORG_NAME,
       replyTo: process.env.SENDER_FROM_EMAIL?.trim() || CONTACT_EMAIL,
       preheader: data.preheader.trim(),
-      html: toHtml(data.body, 'campaign'),
+      html: toHtml(data.body, data.subject.trim(), 'campaign'),
       groups: [data.groupId],
     });
   } catch (err) {
     return { error: err instanceof Error ? err.message : 'Could not create the campaign.' };
   }
 
-  // The two calls are reported apart on purpose. Creating succeeds and sending
-  // fails often enough — Sender validates the content at send time — and the
-  // campaign it leaves behind is a draft nobody mentioned, so say where it is.
+  // The two calls are reported apart on purpose. Sender validates content at
+  // send time, so creating succeeds and sending fails — against a campaign that
+  // now exists as a draft nobody asked for.
   try {
     await sendCampaign(campaignId);
   } catch (err) {
-    const detail = err instanceof Error ? err.message : 'Send failed.';
-    return {
-      error: `${detail} — nothing went out. Draft ${campaignId} is left in Sender; delete it there before trying again.`,
-    };
+    return { error: await explainSendFailure(campaignId, err) };
   }
 
   return {
     ok: true,
     message: `Campaign ${campaignId} is sending. Delivery reports are in Sender.`,
   };
+}
+
+/**
+ * Turns a refused send into something actionable.
+ *
+ * Sender validates at send time and says only what it wants, not what it has,
+ * which leaves the useful question unanswered: did our HTML reach them intact?
+ * Reading the campaign back separates "they rejected our content" from "our
+ * content never landed", and the draft gets cleared either way so retries
+ * don't silt up the account.
+ */
+async function explainSendFailure(campaignId: string, err: unknown): Promise<string> {
+  const parts = [err instanceof Error ? err.message : 'Send failed.', 'Nothing went out.'];
+
+  try {
+    const stored = await getCampaignHtml(campaignId);
+    if (!stored) {
+      parts.push('Sender has no HTML stored for this campaign — the content never reached it.');
+    } else if (!stored.includes(UNSUBSCRIBE_ANCHOR)) {
+      parts.push(
+        `Sender stored ${stored.length} characters of HTML, but not the unsubscribe link we sent — it altered or dropped it.`,
+      );
+    } else {
+      parts.push('The unsubscribe link is in the HTML Sender stored, so it is refusing for another reason.');
+    }
+  } catch (readErr) {
+    parts.push(
+      `Could not read the campaign back: ${readErr instanceof Error ? readErr.message : String(readErr)}.`,
+    );
+  }
+
+  try {
+    await deleteCampaign(campaignId);
+    parts.push(`Draft ${campaignId} cleaned up.`);
+  } catch {
+    parts.push(`Draft ${campaignId} is still in Sender — delete it there.`);
+  }
+
+  return parts.join(' ');
 }

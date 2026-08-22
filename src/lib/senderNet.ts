@@ -170,6 +170,26 @@ export async function sendCampaign(campaignId: string): Promise<void> {
   await call(`/campaigns/${encodeURIComponent(campaignId)}/send`, { method: 'POST' });
 }
 
+/**
+ * The HTML Sender actually stored for a campaign, as we supplied it.
+ *
+ * `html_content` is our markup; `html_body` is their processed copy with
+ * tracking woven in. Reading the first one back is the only way to tell a
+ * campaign that Sender rejected from one whose content never landed.
+ */
+export async function getCampaignHtml(campaignId: string): Promise<string> {
+  const result = await call<{ data?: { html?: { html_content?: string } } }>(
+    `/campaigns/${encodeURIComponent(campaignId)}`,
+  );
+  return result.data?.html?.html_content ?? '';
+}
+
+/** Removes a campaign. Used to clear the draft a failed send leaves behind. */
+export async function deleteCampaign(campaignId: string): Promise<void> {
+  // Sender takes the ids as a bracketed list in the query string, not a body.
+  await call(`/campaigns?ids=[${encodeURIComponent(campaignId)}]`, { method: 'DELETE' });
+}
+
 /** One-off email that bypasses groups and campaigns — used for test sends and
  *  the weekly referral report. */
 export async function sendTransactional(message: {
